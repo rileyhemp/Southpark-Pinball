@@ -13,7 +13,7 @@
         physics: {
             default: 'arcade',
             arcade: {
-                gravity: { y: 200 }
+                gravity: { y: 400 }
             }
         },
         scene: {
@@ -40,15 +40,15 @@
         var particles = this.add.particles('red');
 
         var emitter = particles.createEmitter({
-            speed: 100,
+            speed: 4,
             scale: { start: 1, end: 0 },
             blendMode: 'ADD'
         });
 
         var logo = this.physics.add.image(400, 100, 'logo');
 
-        logo.setVelocity(100, 200);
-        logo.setBounce(1, 1);
+        logo.setVelocity(0, 0);
+        logo.setBounce(0, 0);
         logo.setCollideWorldBounds(true);
 
         emitter.startFollow(logo);
