@@ -1,3 +1,24 @@
+class Ball extends Phaser.Physics.Matter.Image {
+    constructor(scene, x, y, texture) {
+        super(scene.matter.world, x, y, texture)
+        super.setScale(.17)
+        super.setCircle(8.657)
+        scene.sys.displayList.add(this)
+    }
+    launch(){
+        super.setVelocityY(-30)
+    }
+}
+
+class Bumper extends Phaser.Physics.Matter.Sprite {
+    constructor(scene, x, y, texture){
+        super(scene.matter.world, x, y, texture)
+        super.setStatic(true)
+        scene.sys.displayList.add(this)
+    }
+}
+
+
 const config = {
     type: Phaser.AUTO,
     width: 440,
@@ -31,7 +52,11 @@ let
     rightFlipper, 
     rightBlock, 
     rightPivot, 
-    rightFlipperPin
+    rightFlipperPin,
+    leftApron,
+    rightApron,
+    createBall,
+    leftFlipperActive
 
 const game = new Phaser.Game(config)
 
@@ -53,49 +78,22 @@ function create() {
 
     left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
     right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
+    spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
     
     let schematic = this.add.image(220,400, 'schematic')
     schematic.scale = 0.8
     
-    class Ball extends Phaser.Physics.Matter.Image {
-        constructor(scene, x, y, texture) {
-            super(scene.matter.world, x, y, texture)
-            super.setScale(.17)
-            super.setCircle(8.657)
-            scene.sys.displayList.add(this)
-        }
-        launch(){
-            super.setVelocityY(-30)
-        }
-    }
-    
-    class Bumper extends Phaser.Physics.Matter.Sprite {
-        constructor(scene, x, y, texture){
-            super(scene.matter.world, x, y, texture)
-            super.setStatic(true)
-            scene.sys.displayList.add(this)
-        }
-    }
-
-    class Flipper extends Phaser.Physics.Matter.Image {
-        constructor(scene, x, y, texture, orientation) {
-            super(scene.matter.world, x, y, texture)
-           // super.setStatic(true)
-            super.setFriction(.2)
-            scene.sys.displayList.add(this)
-            this.setScale(0.15, .15)
-            this.rotation = 0.55
-            console.log(this.width)
-        }
-    }
     
     //Create the ball
-    ball = new Ball(this, 152, 625, 'ball') 
+
+
+   
+    ball = new Ball(this, 100, 625, 'ball') 
     ball.setFrictionStatic(0.02)
     ball.setMass(.25)
     ball.setFrictionAir(0)
     ball.setBounce(0.25)
-
+    
 
 
     //Left flipper mechanism
@@ -155,7 +153,7 @@ function create() {
     rightPivot.setScale(.2)
     rightPivot.setCircle(1)
     rightPivot.setStatic(true)
-
+ 
     //Create the right flipper components 
     let rectB = Bodies.rectangle(250 , 699, 70, 16)
     let circleC = Bodies.circle(270, 699, 5)
@@ -185,18 +183,38 @@ function create() {
     //Increase mass of the flippers
     leftFlipper.mass = 50
 
-    //rightFlipper.isStatic = true
+
+    //Create the aprons
+    leftApron = new Bumper(this, 13, 615, 'rectA')
+    leftApron.setScale(1, 0.4)
+    leftApron.rotation = .58
+
+    rightApron = new Bumper(this, 418, 615, 'rectA')
+    rightApron.setScale(1, 0.4)
+    rightApron.rotation = -.58
 
 }
 
 function update() {
     
+    if(Phaser.Input.Keyboard.JustDown(spacebar)){
+        ball = new Ball(this, 100, 625, 'ball') 
+        ball.setFrictionStatic(0.02)
+        ball.setMass(.25)
+        ball.setFrictionAir(0)
+    }
+
     //Input control of left flipper
     if (Phaser.Input.Keyboard.JustDown(left)){
+        leftFlipperActive = true
         leftFlipper.torque = -3
     } 
+    
+    if (Phaser.Input.Keyboard.JustUp(left)){
+        leftFlipperActive = false
+    } 
     //Apply torque in opposite direction after left flipper reaches max angle
-    if(leftFlipper.angle <= -.5 ){
+    if( leftFlipper.angle <= -.5){
         leftFlipper.torque = 1
     } 
 
@@ -211,7 +229,7 @@ function update() {
     
     //This function lowers the gravity when the ball is going up and raises it on the way down.
     if(ball.body.velocity.y < 0){
-        this.matter.world.setGravity(0,0.2)
+        this.matter.world.setGravity(0,0.35)
     } else {
         this.matter.world.setGravity(0,.35)
     }

@@ -22,6 +22,57 @@ function _superPropBase(object, property) { while (!Object.prototype.hasOwnPrope
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+var Ball =
+/*#__PURE__*/
+function (_Phaser$Physics$Matte) {
+  _inherits(Ball, _Phaser$Physics$Matte);
+
+  function Ball(scene, x, y, texture) {
+    var _this;
+
+    _classCallCheck(this, Ball);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Ball).call(this, scene.matter.world, x, y, texture));
+
+    _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .17);
+
+    _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.657);
+
+    scene.sys.displayList.add(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(Ball, [{
+    key: "launch",
+    value: function launch() {
+      _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -30);
+    }
+  }]);
+
+  return Ball;
+}(Phaser.Physics.Matter.Image);
+
+var Bumper =
+/*#__PURE__*/
+function (_Phaser$Physics$Matte2) {
+  _inherits(Bumper, _Phaser$Physics$Matte2);
+
+  function Bumper(scene, x, y, texture) {
+    var _this2;
+
+    _classCallCheck(this, Bumper);
+
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(Bumper).call(this, scene.matter.world, x, y, texture));
+
+    _get(_getPrototypeOf(Bumper.prototype), "setStatic", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2), true);
+
+    scene.sys.displayList.add(_assertThisInitialized(_this2));
+    return _this2;
+  }
+
+  return Bumper;
+}(Phaser.Physics.Matter.Sprite);
+
 var config = {
   type: Phaser.AUTO,
   width: 440,
@@ -39,7 +90,7 @@ var config = {
   }
 };
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
-var balls, spacebar, left, right, ball, bounds, leftFlipper, leftBlock, leftPivot, leftFlipperPin, rightFlipper, rightBlock, rightPivot, rightFlipperPin;
+var balls, spacebar, left, right, ball, bounds, leftFlipper, leftBlock, leftPivot, leftFlipperPin, rightFlipper, rightBlock, rightPivot, rightFlipperPin, leftApron, rightApron, createBall, leftFlipperActive;
 var game = new Phaser.Game(config);
 
 function preload() {
@@ -54,88 +105,11 @@ function create() {
   this.matter.world.setGravity(0, 1);
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
   var schematic = this.add.image(220, 400, 'schematic');
-  schematic.scale = 0.8;
+  schematic.scale = 0.8; //Create the ball
 
-  var Ball =
-  /*#__PURE__*/
-  function (_Phaser$Physics$Matte) {
-    _inherits(Ball, _Phaser$Physics$Matte);
-
-    function Ball(scene, x, y, texture) {
-      var _this;
-
-      _classCallCheck(this, Ball);
-
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Ball).call(this, scene.matter.world, x, y, texture));
-
-      _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .17);
-
-      _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.657);
-
-      scene.sys.displayList.add(_assertThisInitialized(_this));
-      return _this;
-    }
-
-    _createClass(Ball, [{
-      key: "launch",
-      value: function launch() {
-        _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -30);
-      }
-    }]);
-
-    return Ball;
-  }(Phaser.Physics.Matter.Image);
-
-  var Bumper =
-  /*#__PURE__*/
-  function (_Phaser$Physics$Matte2) {
-    _inherits(Bumper, _Phaser$Physics$Matte2);
-
-    function Bumper(scene, x, y, texture) {
-      var _this2;
-
-      _classCallCheck(this, Bumper);
-
-      _this2 = _possibleConstructorReturn(this, _getPrototypeOf(Bumper).call(this, scene.matter.world, x, y, texture));
-
-      _get(_getPrototypeOf(Bumper.prototype), "setStatic", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2), true);
-
-      scene.sys.displayList.add(_assertThisInitialized(_this2));
-      return _this2;
-    }
-
-    return Bumper;
-  }(Phaser.Physics.Matter.Sprite);
-
-  var Flipper =
-  /*#__PURE__*/
-  function (_Phaser$Physics$Matte3) {
-    _inherits(Flipper, _Phaser$Physics$Matte3);
-
-    function Flipper(scene, x, y, texture, orientation) {
-      var _this3;
-
-      _classCallCheck(this, Flipper);
-
-      _this3 = _possibleConstructorReturn(this, _getPrototypeOf(Flipper).call(this, scene.matter.world, x, y, texture)); // super.setStatic(true)
-
-      _get(_getPrototypeOf(Flipper.prototype), "setFriction", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3), .2);
-
-      scene.sys.displayList.add(_assertThisInitialized(_this3));
-
-      _this3.setScale(0.15, .15);
-
-      _this3.rotation = 0.55;
-      console.log(_this3.width);
-      return _this3;
-    }
-
-    return Flipper;
-  }(Phaser.Physics.Matter.Image); //Create the ball
-
-
-  ball = new Ball(this, 152, 625, 'ball');
+  ball = new Ball(this, 100, 625, 'ball');
   ball.setFrictionStatic(0.02);
   ball.setMass(.25);
   ball.setFrictionAir(0);
@@ -208,13 +182,32 @@ function create() {
     y: 0
   }; //Increase mass of the flippers
 
-  leftFlipper.mass = 50; //rightFlipper.isStatic = true
+  leftFlipper.mass = 50; //Create the aprons
+
+  leftApron = new Bumper(this, 13, 615, 'rectA');
+  leftApron.setScale(1, 0.4);
+  leftApron.rotation = .58;
+  rightApron = new Bumper(this, 418, 615, 'rectA');
+  rightApron.setScale(1, 0.4);
+  rightApron.rotation = -.58;
 }
 
 function update() {
-  //Input control of left flipper
+  if (Phaser.Input.Keyboard.JustDown(spacebar)) {
+    ball = new Ball(this, 100, 625, 'ball');
+    ball.setFrictionStatic(0.02);
+    ball.setMass(.25);
+    ball.setFrictionAir(0);
+  } //Input control of left flipper
+
+
   if (Phaser.Input.Keyboard.JustDown(left)) {
+    leftFlipperActive = true;
     leftFlipper.torque = -3;
+  }
+
+  if (Phaser.Input.Keyboard.JustUp(left)) {
+    leftFlipperActive = false;
   } //Apply torque in opposite direction after left flipper reaches max angle
 
 
@@ -234,7 +227,7 @@ function update() {
 
 
   if (ball.body.velocity.y < 0) {
-    this.matter.world.setGravity(0, 0.2);
+    this.matter.world.setGravity(0, 0.35);
   } else {
     this.matter.world.setGravity(0, .35);
   }
