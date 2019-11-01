@@ -91,7 +91,7 @@ var config = {
 };
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
 var flipperLength = 65;
-var balls, spacebar, left, right, ball, bounds, leftFlipper, leftBlock, leftPivot, leftFlipperPin, rightFlipper, rightBlock, rightPivot, rightFlipperPin, leftApron, rightApron, createBall, leftFlipperActive, dome, apronLeft, apronRight, apronBottom, bouncer, bumperRight, fixtureTopLeft, hsBottom, hsTop, triPegLeft, triPegRight, wallLowLeft, wallTopLeft, wallTopRight, wallTopRightInner;
+var balls, spacebar, left, right, ball, bounds, leftFlipper, leftBlock, leftPivot, leftFlipperPin, rightFlipper, rightBlock, rightPivot, rightFlipperPin, leftApron, rightApron, createBall, leftFlipperActive, dome, apronLeft, apronRight, apronBottom, bouncer, bumperRight, bumperLeft, fixtureTopLeft, hsBottom, hsTop, triPegLeft, triPegRight, wallLowLeft, wallTopLeft, wallTopRight, wallTopRightInner;
 var game = new Phaser.Game(config);
 
 function preload() {
@@ -187,18 +187,67 @@ function create() {
     x: 15,
     y: 0
   }; //Increase mass of the flippers
+  //leftFlipper.mass = 50
+  //Place static objects. 
+  //1. Create a game object with desired texture
 
-  leftFlipper.mass = 50; //Place static objects
+  dome = this.matter.add.image(0, 0, 'dome'); //2. Set that objects physics body to its vector outline and set it as static
 
-  dome = this.matter.add.image(0, 0, 'dome');
-  dome.setExistingBody(Bodies.fromVertices(220, 180, PATHS.dome));
-  dome.setStatic(true);
+  dome.setExistingBody(Bodies.fromVertices(0, 0, PATHS.dome)).setStatic(true);
+  dome.x = 220;
+  dome.y = 180;
   apronLeft = this.matter.add.image(0, 0, 'apronLeft');
-  apronLeft.setExistingBody(Bodies.fromVertices(71, 630, PATHS.apronLeft));
-  apronLeft.setStatic(true);
+  apronLeft.setExistingBody(Bodies.fromVertices(0, 0, PATHS.apronLeft)).setStatic(true);
+  apronLeft.x = 71;
+  apronLeft.y = 630;
   apronRight = this.matter.add.image(0, 0, 'apronRight');
-  apronRight.setExistingBody(Bodies.fromVertices(340, 654, PATHS.apronRight));
-  apronRight.setStatic(true);
+  apronRight.setExistingBody(Bodies.fromVertices(0, 0, PATHS.apronRight)).setStatic(true);
+  apronRight.x = 340;
+  apronRight.y = 654;
+  bumperLeft = this.matter.add.image(0, 0, 'bumperLeft');
+  bumperLeft.setExistingBody(Bodies.fromVertices(0, 0, PATHS.bumperLeft)).setStatic(true);
+  bumperLeft.x = 120;
+  bumperLeft.y = 602;
+  bumperRight = this.matter.add.image(0, 0, 'bumperRight');
+  bumperRight.setExistingBody(Bodies.fromVertices(0, 0, PATHS.bumperRight)).setStatic(true);
+  bumperRight.x = 314;
+  bumperRight.y = 602;
+  fixtureTopLeft = this.matter.add.image(0, 0, 'fixtureTopLeft');
+  fixtureTopLeft.setExistingBody(Bodies.fromVertices(0, 0, PATHS.fixtureTopLeft)).setStatic(true);
+  fixtureTopLeft.x = 90;
+  fixtureTopLeft.y = 145;
+  hsBottom = this.matter.add.image(0, 0, 'hsBottom');
+  hsBottom.setExistingBody(Bodies.fromVertices(0, 0, PATHS.hsBottom)).setStatic(true);
+  hsBottom.x = 215;
+  hsBottom.y = 85;
+  hsTop = this.matter.add.image(0, 0, 'hsTop');
+  hsTop.setExistingBody(Bodies.fromVertices(0, 0, PATHS.hsTop)).setStatic(true);
+  hsTop.x = 215;
+  hsTop.y = 80;
+  triPegLeft = this.matter.add.image(0, 0, 'triPegLeft');
+  triPegLeft.setExistingBody(Bodies.fromVertices(0, 0, PATHS.triPegLeft)).setStatic(true);
+  triPegLeft.x = 40;
+  triPegLeft.y = 425;
+  triPegRight = this.matter.add.image(0, 0, 'triPegRight');
+  triPegRight.setExistingBody(Bodies.fromVertices(0, 0, PATHS.triPegRight)).setStatic(true);
+  triPegRight.x = 400;
+  triPegRight.y = 408;
+  wallTopLeft = this.matter.add.image(0, 0, 'wallTopLeft');
+  wallTopLeft.setExistingBody(Bodies.fromVertices(0, 0, PATHS.wallTopLeft)).setStatic(true);
+  wallTopLeft.x = 27;
+  wallTopLeft.y = 325;
+  wallTopRight = this.matter.add.image(0, 0, 'wallTopRight');
+  wallTopRight.setExistingBody(Bodies.fromVertices(0, 0, PATHS.wallTopRight)).setStatic(true);
+  wallTopRight.x = 426;
+  wallTopRight.y = 285;
+  wallTopRightInner = this.matter.add.image(0, 0, 'wallTopRightInner');
+  wallTopRightInner.setExistingBody(Bodies.fromVertices(0, 0, PATHS.wallTopRightInner)).setStatic(true);
+  wallTopRightInner.x = 385;
+  wallTopRightInner.y = 200;
+  wallLowLeft = this.matter.add.image(0, 0, 'wallLowLeft');
+  wallLowLeft.setExistingBody(Bodies.fromVertices(0, 0, PATHS.wallLowLeft)).setStatic(true);
+  wallLowLeft.x = 26;
+  wallLowLeft.y = 490;
 }
 
 function update() {
