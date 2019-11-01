@@ -90,30 +90,36 @@ var config = {
   }
 };
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
-var balls, spacebar, left, right, ball, bounds, leftFlipper, leftBlock, leftPivot, leftFlipperPin, rightFlipper, rightBlock, rightPivot, rightFlipperPin, leftApron, rightApron, createBall, leftFlipperActive;
+var flipperLength = 65;
+var balls, spacebar, left, right, ball, bounds, leftFlipper, leftBlock, leftPivot, leftFlipperPin, rightFlipper, rightBlock, rightPivot, rightFlipperPin, leftApron, rightApron, createBall, leftFlipperActive, dome, apronLeft, apronRight, apronBottom, bouncer, bumperRight, fixtureTopLeft, hsBottom, hsTop, triPegLeft, triPegRight, wallLowLeft, wallTopLeft, wallTopRight, wallTopRightInner;
 var game = new Phaser.Game(config);
 
 function preload() {
   this.load.image('ball', 'dist/assets/sprites/wizball.png');
   this.load.image('rectA', 'dist/assets/solids/grey-solid.svg');
   this.load.image('schematic', 'dist/assets/schematic.jpg');
+  this.load.image('dome', 'dist/assets/textures/Dome.png');
 } //***************************************************************************************//
 
 
 function create() {
-  bounds = this.matter.world.setBounds(0, 0, 440, 800, 30, true, true, true, true);
-  this.matter.world.setGravity(0, 1);
+  //Set world bounds
+  bounds = this.matter.world.setBounds(0, 0, 440, 800, 30, true, true, true, true); //Set gravity
+
+  this.matter.world.setGravity(0, .35); //Define inputs
+
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //Layout overlay
+
   var schematic = this.add.image(220, 400, 'schematic');
   schematic.scale = 0.8; //Create the ball
 
   ball = new Ball(this, 100, 625, 'ball');
-  ball.setFrictionStatic(0.02);
-  ball.setMass(.25);
+  ball.setFrictionStatic(0);
+  ball.setMass(.1);
   ball.setFrictionAir(0);
-  ball.setBounce(0.25); //Left flipper mechanism
+  ball.setBounce(0.05); //Left flipper mechanism
   //Create bottom block to stop flipper from going too low
 
   leftBlock = this.matter.add.image(170, 727, 'rectA', this, {
@@ -126,10 +132,10 @@ function create() {
   leftPivot.setCircle(1);
   leftPivot.setStatic(true); //Create the left flipper components 
 
-  var rectA = Bodies.rectangle(170, 699, 70, 16);
+  var rectA = Bodies.rectangle(166, 700, flipperLength, 16);
   var circleA = Bodies.circle(150, 699, 5);
   circleA.mass = 2;
-  var circleB = Bodies.circle(188, 695, 4); //Create left flipper compound body
+  var circleB = Bodies.circle(188, 695, 4); //Merge left flipper components
 
   leftFlipper = Phaser.Physics.Matter.Matter.Body.create({
     parts: [circleA, circleB, rectA]
@@ -160,7 +166,7 @@ function create() {
   rightPivot.setCircle(1);
   rightPivot.setStatic(true); //Create the right flipper components 
 
-  var rectB = Bodies.rectangle(250, 699, 70, 16);
+  var rectB = Bodies.rectangle(254, 700, flipperLength, 16);
   var circleC = Bodies.circle(270, 699, 5);
   circleC.mass = 2;
   var circleD = Bodies.circle(229, 695, 4); //Create right flipper compound body
@@ -182,14 +188,17 @@ function create() {
     y: 0
   }; //Increase mass of the flippers
 
-  leftFlipper.mass = 50; //Create the aprons
+  leftFlipper.mass = 50; //Place static objects
 
-  leftApron = new Bumper(this, 13, 615, 'rectA');
-  leftApron.setScale(1, 0.4);
-  leftApron.rotation = .58;
-  rightApron = new Bumper(this, 418, 615, 'rectA');
-  rightApron.setScale(1, 0.4);
-  rightApron.rotation = -.58;
+  dome = this.matter.add.image(0, 0, 'dome');
+  dome.setExistingBody(Bodies.fromVertices(220, 180, PATHS.dome));
+  dome.setStatic(true);
+  apronLeft = this.matter.add.image(0, 0, 'apronLeft');
+  apronLeft.setExistingBody(Bodies.fromVertices(71, 630, PATHS.apronLeft));
+  apronLeft.setStatic(true);
+  apronRight = this.matter.add.image(0, 0, 'apronRight');
+  apronRight.setExistingBody(Bodies.fromVertices(340, 654, PATHS.apronRight));
+  apronRight.setStatic(true);
 }
 
 function update() {
@@ -224,12 +233,11 @@ function update() {
   if (rightFlipper.angle >= .5) {
     rightFlipper.torque = -1;
   } //This function lowers the gravity when the ball is going up and raises it on the way down.
+  // if(ball.body.velocity.y < 0){
+  //     this.matter.world.setGravity(0,0.35)
+  // } else {
+  //     this.matter.world.setGravity(0,.35)
+  // }
 
-
-  if (ball.body.velocity.y < 0) {
-    this.matter.world.setGravity(0, 0.35);
-  } else {
-    this.matter.world.setGravity(0, .35);
-  }
 } ///The base of the flipper is a 15mm diameter circle, sloping down to a 5mm diameter circle at the tip. Overall length is 71mm,
 //# sourceMappingURL=game.js.map

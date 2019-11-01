@@ -1,147 +1,122 @@
 "use strict";
 
-var config = {
-  type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: {
-        y: 300
-      },
-      debug: false
+var Example = Example || {};
+
+Example.svg = function () {
+  var Engine = Matter.Engine,
+      Render = Matter.Render,
+      Runner = Matter.Runner,
+      Common = Matter.Common,
+      MouseConstraint = Matter.MouseConstraint,
+      Mouse = Matter.Mouse,
+      World = Matter.World,
+      Vertices = Matter.Vertices,
+      Svg = Matter.Svg,
+      Bodies = Matter.Bodies; // create engine
+
+  var engine = Engine.create(),
+      world = engine.world; // create renderer
+
+  var render = Render.create({
+    element: document.body,
+    engine: engine,
+    options: {
+      width: 800,
+      height: 600
     }
-  },
-  scene: {
-    preload: preload,
-    create: create,
-    update: update
+  });
+  Render.run(render); // create runner
+
+  var runner = Runner.create();
+  Runner.run(runner, engine); // add bodies
+
+  var svgs = ['iconmonstr-check-mark-8-icon', 'iconmonstr-paperclip-2-icon', 'iconmonstr-puzzle-icon', 'iconmonstr-user-icon'];
+
+  if (typeof $ !== 'undefined') {
+    for (var i = 0; i < svgs.length; i += 1) {
+      (function (i) {
+        $.get('./svg/' + svgs[i] + '.svg').done(function (data) {
+          var vertexSets = [],
+              color = Common.choose(['#556270', '#4ECDC4', '#C7F464', '#FF6B6B', '#C44D58']);
+          $(data).find('path').each(function (i, path) {
+            var points = Svg.pathToVertices(path, 30);
+            vertexSets.push(Vertices.scale(points, 0.4, 0.4));
+          });
+          World.add(world, Bodies.fromVertices(100 + i * 150, 200 + i * 50, vertexSets, {
+            render: {
+              fillStyle: color,
+              strokeStyle: color,
+              lineWidth: 1
+            }
+          }, true));
+        });
+      })(i);
+    }
+
+    $.get('./svg/svg.svg').done(function (data) {
+      var vertexSets = [],
+          color = Common.choose(['#556270', '#4ECDC4', '#C7F464', '#FF6B6B', '#C44D58']);
+      $(data).find('path').each(function (i, path) {
+        vertexSets.push(Svg.pathToVertices(path, 30));
+      });
+      World.add(world, Bodies.fromVertices(400, 80, vertexSets, {
+        render: {
+          fillStyle: color,
+          strokeStyle: color,
+          lineWidth: 1
+        }
+      }, true));
+    });
   }
+
+  World.add(world, [Bodies.rectangle(400, 0, 800, 50, {
+    isStatic: true
+  }), Bodies.rectangle(400, 600, 800, 50, {
+    isStatic: true
+  }), Bodies.rectangle(800, 300, 50, 600, {
+    isStatic: true
+  }), Bodies.rectangle(0, 300, 50, 600, {
+    isStatic: true
+  })]); // add mouse control
+
+  var mouse = Mouse.create(render.canvas),
+      mouseConstraint = MouseConstraint.create(engine, {
+    mouse: mouse,
+    constraint: {
+      stiffness: 0.2,
+      render: {
+        visible: false
+      }
+    }
+  });
+  World.add(world, mouseConstraint); // keep the mouse in sync with rendering
+
+  render.mouse = mouse; // fit the render viewport to the scene
+
+  Render.lookAt(render, {
+    min: {
+      x: 0,
+      y: 0
+    },
+    max: {
+      x: 800,
+      y: 600
+    }
+  }); // context for MatterTools.Demo
+
+  return {
+    engine: engine,
+    runner: runner,
+    render: render,
+    canvas: render.canvas,
+    stop: function stop() {
+      Matter.Render.stop(render);
+      Matter.Runner.stop(runner);
+    }
+  };
 };
-var player;
-var bombs;
-var platforms;
-var cursors;
-var stars;
-var score = 0;
-var scoreText;
-var game = new Phaser.Game(config);
 
-function preload() {
-  this.load.image('sky', '../../assets/sky.png');
-  this.load.image('ground', '../../assets/platform.png');
-  this.load.image('star', '../../assets/star.png');
-  this.load.image('bomb', '../../assets/bomb.png');
-  this.load.spritesheet('dude', '../../assets/dude.png', {
-    frameWidth: 32,
-    frameHeight: 48
-  });
-}
-
-function create() {
-  this.add.image(400, 300, 'sky');
-  this.add.image(400, 300, 'star');
-  var platforms = this.physics.add.staticGroup();
-  platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-  platforms.create(400, 400, 'ground');
-  platforms.create(50, 250, 'ground');
-  platforms.create(750, 220, 'ground');
-  player = this.physics.add.sprite(100, 450, 'dude');
-  player.setBounceY(0.2);
-  player.setCollideWorldBounds(true);
-  this.anims.create({
-    key: 'left',
-    frames: this.anims.generateFrameNumbers('dude', {
-      start: 0,
-      end: 3
-    }),
-    frameRate: 10,
-    repeat: -1
-  });
-  this.anims.create({
-    key: 'turn',
-    frames: [{
-      key: 'dude',
-      frame: 4
-    }],
-    frameRate: 20
-  });
-  this.anims.create({
-    key: 'right',
-    frames: this.anims.generateFrameNumbers('dude', {
-      start: 5,
-      end: 8
-    }),
-    frameRate: 10,
-    repeat: -1
-  });
-  this.physics.add.collider(player, platforms);
-  cursors = this.input.keyboard.createCursorKeys();
-  stars = this.physics.add.group({
-    key: 'star',
-    repeat: 11,
-    setXY: {
-      x: 12,
-      y: 0,
-      stepX: 70
-    }
-  });
-  stars.children.iterate(function (child) {
-    child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-  });
-  this.physics.add.collider(stars, platforms);
-  this.physics.add.overlap(player, stars, collectStar, null, this);
-
-  function collectStar(player, star) {
-    star.disableBody(true, true);
-    score += 10;
-    scoreText.setText('Score: ' + score);
-
-    if (stars.countActive(true) === 0) {
-      stars.children.iterate(function (child) {
-        child.enableBody(true, child.x, 0, true, true);
-      }); //If player is on the left side, make set var to x coord on right side, visa versa.
-
-      var x = player.x < 400 ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400); //Make the bomb and add some props
-
-      var bomb = bombs.create(x, 16, 'bomb');
-      bomb.setBounce(1);
-      bomb.setCollideWorldBounds(true);
-      bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    }
-  }
-
-  scoreText = this.add.text(16, 16, 'score: 0', {
-    fontSize: '32px',
-    fill: '#000'
-  });
-  bombs = this.physics.add.group();
-  this.physics.add.collider(bombs, platforms);
-  this.physics.add.collider(player, bombs, hitBomb, null, this);
-
-  function hitBomb(player, bomb) {
-    this.physics.pause();
-    player.setTint(0xff0000);
-    player.anims.play('turn');
-    gameOver = true;
-  }
-}
-
-function update() {
-  if (cursors.left.isDown) {
-    player.setVelocityX(-160);
-    player.anims.play('left', true);
-  } else if (cursors.right.isDown) {
-    player.setVelocityX(160);
-    player.anims.play('right', true);
-  } else {
-    player.setVelocityX(0);
-    player.anims.play('turn');
-  }
-
-  if (cursors.up.isDown && player.body.touching.down) {
-    player.setVelocityY(-330);
-  }
+if (typeof module !== 'undefined') {
+  module.exports = Example[Object.keys(Example)[0]];
 }
 //# sourceMappingURL=example.js.map

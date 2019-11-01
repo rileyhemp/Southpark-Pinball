@@ -18,7 +18,6 @@ class Bumper extends Phaser.Physics.Matter.Sprite {
     }
 }
 
-
 const config = {
     type: Phaser.AUTO,
     width: 440,
@@ -38,6 +37,8 @@ const config = {
 
 const Bodies = Phaser.Physics.Matter.Matter.Bodies
 
+const flipperLength = 65
+
 let 
     balls, 
     spacebar, 
@@ -56,7 +57,22 @@ let
     leftApron,
     rightApron,
     createBall,
-    leftFlipperActive
+    leftFlipperActive,
+    dome,
+    apronLeft,
+    apronRight,
+    apronBottom,
+    bouncer,
+    bumperRight,
+    fixtureTopLeft,
+    hsBottom,
+    hsTop,
+    triPegLeft,
+    triPegRight,
+    wallLowLeft,
+    wallTopLeft,
+    wallTopRight,
+    wallTopRightInner
 
 const game = new Phaser.Game(config)
 
@@ -66,6 +82,7 @@ function preload() {
     this.load.image('ball', 'dist/assets/sprites/wizball.png')
     this.load.image('rectA', 'dist/assets/solids/grey-solid.svg')
     this.load.image('schematic', 'dist/assets/schematic.jpg')
+    this.load.image('dome', 'dist/assets/textures/Dome.png')
 }
 
 
@@ -73,29 +90,29 @@ function preload() {
 
 
 function create() {
-    bounds = this.matter.world.setBounds(0, 0, 440, 800, 30, true, true, true, true)
-    this.matter.world.setGravity(0,1)
 
+    //Set world bounds
+    bounds = this.matter.world.setBounds(0, 0, 440, 800, 30, true, true, true, true)
+
+    //Set gravity
+    this.matter.world.setGravity(0,.35)
+
+    //Define inputs
     left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
     right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
     
+    //Layout overlay
     let schematic = this.add.image(220,400, 'schematic')
     schematic.scale = 0.8
     
-    
     //Create the ball
-
-
-   
     ball = new Ball(this, 100, 625, 'ball') 
-    ball.setFrictionStatic(0.02)
-    ball.setMass(.25)
+    ball.setFrictionStatic(0)
+    ball.setMass(.1)
     ball.setFrictionAir(0)
-    ball.setBounce(0.25)
+    ball.setBounce(0.05)
     
-
-
     //Left flipper mechanism
     
     //Create bottom block to stop flipper from going too low
@@ -113,13 +130,12 @@ function create() {
     leftPivot.setStatic(true)
 
     //Create the left flipper components 
-    let rectA = Bodies.rectangle(170 , 699, 70, 16)
+    let rectA = Bodies.rectangle(166 , 700, flipperLength, 16)
     let circleA = Bodies.circle(150, 699, 5)
     circleA.mass = 2
     let circleB = Bodies.circle(188, 695, 4)
 
-    
-    //Create left flipper compound body
+    //Merge left flipper components
     leftFlipper = Phaser.Physics.Matter.Matter.Body.create({
         parts: [ circleA, circleB, rectA  ]
     });
@@ -155,7 +171,7 @@ function create() {
     rightPivot.setStatic(true)
  
     //Create the right flipper components 
-    let rectB = Bodies.rectangle(250 , 699, 70, 16)
+    let rectB = Bodies.rectangle(254 , 700, flipperLength, 16)
     let circleC = Bodies.circle(270, 699, 5)
     circleC.mass = 2
     let circleD = Bodies.circle(229, 695, 4)
@@ -183,16 +199,18 @@ function create() {
     //Increase mass of the flippers
     leftFlipper.mass = 50
 
+    //Place static objects
+    dome = this.matter.add.image(0, 0, 'dome')
+    dome.setExistingBody(Bodies.fromVertices(220,180, PATHS.dome))
+    dome.setStatic(true)
 
-    //Create the aprons
-    leftApron = new Bumper(this, 13, 615, 'rectA')
-    leftApron.setScale(1, 0.4)
-    leftApron.rotation = .58
+    apronLeft = this.matter.add.image(0, 0, 'apronLeft')
+    apronLeft.setExistingBody(Bodies.fromVertices(71,630, PATHS.apronLeft))
+    apronLeft.setStatic(true)
 
-    rightApron = new Bumper(this, 418, 615, 'rectA')
-    rightApron.setScale(1, 0.4)
-    rightApron.rotation = -.58
-
+    apronRight = this.matter.add.image(0, 0, 'apronRight')
+    apronRight.setExistingBody(Bodies.fromVertices(340,654, PATHS.apronRight))
+    apronRight.setStatic(true)
 }
 
 function update() {
@@ -228,11 +246,11 @@ function update() {
      } 
     
     //This function lowers the gravity when the ball is going up and raises it on the way down.
-    if(ball.body.velocity.y < 0){
-        this.matter.world.setGravity(0,0.35)
-    } else {
-        this.matter.world.setGravity(0,.35)
-    }
+    // if(ball.body.velocity.y < 0){
+    //     this.matter.world.setGravity(0,0.35)
+    // } else {
+    //     this.matter.world.setGravity(0,.35)
+    // }
 
 } 
 
