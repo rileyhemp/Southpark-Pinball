@@ -30,7 +30,7 @@ class StaticObject extends Phaser.Physics.Matter.Image {
 const config = {
     type: Phaser.AUTO,
     width: 440,
-    height: 800,
+    height: 875,
     physics: {
         default: 'matter',
         matter: {
@@ -50,10 +50,6 @@ const config = {
 
 const Bodies = Phaser.Physics.Matter.Matter.Bodies
 
-const flipperLength = 70
-
-const frictionAmount = 1
-
 let 
     balls, 
     spacebar, 
@@ -63,29 +59,11 @@ let
     bounds, 
     leftFlipper, 
     rightFlipper, 
-    leftApron,
-    rightApron,
     dome,
-    apronLeft,
-    apronRight,
-    apronBottom,
-    bumperRight,
-    bumperLeft,
-    fixtureTopLeft,
-    hsBottom,
-    hsTop,
-    triPegLeft,
-    triPegRight,
-    wallLowLeft,
-    wallTopLeft,
-    wallTopRight,
-    wallTopRightInner,
+    center,
+    wallRight,
     collisionGroupA,
     collisionGroupB,
-    pegA,
-    pegB,
-    pegC,
-    pegs,
     test
     
 const game = new Phaser.Game(config)
@@ -94,7 +72,7 @@ function preload() {
     this.load.image('ball', 'dist/assets/sprites/wizball.png')
     this.load.image('rectA', 'dist/assets/solids/grey-solid.svg')
     this.load.image('schematic', 'dist/assets/schematic.jpg')
-    this.load.image('dome', 'dist/assets/textures/Dome.png')
+    this.load.image('blueprint', 'dist/assets/blueprint.png')
 }
 
 //***************************************************************************************//
@@ -118,11 +96,15 @@ function create() {
     left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
     right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+
+    this.input.on('pointerdown', function(pointer){
+        ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+    }, this)
     
     //Layout overlay
-    //let schematic = this.add.image(220,400, 'schematic')
-    //schematic.scale = 0.8
-    //schematic.y = schematic.y + 20
+    let blueprint = this.add.image(220,437.5, 'blueprint')
+    blueprint.setScale(0.9)
+
    
     //Create the ball
 
@@ -130,55 +112,10 @@ function create() {
     
     //Place static objects
 
-    dome = new StaticObject(this, 220, 190, 'dome')
-    
-    apronLeft = new StaticObject(this, 90, 658, 'apronLeft')
+    dome = new StaticObject(this, 250, 250, 'dome')
+    center = new StaticObject(this, 197, 275, 'center')
+    wallRight = new StaticObject(this, 370, 315, 'wallRight')
 
-    apronRight = new StaticObject(this, 340, 680, 'apronRight')
-
-    bumperLeft = new StaticObject(this, 120, 622, 'bumperLeft')
-
-    bumperRight = new StaticObject(this, 314, 622, 'bumperRight')
-
-    fixtureTopLeft = new StaticObject(this, 90, 165, 'fixtureTopLeft')  
-
-    hsBottom = new StaticObject(this, 215, 115, 'hsBottom')
-
-    hsTop = new StaticObject(this, 215, 110, 'hsTop')
-
-    triPegLeft = new StaticObject(this, 40, 445, 'triPegLeft')
-
-    triPegRight = new StaticObject(this, 400, 428, 'triPegRight')
-
-    pegA = this.matter.add.image(0, 0, 'pegA')
-    pegA.x = 312
-    pegA.y = 60
-
-    pegB = this.matter.add.image(0, 0, 'pegB')
-    pegB.x = 370
-    pegB.y = 109
-
-    pegC = this.matter.add.image(0, 0, 'pegC')
-    pegC.x = 298
-    pegC.y = 135
-
-    pegs = [pegA, pegB, pegC]
-
-    for (let i=0; i<pegs.length; i++){
-        pegs[i].frictionStatic = frictionAmount
-        pegs[i].setBounce(2)
-        pegs[i].setCircle(24).setStatic(true)
-    }
-
-    //Walls
-
-    wallTopLeft = new StaticObject(this, 27, 345, 'wallTopLeft')
-
-    wallTopRight = new StaticObject(this, 426, 305, 'wallTopRight')
-
-    wallTopRightInner = new StaticObject(this, 385, 220, 'wallTopRightInner')
-
-    wallLowLeft = new StaticObject(this, 26, 510, 'wallLowLeft')
     
 }
 
