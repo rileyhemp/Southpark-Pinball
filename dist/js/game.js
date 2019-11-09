@@ -132,9 +132,9 @@ function create() {
   this.input.on('pointerdown', function (pointer) {
     ball = new Ball(this, pointer.x, pointer.y, 'ball');
   }, this); //Layout overlay
-
-  var blueprint = this.add.image(220, 437.5, 'blueprint');
-  blueprint.setScale(0.9); //Add the flippers
+  // let blueprint = this.add.image(220,437.5, 'blueprint')
+  // blueprint.setScale(0.9)
+  //Add the flippers
 
   leftFlipper = new LeftFlipper(this, 118, 725);
   rightFlipper = new RightFlipper(this, 274, 725); //Place static objects

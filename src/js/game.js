@@ -102,8 +102,8 @@ function create() {
     }, this)
     
     //Layout overlay
-    let blueprint = this.add.image(220,437.5, 'blueprint')
-    blueprint.setScale(0.9)
+    // let blueprint = this.add.image(220,437.5, 'blueprint')
+    // blueprint.setScale(0.9)
     
 
     //Add the flippers
