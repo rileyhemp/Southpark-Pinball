@@ -61,13 +61,13 @@ let
     rightFlipper, 
 
     //Static Objects
-    dome,
+    dome, bottomFrame,
     center,
-    wallRight,
-    chuteLeft,
-    chuteRight,
-    bumperLeft,
-    bumperRight,
+    wallRight, wallRightInner,
+    chuteLeft, chuteRight,
+    bumperLeft, bumperRight,
+    ballStashInner, ballStashOuter,
+    pillA, pillB, pillC, pillD,
 
     //Utilities
     collisionGroupA,
@@ -91,7 +91,7 @@ function create() {
     collisionGroupA = this.matter.world.nextCategory()
     collisionGroupB = this.matter.world.nextCategory()
     test = this
-    bounds = this.matter.world.setBounds(0, 0, 440, 800, 30, true, true, true, true)
+    bounds = this.matter.world.setBounds(0, 0, 440, 875, 30, true, true, true, true)
     left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
     right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
@@ -113,14 +113,26 @@ function create() {
     //Place static objects
 
     dome = new StaticCustomShape(this, 250, 250, 'dome')
+    bottomFrame = new StaticCustomShape(this, 210, 830, 'bottomFrame')
+
     center = new StaticCustomShape(this, 197, 275, 'center')
+
     wallRight = new StaticCustomShape(this, 370, 315, 'wallRight')
+    wallRightInner = new StaticCustomShape(this, 305, 170, 'wallRightInner')
+
+    ballStashInner = new StaticCustomShape(this, 107, 130, 'ballStashInner')
+    ballStashOuter = new StaticCustomShape(this, 72, 150, 'ballStashOuter')
 
     chuteLeft = new StaticCustomShape(this, 80, 705, 'chuteLeft')
     chuteRight = new StaticCustomShape(this, 315, 705, 'chuteRight')
 
     bumperLeft = new StaticCustomShape(this, 90, 635, 'bumperLeft')
     bumperRight = new StaticCustomShape(this, 305, 625, 'bumperRight')
+
+    pillA = new StaticCustomShape(this, 130, 125, 'pill')
+    pillB = new StaticCustomShape(this, 175, 125, 'pill')
+    pillC = new StaticCustomShape(this, 220, 125, 'pill')
+    pillD = new StaticCustomShape(this, 265, 125, 'pill')
 
     
 }
