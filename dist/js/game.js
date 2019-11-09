@@ -59,31 +59,71 @@ function (_Phaser$Physics$Matte) {
   return Ball;
 }(Phaser.Physics.Matter.Image);
 
-var StaticCustomShape =
+var StaticShape =
 /*#__PURE__*/
 function (_Phaser$Physics$Matte2) {
-  _inherits(StaticCustomShape, _Phaser$Physics$Matte2);
+  _inherits(StaticShape, _Phaser$Physics$Matte2);
 
-  function StaticCustomShape(scene, x, y, name) {
+  function StaticShape(scene, x, y, name) {
     var _this2;
 
-    _classCallCheck(this, StaticCustomShape);
+    _classCallCheck(this, StaticShape);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(StaticCustomShape).call(this, scene.matter.world, 0, 0, name));
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(StaticShape).call(this, scene.matter.world, 0, 0, name));
     scene.sys.displayList.add(_assertThisInitialized(_this2));
-    _this2.scene = scene;
-
-    _this2.setExistingBody(Bodies.fromVertices(0, 0, PATHS["".concat(name)]));
-
-    _this2.setStatic(true);
-
-    _this2.x = x;
-    _this2.y = y;
     return _this2;
   }
 
-  return StaticCustomShape;
+  return StaticShape;
 }(Phaser.Physics.Matter.Image);
+
+var StaticCustomShape =
+/*#__PURE__*/
+function (_StaticShape) {
+  _inherits(StaticCustomShape, _StaticShape);
+
+  function StaticCustomShape(scene, x, y, name) {
+    var _this3;
+
+    _classCallCheck(this, StaticCustomShape);
+
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(StaticCustomShape).call(this, scene, x, y, name));
+
+    _this3.setExistingBody(Bodies.fromVertices(0, 0, PATHS["".concat(name)]));
+
+    _this3.setStatic(true);
+
+    _this3.x = x;
+    _this3.y = y;
+    return _this3;
+  }
+
+  return StaticCustomShape;
+}(StaticShape);
+
+var Peg =
+/*#__PURE__*/
+function (_StaticShape2) {
+  _inherits(Peg, _StaticShape2);
+
+  function Peg(scene, x, y, name) {
+    var _this4;
+
+    _classCallCheck(this, Peg);
+
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Peg).call(this, scene, x, y, name));
+
+    _this4.setCircle(24);
+
+    _this4.setStatic(true);
+
+    _this4.x = x;
+    _this4.y = y;
+    return _this4;
+  }
+
+  return Peg;
+}(StaticShape);
 
 var config = {
   type: Phaser.AUTO,
@@ -107,7 +147,7 @@ var config = {
 };
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
 var balls, spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, //Static Objects
-dome, bottomFrame, center, wallRight, wallRightInner, chuteLeft, chuteRight, bumperLeft, bumperRight, ballStashInner, ballStashOuter, pillA, pillB, pillC, pillD, //Utilities
+dome, bottomFrame, center, wallRight, wallRightInner, chuteLeft, chuteRight, bumperLeft, bumperRight, ballStashInner, ballStashOuter, pillA, pillB, pillC, pillD, pegA, pegB, pegC, rightWall, rightDivider, leftDivider, rightTrapDoor, //Utilities
 collisionGroupA, collisionGroupB, test;
 var game = new Phaser.Game(config);
 
@@ -154,6 +194,15 @@ function create() {
   pillB = new StaticCustomShape(this, 175, 125, 'pill');
   pillC = new StaticCustomShape(this, 220, 125, 'pill');
   pillD = new StaticCustomShape(this, 265, 125, 'pill');
+  pegA = new Peg(this, 200, 240, 'pegA');
+  pegB = new Peg(this, 150, 190, 'pegB');
+  pegC = new Peg(this, 250, 190, 'pegC');
+  rightWall = this.matter.add.image(390, 595, 'rectA').setScale(0.02, 4.2).setStatic(true);
+  leftDivider = this.matter.add.image(40, 630, 'rectA').setScale(0.01, 1.7).setStatic(true);
+  rightDivider = this.matter.add.image(352, 600, 'rectA').setScale(0.01, 1).setStatic(true);
+  rightTrapDoor = this.matter.add.image(365, 660, 'rectA').setScale(0.01, .9);
+  rightTrapDoor.rotation = .8;
+  rightTrapDoor.setStatic(true);
 }
 
 function update() {

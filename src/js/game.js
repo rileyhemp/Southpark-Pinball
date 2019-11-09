@@ -15,17 +15,33 @@ class Ball extends Phaser.Physics.Matter.Image {
     }
 }
 
-class StaticCustomShape extends Phaser.Physics.Matter.Image {
+class StaticShape extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, name){
         super(scene.matter.world, 0, 0, name)
-        scene.sys.displayList.add(this)
-        this.scene = scene
+        scene.sys.displayList.add(this) 
+    }
+}
+
+class StaticCustomShape extends StaticShape {
+    constructor(scene, x, y, name){
+        super(scene, x, y, name)
         this.setExistingBody(Bodies.fromVertices(0,0, PATHS[`${name}`]))
         this.setStatic(true)
         this.x = x
         this.y = y
     }
 }
+
+class Peg extends StaticShape {
+    constructor(scene, x, y, name){
+        super(scene, x, y, name)
+        this.setCircle(24)
+        this.setStatic(true)
+        this.x = x
+        this.y = y
+    }
+}
+
 
 const config = {
     type: Phaser.AUTO,
@@ -68,6 +84,11 @@ let
     bumperLeft, bumperRight,
     ballStashInner, ballStashOuter,
     pillA, pillB, pillC, pillD,
+    pegA, pegB, pegC, 
+    rightWall,
+    rightDivider,
+    leftDivider,
+    rightTrapDoor, 
 
     //Utilities
     collisionGroupA,
@@ -134,7 +155,18 @@ function create() {
     pillC = new StaticCustomShape(this, 220, 125, 'pill')
     pillD = new StaticCustomShape(this, 265, 125, 'pill')
 
+    pegA = new Peg(this, 200, 240, 'pegA')
+    pegB = new Peg(this, 150, 190, 'pegB')
+    pegC = new Peg(this, 250, 190, 'pegC')
+
+    rightWall = this.matter.add.image(390, 595, 'rectA').setScale(0.02, 4.2).setStatic(true)
+
+    leftDivider = this.matter.add.image(40, 630, 'rectA').setScale(0.01, 1.7).setStatic(true)
+    rightDivider = this.matter.add.image(352, 600, 'rectA').setScale(0.01, 1).setStatic(true)
     
+    rightTrapDoor = this.matter.add.image(365, 660, 'rectA').setScale(0.01, .9)
+    rightTrapDoor.rotation = .8
+    rightTrapDoor.setStatic(true)
 }
 
 function update() {
