@@ -15,7 +15,7 @@ class Ball extends Phaser.Physics.Matter.Image {
     }
 }
 
-class StaticObject extends Phaser.Physics.Matter.Image {
+class StaticCustomShape extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, name){
         super(scene.matter.world, 0, 0, name)
         scene.sys.displayList.add(this)
@@ -59,9 +59,17 @@ let
     bounds, 
     leftFlipper, 
     rightFlipper, 
+
+    //Static Objects
     dome,
     center,
     wallRight,
+    chuteLeft,
+    chuteRight,
+    bumperLeft,
+    bumperRight,
+
+    //Utilities
     collisionGroupA,
     collisionGroupB,
     test
@@ -79,24 +87,16 @@ function preload() {
 
 function create() {
 
-    //Define collision groups
+    //Set some things up, inputs, collisiongroups, etc. 
     collisionGroupA = this.matter.world.nextCategory()
     collisionGroupB = this.matter.world.nextCategory()
-
-    //Add the flippers
-    leftFlipper = new LeftFlipper(this, 150, 710)
-    rightFlipper = new RightFlipper(this, 290, 710)
-
     test = this
-
-    //Set world bounds
     bounds = this.matter.world.setBounds(0, 0, 440, 800, 30, true, true, true, true)
-
-    //Define inputs
     left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
     right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-
+    
+    //Add a ball where you click
     this.input.on('pointerdown', function(pointer){
         ball = new Ball(this, pointer.x, pointer.y, 'ball') 
     }, this)
@@ -104,17 +104,23 @@ function create() {
     //Layout overlay
     let blueprint = this.add.image(220,437.5, 'blueprint')
     blueprint.setScale(0.9)
+    
 
-   
-    //Create the ball
-
-    ball = new Ball(this, 100, 625, 'ball') 
+    //Add the flippers
+    leftFlipper = new LeftFlipper(this, 118, 725)
+    rightFlipper = new RightFlipper(this, 274, 725)
     
     //Place static objects
 
-    dome = new StaticObject(this, 250, 250, 'dome')
-    center = new StaticObject(this, 197, 275, 'center')
-    wallRight = new StaticObject(this, 370, 315, 'wallRight')
+    dome = new StaticCustomShape(this, 250, 250, 'dome')
+    center = new StaticCustomShape(this, 197, 275, 'center')
+    wallRight = new StaticCustomShape(this, 370, 315, 'wallRight')
+
+    chuteLeft = new StaticCustomShape(this, 80, 705, 'chuteLeft')
+    chuteRight = new StaticCustomShape(this, 315, 705, 'chuteRight')
+
+    bumperLeft = new StaticCustomShape(this, 90, 635, 'bumperLeft')
+    bumperRight = new StaticCustomShape(this, 305, 625, 'bumperRight')
 
     
 }

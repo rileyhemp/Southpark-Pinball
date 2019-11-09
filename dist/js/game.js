@@ -59,17 +59,17 @@ function (_Phaser$Physics$Matte) {
   return Ball;
 }(Phaser.Physics.Matter.Image);
 
-var StaticObject =
+var StaticCustomShape =
 /*#__PURE__*/
 function (_Phaser$Physics$Matte2) {
-  _inherits(StaticObject, _Phaser$Physics$Matte2);
+  _inherits(StaticCustomShape, _Phaser$Physics$Matte2);
 
-  function StaticObject(scene, x, y, name) {
+  function StaticCustomShape(scene, x, y, name) {
     var _this2;
 
-    _classCallCheck(this, StaticObject);
+    _classCallCheck(this, StaticCustomShape);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(StaticObject).call(this, scene.matter.world, 0, 0, name));
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(StaticCustomShape).call(this, scene.matter.world, 0, 0, name));
     scene.sys.displayList.add(_assertThisInitialized(_this2));
     _this2.scene = scene;
 
@@ -82,7 +82,7 @@ function (_Phaser$Physics$Matte2) {
     return _this2;
   }
 
-  return StaticObject;
+  return StaticCustomShape;
 }(Phaser.Physics.Matter.Image);
 
 var config = {
@@ -106,7 +106,9 @@ var config = {
   }
 };
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
-var balls, spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, dome, center, wallRight, collisionGroupA, collisionGroupB, test;
+var balls, spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, //Static Objects
+dome, center, wallRight, chuteLeft, chuteRight, bumperLeft, bumperRight, //Utilities
+collisionGroupA, collisionGroupB, test;
 var game = new Phaser.Game(config);
 
 function preload() {
@@ -118,31 +120,32 @@ function preload() {
 
 
 function create() {
-  //Define collision groups
+  //Set some things up, inputs, collisiongroups, etc. 
   collisionGroupA = this.matter.world.nextCategory();
-  collisionGroupB = this.matter.world.nextCategory(); //Add the flippers
-
-  leftFlipper = new LeftFlipper(this, 150, 710);
-  rightFlipper = new RightFlipper(this, 290, 710);
-  test = this; //Set world bounds
-
-  bounds = this.matter.world.setBounds(0, 0, 440, 800, 30, true, true, true, true); //Define inputs
-
+  collisionGroupB = this.matter.world.nextCategory();
+  test = this;
+  bounds = this.matter.world.setBounds(0, 0, 440, 800, 30, true, true, true, true);
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //Add a ball where you click
+
   this.input.on('pointerdown', function (pointer) {
     ball = new Ball(this, pointer.x, pointer.y, 'ball');
   }, this); //Layout overlay
 
   var blueprint = this.add.image(220, 437.5, 'blueprint');
-  blueprint.setScale(0.9); //Create the ball
+  blueprint.setScale(0.9); //Add the flippers
 
-  ball = new Ball(this, 100, 625, 'ball'); //Place static objects
+  leftFlipper = new LeftFlipper(this, 118, 725);
+  rightFlipper = new RightFlipper(this, 274, 725); //Place static objects
 
-  dome = new StaticObject(this, 250, 250, 'dome');
-  center = new StaticObject(this, 197, 275, 'center');
-  wallRight = new StaticObject(this, 370, 315, 'wallRight');
+  dome = new StaticCustomShape(this, 250, 250, 'dome');
+  center = new StaticCustomShape(this, 197, 275, 'center');
+  wallRight = new StaticCustomShape(this, 370, 315, 'wallRight');
+  chuteLeft = new StaticCustomShape(this, 80, 705, 'chuteLeft');
+  chuteRight = new StaticCustomShape(this, 315, 705, 'chuteRight');
+  bumperLeft = new StaticCustomShape(this, 90, 635, 'bumperLeft');
+  bumperRight = new StaticCustomShape(this, 305, 625, 'bumperRight');
 }
 
 function update() {
