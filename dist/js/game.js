@@ -48,13 +48,14 @@ function (_Phaser$Physics$Matte) {
 
     _this.setDepth(1);
 
+    _this.body.label = 'Ball';
     return _this;
   }
 
   _createClass(Ball, [{
     key: "launch",
     value: function launch() {
-      _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -30);
+      _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -12.5);
     }
   }]);
 
@@ -118,20 +119,49 @@ function (_StaticShape2) {
 
     _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Bumper).call(this, scene, x, y, name));
 
-    _this4.setCircle(24);
+    _this4.setCircle(26);
 
     _this4.setStatic(true);
 
     _this4.x = x;
     _this4.y = y;
+    _this4.body.label = name;
+    _this4.scene = scene;
+    _this4.body.restitution = 2;
     return _this4;
   }
+
+  _createClass(Bumper, [{
+    key: "fire",
+    value: function fire(position) {
+      var _this5 = this;
+
+      var ballX = position.x;
+      var ballY = position.y;
+      var bumperX = this.x;
+      var bumperY = this.y;
+      var vector = (bumperY - ballY) / (bumperX - ballX);
+      var y = 15;
+      var x = 15 / vector;
+      this.scene.tweens.add({
+        targets: this,
+        x: "-=".concat(x),
+        y: "-=".concat(y),
+        yoyo: true,
+        duration: 20
+      });
+      setTimeout(function () {
+        _this5.x = bumperX;
+        _this5.y = bumperY;
+      }, 50);
+    }
+  }]);
 
   return Bumper;
 }(StaticShape);
 
 var config = {
-  type: Phaser.AUTO,
+  type: Phaser.CANVAS,
   width: 440,
   height: 875,
   physics: {
@@ -198,6 +228,7 @@ function create() {
   dome = new StaticCustomShape(this, 250, 250, 'dome');
   bottomFrame = new StaticCustomShape(this, 210, 830, 'bottomFrame');
   center = new StaticCustomShape(this, 197, 275, 'center');
+  center.restitution = 0.5;
   wallRight = new StaticCustomShape(this, 370, 315, 'wallRight');
   wallRightInner = new StaticCustomShape(this, 305, 170, 'wallRightInner');
   ballStashInner = new StaticCustomShape(this, 107, 130, 'ballStashInner');
@@ -210,9 +241,9 @@ function create() {
   pillB = new StaticCustomShape(this, 175, 125, 'pill');
   pillC = new StaticCustomShape(this, 220, 125, 'pill');
   pillD = new StaticCustomShape(this, 265, 125, 'pill');
-  bumperA = new Bumper(this, 200, 240, 'bumperA');
-  bumperB = new Bumper(this, 150, 190, 'bumperB');
-  bumperC = new Bumper(this, 250, 190, 'bumperC');
+  bumperA = new Bumper(this, 124, 178, 'bumperA');
+  bumperB = new Bumper(this, 200, 243, 'bumperB');
+  bumperC = new Bumper(this, 301, 220, 'bumperC');
   rightWall = this.matter.add.image(390, 595, 'rectA').setScale(0.02, 4.2).setStatic(true);
   leftDivider = this.matter.add.image(40, 630, 'rectA').setScale(0.01, 1.7).setStatic(true);
   rightDivider = this.matter.add.image(352, 600, 'rectA').setScale(0.01, 1).setStatic(true);
@@ -221,13 +252,48 @@ function create() {
   rightTrapDoor.setStatic(true);
   slingshotA = new Slingshot(this, 78, 577, 121, 681, 132, 613, 9);
   slingshotB = new Slingshot(this, 280, 667, 313, 567, 260, 607, 9); //Setup collision events
+  //Change to one <------------
 
+  var canCallA = true;
+  var canCallB = true;
+  var canCallC = true;
   this.matter.world.on('collisionstart', function (event, bodyA, bodyB) {
-    if (bodyB.label === 'Circle Body' && bodyA.label === 'Slingshot') {
+    if (bodyB.label === 'Ball' && bodyA.label === 'Slingshot') {
       slingshotA.fire();
       slingshotB.fire();
+    } //Change to one <------------------
+
+
+    if (bodyA.label === "bumperA" && bodyB.label === 'Ball' && canCallA) {
+      canCallA = false;
+      bumperA.fire(bodyB.position, "bumperA");
+      setTimeout(function () {
+        canCallA = true;
+      }, 100);
     }
-  });
+
+    if (bodyA.label === "bumperB" && bodyB.label === 'Ball' && canCallB) {
+      canCallB = false;
+      bumperB.fire(bodyB.position, "bumperB");
+      setTimeout(function () {
+        canCallB = true;
+      }, 100);
+    }
+
+    if (bodyA.label === "bumperC" && bodyB.label === 'Ball' && canCallC) {
+      canCallC = false;
+      bumperC.fire(bodyB.position, "bumperC");
+      setTimeout(function () {
+        canCallC = true;
+      }, 100);
+    }
+  }); // console.log(bumperA)
+  // bumperA.setScale(1.5)
+  //     tween = this.tweens.add({
+  //         targets: bumperA,
+  //         x: '+=50',
+  //         duration: 1000
+  //     })
 }
 
 function update() {

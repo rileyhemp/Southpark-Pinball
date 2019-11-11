@@ -55,8 +55,7 @@ function () {
       this.block.scaleX = .1;
       this.block.scaleY = .3;
       this.block.visible = false;
-      this.block.rotation = this.blockRotation;
-      console.log(this.block); //Top block
+      this.block.rotation = this.blockRotation; //Top block
 
       this.stopper = this.scene.matter.add.image(this.x + this.stopperOffsetX, this.y + this.stopperOffsetY, 'rectA', this.scene, {
         isStatic: true
@@ -70,7 +69,9 @@ function () {
       this.pivot.setCircle(1);
       this.pivot.setStatic(true); //Flipper
 
-      var rectA = Phaser.Physics.Matter.Matter.Bodies.rectangle(this.x + this.flipperOffsetX, this.y + this.flipperOffsetY, this.flipperLength, 16);
+      var rectA = Phaser.Physics.Matter.Matter.Bodies.rectangle(this.x + this.flipperOffsetX, this.y + this.flipperOffsetY, this.flipperLength, 16, {
+        chamfer: 10
+      });
       this.flipperBody = this.scene.matter.body.create({
         parts: [rectA]
       });

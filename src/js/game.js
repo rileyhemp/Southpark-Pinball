@@ -11,9 +11,10 @@ class Ball extends Phaser.Physics.Matter.Image {
         this.setCollisionCategory(collisionGroupA)
         this.body.density = 0.75
         this.setDepth(1)
+        this.body.label = 'Ball'
     }
     launch(){
-        super.setVelocityY(-30)
+        super.setVelocityY(-12.5)
     }
 }
 
@@ -39,16 +40,40 @@ class StaticCustomShape extends StaticShape {
 class Bumper extends StaticShape {
     constructor(scene, x, y, name){
         super(scene, x, y, name)
-        this.setCircle(24)
+        this.setCircle(26)
         this.setStatic(true)
         this.x = x
         this.y = y
+        this.body.label = name
+        this.scene = scene
+        this.body.restitution = 2
     }
+    fire(position){
+        let ballX = position.x
+        let ballY = position.y
+        let bumperX = this.x
+        let bumperY = this.y
+        let vector = (bumperY - ballY) / (bumperX - ballX)
+        let y = 15
+        let x = 15 / vector
+        this.scene.tweens.add({
+            targets: this,
+            x: `-=${x}`,
+            y: `-=${y}`,
+            yoyo: true,
+            duration: 20
+        })
+        setTimeout(()=>{
+            this.x = bumperX
+            this.y = bumperY
+        }, 50)
+    }
+
 }
 
 
 const config = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     width: 440,
     height: 875,
     physics: {
@@ -161,6 +186,7 @@ function create() {
     bottomFrame = new StaticCustomShape(this, 210, 830, 'bottomFrame')
     
     center = new StaticCustomShape(this, 197, 275, 'center')
+    center.restitution = 0.5
     
     wallRight = new StaticCustomShape(this, 370, 315, 'wallRight')
     wallRightInner = new StaticCustomShape(this, 305, 170, 'wallRightInner')
@@ -179,9 +205,9 @@ function create() {
     pillC = new StaticCustomShape(this, 220, 125, 'pill')
     pillD = new StaticCustomShape(this, 265, 125, 'pill')
     
-    bumperA = new Bumper(this, 200, 240, 'bumperA')
-    bumperB = new Bumper(this, 150, 190, 'bumperB')
-    bumperC = new Bumper(this, 250, 190, 'bumperC')
+    bumperA = new Bumper(this, 124, 178, 'bumperA')
+    bumperB = new Bumper(this, 200, 243, 'bumperB')
+    bumperC = new Bumper(this, 301, 220, 'bumperC')
     
     rightWall = this.matter.add.image(390, 595, 'rectA').setScale(0.02, 4.2).setStatic(true)
     
@@ -196,12 +222,53 @@ function create() {
     slingshotB = new Slingshot(this, 280, 667, 313, 567, 260, 607, 9)
     
     //Setup collision events
+    //Change to one <------------
+    let canCallA = true
+    let canCallB = true
+    let canCallC = true
     this.matter.world.on('collisionstart', function(event, bodyA, bodyB){
-        if (bodyB.label === 'Circle Body' && bodyA.label === 'Slingshot'){
+
+        if (bodyB.label === 'Ball' && bodyA.label === 'Slingshot'){
             slingshotA.fire()
             slingshotB.fire()
         }
+        //Change to one <------------------
+        if ( bodyA.label === "bumperA" && bodyB.label  === 'Ball' && canCallA) {
+            canCallA = false
+            bumperA.fire(bodyB.position, "bumperA")
+            setTimeout(()=>{
+                canCallA = true
+            }, 100)
+        }
+        if ( bodyA.label === "bumperB" && bodyB.label  === 'Ball' && canCallB) {
+            canCallB = false
+            bumperB.fire(bodyB.position, "bumperB")
+            setTimeout(()=>{
+                canCallB = true
+            }, 100)
+        }
+        if ( bodyA.label === "bumperC" && bodyB.label  === 'Ball' && canCallC) {
+            canCallC = false
+            bumperC.fire(bodyB.position, "bumperC")
+            setTimeout(()=>{
+                canCallC = true
+            }, 100)
+        }
     })
+// console.log(bumperA)
+// bumperA.setScale(1.5)
+    
+//     tween = this.tweens.add({
+//         targets: bumperA,
+//         x: '+=50',
+//         duration: 1000
+//     })
+
+
+
+
+
+
 }
 
 function update() {
