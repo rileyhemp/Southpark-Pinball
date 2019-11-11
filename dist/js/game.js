@@ -39,13 +39,15 @@ function (_Phaser$Physics$Matte) {
     _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.657);
 
     _this.body.friction = 0;
-    _this.body.frictionAir = 0;
-    console.log(_this.body.frictionStatic);
+    _this.body.frictionAir = 0.00001;
     scene.sys.displayList.add(_assertThisInitialized(_this));
 
     _this.setCollisionCategory(collisionGroupA);
 
     _this.body.density = 0.75;
+
+    _this.setDepth(1);
+
     return _this;
   }
 
@@ -95,23 +97,26 @@ function (_StaticShape) {
 
     _this3.x = x;
     _this3.y = y;
+
+    _this3.setCollidesWith(collisionGroupA);
+
     return _this3;
   }
 
   return StaticCustomShape;
 }(StaticShape);
 
-var Peg =
+var Bumper =
 /*#__PURE__*/
 function (_StaticShape2) {
-  _inherits(Peg, _StaticShape2);
+  _inherits(Bumper, _StaticShape2);
 
-  function Peg(scene, x, y, name) {
+  function Bumper(scene, x, y, name) {
     var _this4;
 
-    _classCallCheck(this, Peg);
+    _classCallCheck(this, Bumper);
 
-    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Peg).call(this, scene, x, y, name));
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Bumper).call(this, scene, x, y, name));
 
     _this4.setCircle(24);
 
@@ -122,7 +127,7 @@ function (_StaticShape2) {
     return _this4;
   }
 
-  return Peg;
+  return Bumper;
 }(StaticShape);
 
 var config = {
@@ -147,8 +152,9 @@ var config = {
 };
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
 var balls, spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, //Static Objects
-dome, bottomFrame, center, wallRight, wallRightInner, chuteLeft, chuteRight, bumperLeft, bumperRight, ballStashInner, ballStashOuter, pillA, pillB, pillC, pillD, pegA, pegB, pegC, rightWall, rightDivider, leftDivider, rightTrapDoor, //Utilities
-collisionGroupA, collisionGroupB, test;
+dome, bottomFrame, center, wallRight, wallRightInner, chuteLeft, chuteRight, bumperLeft, bumperRight, ballStashInner, ballStashOuter, pillA, pillB, pillC, pillD, bumperA, bumperB, bumperC, rightWall, rightDivider, leftDivider, rightTrapDoor, slingshotA, slingshotB, //Background
+playfield, plastics, //Utilities
+collisionGroupA, collisionGroupB, collisionGroupC, test, tween;
 var game = new Phaser.Game(config);
 
 function preload() {
@@ -156,6 +162,8 @@ function preload() {
   this.load.image('rectA', 'dist/assets/solids/grey-solid.svg');
   this.load.image('schematic', 'dist/assets/schematic.jpg');
   this.load.image('blueprint', 'dist/assets/blueprint.png');
+  this.load.image('plastics', 'dist/assets/Plasticos.png');
+  this.load.image('playfield', 'dist/assets/Playfield.png');
 } //***************************************************************************************//
 
 
@@ -163,6 +171,7 @@ function create() {
   //Set some things up, inputs, collisiongroups, etc. 
   collisionGroupA = this.matter.world.nextCategory();
   collisionGroupB = this.matter.world.nextCategory();
+  collisionGroupC = this.matter.world.nextCategory();
   test = this;
   bounds = this.matter.world.setBounds(0, 0, 440, 875, 30, true, true, true, true);
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -171,9 +180,16 @@ function create() {
 
   this.input.on('pointerdown', function (pointer) {
     ball = new Ball(this, pointer.x, pointer.y, 'ball');
+    console.log(pointer.x + ',', pointer.y);
   }, this); //Layout overlay
   // let blueprint = this.add.image(220,437.5, 'blueprint')
   // blueprint.setScale(0.9)
+  // playfield = this.add.image(220, 445, 'playfield')
+  // playfield.setScale(0.21)
+  // playfield.setDepth(1)
+  // plastics = this.add.image(220, 445, 'plastics')
+  // plastics.setScale(0.21)
+  // plastics.setDepth(1)
   //Add the flippers
 
   leftFlipper = new LeftFlipper(this, 118, 725);
@@ -194,15 +210,24 @@ function create() {
   pillB = new StaticCustomShape(this, 175, 125, 'pill');
   pillC = new StaticCustomShape(this, 220, 125, 'pill');
   pillD = new StaticCustomShape(this, 265, 125, 'pill');
-  pegA = new Peg(this, 200, 240, 'pegA');
-  pegB = new Peg(this, 150, 190, 'pegB');
-  pegC = new Peg(this, 250, 190, 'pegC');
+  bumperA = new Bumper(this, 200, 240, 'bumperA');
+  bumperB = new Bumper(this, 150, 190, 'bumperB');
+  bumperC = new Bumper(this, 250, 190, 'bumperC');
   rightWall = this.matter.add.image(390, 595, 'rectA').setScale(0.02, 4.2).setStatic(true);
   leftDivider = this.matter.add.image(40, 630, 'rectA').setScale(0.01, 1.7).setStatic(true);
   rightDivider = this.matter.add.image(352, 600, 'rectA').setScale(0.01, 1).setStatic(true);
   rightTrapDoor = this.matter.add.image(365, 660, 'rectA').setScale(0.01, .9);
   rightTrapDoor.rotation = .8;
   rightTrapDoor.setStatic(true);
+  slingshotA = new Slingshot(this, 78, 577, 121, 681, 132, 613, 9);
+  slingshotB = new Slingshot(this, 280, 667, 313, 567, 260, 607, 9); //Setup collision events
+
+  this.matter.world.on('collisionstart', function (event, bodyA, bodyB) {
+    if (bodyB.label === 'Circle Body' && bodyA.label === 'Slingshot') {
+      slingshotA.fire();
+      slingshotB.fire();
+    }
+  });
 }
 
 function update() {
@@ -230,5 +255,81 @@ function update() {
   if (Phaser.Input.Keyboard.JustUp(right)) {
     rightFlipper.isFlipping = false;
   }
-} ///The base of the flipper is a 15mm diameter circle, sloping down to a 5mm diameter circle at the tip. Overall length is 71mm,
+} ///The base of the flipper is a 15mm diameter circle, sloping down to a 5mm diameter circle at the tip. Overall length is 71mm, 
+
+/*
+
+var config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    backgroundColor: '#000000',
+    parent: 'phaser-example',
+    physics: {
+        default: 'matter',
+        matter: {
+            gravity: {
+                y: 0.8
+            },
+            debug: true,
+            debugBodyColor: 0xffffff
+        }
+    },
+    scene: {
+        create: create
+    }
+};
+
+var bridge = ''
+
+var game = new Phaser.Game(config);
+
+function create ()
+{
+    this.matter.world.setBounds();
+
+    this.matter.add.mouseSpring();
+
+    var group = this.matter.world.nextGroup(true);
+
+    var bridge = this.matter.add.stack(160, 290, 15, 1, 0, 0, function(x, y) {
+        return Phaser.Physics.Matter.Matter.Bodies.rectangle(x - 20, y, 53, 20, { 
+            collisionFilter: { group: group },
+            chamfer: 5,
+            density: 0.005,
+            frictionAir: 0.05
+        });
+    });
+    
+    var myChain = this.matter.add.chain(bridge, 0.1, 0, -0.1, 0, {
+        stiffness: 1,
+        length: 0,
+        render: {
+            visible: false
+        }
+    });
+
+    this.input.on('pointerdown', function(){
+    myChain.bodies[8].force = {
+        x: 0,
+        y: -10
+    }
+    })
+
+    console.log(myChain)
+    
+
+    this.matter.add.worldConstraint(bridge.bodies[0], 2, 0.9, {
+        pointA: { x: 140, y: 300 }, 
+        pointB: { x: -25, y: 0 }
+    });
+
+    this.matter.add.worldConstraint(bridge.bodies[bridge.bodies.length - 1], 2, 0.9, {
+        pointA: { x: 660, y: 300 }, 
+        pointB: { x: 25, y: 0 }
+    });
+}
+
+
+*/
 //# sourceMappingURL=game.js.map

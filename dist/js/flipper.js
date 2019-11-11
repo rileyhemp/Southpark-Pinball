@@ -39,41 +39,42 @@ function () {
     this.stopperOffsetY = -25;
     this.flipperOffsetX = 25;
     this.flipperOffsetY = 5;
-    this.isFlipping = false;
     this.torque = -1.5;
     this.staticTorque = 0.5;
     this.flipperLength = 62;
+    this.isFlipping = false;
   }
 
   _createClass(Flipper, [{
     key: "createComponents",
     value: function createComponents() {
-      //Create bottom block
+      //Bottom block
       this.block = this.scene.matter.add.image(this.x + this.blockOffsetX, this.y + this.blockOffsetY, 'rectA', this.scene, {
         isStatic: true
       });
       this.block.scaleX = .1;
       this.block.scaleY = .3;
       this.block.visible = false;
-      this.block.rotation = this.blockRotation; //Create top stopper
+      this.block.rotation = this.blockRotation;
+      console.log(this.block); //Top block
 
       this.stopper = this.scene.matter.add.image(this.x + this.stopperOffsetX, this.y + this.stopperOffsetY, 'rectA', this.scene, {
         isStatic: true
       });
       this.stopper.scaleX = .1;
       this.stopper.scaleY = .4;
-      this.stopper.visible = false; //Create pivot point
+      this.stopper.visible = false; //Pivot point
 
       this.pivot = this.scene.matter.add.image(this.x, this.y, null, this.scene);
       this.pivot.setScale(.2);
       this.pivot.setCircle(1);
-      this.pivot.setStatic(true); //Create flipper
+      this.pivot.setStatic(true); //Flipper
 
       var rectA = Phaser.Physics.Matter.Matter.Bodies.rectangle(this.x + this.flipperOffsetX, this.y + this.flipperOffsetY, this.flipperLength, 16);
       this.flipperBody = this.scene.matter.body.create({
         parts: [rectA]
       });
-      this.flipper = this.scene.matter.add.image(150, 0, null).setScale(0.2).setExistingBody(this.flipperBody); //Create pin
+      this.flipper = this.scene.matter.add.image(150, 0, null).setScale(0.2).setExistingBody(this.flipperBody); //Joint
 
       this.pin = this.scene.matter.add.constraint(this.pivot, this.flipper);
       this.pin.stiffness = 0.9;
