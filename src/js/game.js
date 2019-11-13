@@ -3,26 +3,35 @@
 class Ball extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, texture) {
         super(scene.matter.world, x, y, texture)
-        super.setScale(.17)
-        super.setCircle(8.657)
-        this.body.friction = 0
+        super.setScale(.2) 
+        super.setCircle(8.75)
+         this.body.friction = 0
         this.body.frictionAir = 0.00001
         scene.sys.displayList.add(this)
         this.setCollisionCategory(collisionGroupA)
-        this.body.density = 0.75
+        this.body.density = 0.5 
         this.setDepth(1)
         this.body.label = 'Ball'
+        this.killZoneCheck()
     }
     launch(){
-        super.setVelocityY(-12.5)
+        super.setVelocityY(-20.5)
+    }
+    killZoneCheck(){
+        let i = setInterval(()=>{
+            if (this.y > 800){
+                this.destroy()
+                clearInterval(i)
+            }
+        }, 100)
     }
 }
 
 class StaticShape extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, name){
-        super(scene.matter.world, 0, 0, name)
+        super(scene.matter.world, x, y, name)
         scene.sys.displayList.add(this) 
-        
+        this.setStatic(true)
     }
 }
 
@@ -42,33 +51,45 @@ class Bumper extends StaticShape {
         super(scene, x, y, name)
         this.setCircle(26)
         this.setStatic(true)
+        this.body.mass = .999
         this.x = x
         this.y = y
         this.body.label = name
         this.scene = scene
-        this.body.restitution = 2
+        this.body.restitution = 1.5
+        console.log(this)
     }
     fire(position){
-        let ballX = position.x
-        let ballY = position.y
-        let bumperX = this.x
-        let bumperY = this.y
-        let vector = (bumperY - ballY) / (bumperX - ballX)
-        let y = 15
-        let x = 15 / vector
+        //Grab the starting position
+        let startPosition = {
+            x: this.x,
+            y: this.y
+        }
+        //Calculate the midpoint between the ball and bumper
+        let targetX = (this.x + position.x) / 2
+        let targetY = (this.y + position.y) / 2
+
+        //Tween to that point
         this.scene.tweens.add({
             targets: this,
-            x: `-=${x}`,
-            y: `-=${y}`,
+            x: targetX,
+            y: targetY,
             yoyo: true,
-            duration: 20
+            duration: 10
         })
+        //Reset the bumper after a brief delay
         setTimeout(()=>{
-            this.x = bumperX
-            this.y = bumperY
+            this.x = startPosition.x
+            this.y = startPosition.y
         }, 50)
     }
+}
 
+class Pill extends StaticShape {
+    constructor(scene, x, y, name){
+        super(scene, x, y, name)
+        this.chamfer = 10
+    }
 }
 
 
@@ -188,8 +209,8 @@ function create() {
     center = new StaticCustomShape(this, 197, 275, 'center')
     center.restitution = 0.5
     
-    wallRight = new StaticCustomShape(this, 370, 315, 'wallRight')
-    wallRightInner = new StaticCustomShape(this, 305, 170, 'wallRightInner')
+    wallRight = new StaticCustomShape(this, 372, 315, 'wallRight')
+    wallRightInner = new StaticCustomShape(this, 312, 170, 'wallRightInner')
     
     ballStashInner = new StaticCustomShape(this, 107, 130, 'ballStashInner')
     ballStashOuter = new StaticCustomShape(this, 72, 150, 'ballStashOuter')
@@ -207,9 +228,10 @@ function create() {
     
     bumperA = new Bumper(this, 124, 178, 'bumperA')
     bumperB = new Bumper(this, 200, 243, 'bumperB')
-    bumperC = new Bumper(this, 301, 220, 'bumperC')
+    bumperC = new Bumper(this, 307, 220, 'bumperC')
     
-    rightWall = this.matter.add.image(390, 595, 'rectA').setScale(0.02, 4.2).setStatic(true)
+    
+    rightWall = this.matter.add.image(398, 630, 'rectA').setScale(0.05, 5.4).setStatic(true)
     
     leftDivider = this.matter.add.image(40, 630, 'rectA').setScale(0.01, 1.7).setStatic(true)
     rightDivider = this.matter.add.image(352, 600, 'rectA').setScale(0.01, 1).setStatic(true)
@@ -277,7 +299,8 @@ function update() {
     rightFlipper.hold()
     
     if(Phaser.Input.Keyboard.JustDown(spacebar)){
-        ball = new Ball(this, 130, 625, 'ball') 
+        ball = new Ball(this, 416, 773, 'ball') 
+        ball.launch()
     }
     
     if (Phaser.Input.Keyboard.JustDown(left)){
@@ -297,6 +320,8 @@ function update() {
     if (Phaser.Input.Keyboard.JustUp(right)){
         rightFlipper.isFlipping = false
     } 
+
+
     
 
 

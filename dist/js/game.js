@@ -34,9 +34,9 @@ function (_Phaser$Physics$Matte) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Ball).call(this, scene.matter.world, x, y, texture));
 
-    _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .17);
+    _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .2);
 
-    _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.657);
+    _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.75);
 
     _this.body.friction = 0;
     _this.body.frictionAir = 0.00001;
@@ -44,18 +44,34 @@ function (_Phaser$Physics$Matte) {
 
     _this.setCollisionCategory(collisionGroupA);
 
-    _this.body.density = 0.75;
+    _this.body.density = 0.5;
 
     _this.setDepth(1);
 
     _this.body.label = 'Ball';
+
+    _this.killZoneCheck();
+
     return _this;
   }
 
   _createClass(Ball, [{
     key: "launch",
     value: function launch() {
-      _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -12.5);
+      _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -20.5);
+    }
+  }, {
+    key: "killZoneCheck",
+    value: function killZoneCheck() {
+      var _this2 = this;
+
+      var i = setInterval(function () {
+        if (_this2.y > 800) {
+          _this2.destroy();
+
+          clearInterval(i);
+        }
+      }, 100);
     }
   }]);
 
@@ -68,13 +84,16 @@ function (_Phaser$Physics$Matte2) {
   _inherits(StaticShape, _Phaser$Physics$Matte2);
 
   function StaticShape(scene, x, y, name) {
-    var _this2;
+    var _this3;
 
     _classCallCheck(this, StaticShape);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(StaticShape).call(this, scene.matter.world, 0, 0, name));
-    scene.sys.displayList.add(_assertThisInitialized(_this2));
-    return _this2;
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(StaticShape).call(this, scene.matter.world, x, y, name));
+    scene.sys.displayList.add(_assertThisInitialized(_this3));
+
+    _this3.setStatic(true);
+
+    return _this3;
   }
 
   return StaticShape;
@@ -86,22 +105,22 @@ function (_StaticShape) {
   _inherits(StaticCustomShape, _StaticShape);
 
   function StaticCustomShape(scene, x, y, name) {
-    var _this3;
+    var _this4;
 
     _classCallCheck(this, StaticCustomShape);
 
-    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(StaticCustomShape).call(this, scene, x, y, name));
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(StaticCustomShape).call(this, scene, x, y, name));
 
-    _this3.setExistingBody(Bodies.fromVertices(0, 0, PATHS["".concat(name)]));
+    _this4.setExistingBody(Bodies.fromVertices(0, 0, PATHS["".concat(name)]));
 
-    _this3.setStatic(true);
+    _this4.setStatic(true);
 
-    _this3.x = x;
-    _this3.y = y;
+    _this4.x = x;
+    _this4.y = y;
 
-    _this3.setCollidesWith(collisionGroupA);
+    _this4.setCollidesWith(collisionGroupA);
 
-    return _this3;
+    return _this4;
   }
 
   return StaticCustomShape;
@@ -113,51 +132,74 @@ function (_StaticShape2) {
   _inherits(Bumper, _StaticShape2);
 
   function Bumper(scene, x, y, name) {
-    var _this4;
+    var _this5;
 
     _classCallCheck(this, Bumper);
 
-    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Bumper).call(this, scene, x, y, name));
+    _this5 = _possibleConstructorReturn(this, _getPrototypeOf(Bumper).call(this, scene, x, y, name));
 
-    _this4.setCircle(26);
+    _this5.setCircle(26);
 
-    _this4.setStatic(true);
+    _this5.setStatic(true);
 
-    _this4.x = x;
-    _this4.y = y;
-    _this4.body.label = name;
-    _this4.scene = scene;
-    _this4.body.restitution = 2;
-    return _this4;
+    _this5.body.mass = .999;
+    _this5.x = x;
+    _this5.y = y;
+    _this5.body.label = name;
+    _this5.scene = scene;
+    _this5.body.restitution = 1.5;
+    console.log(_assertThisInitialized(_this5));
+    return _this5;
   }
 
   _createClass(Bumper, [{
     key: "fire",
     value: function fire(position) {
-      var _this5 = this;
+      var _this6 = this;
 
-      var ballX = position.x;
-      var ballY = position.y;
-      var bumperX = this.x;
-      var bumperY = this.y;
-      var vector = (bumperY - ballY) / (bumperX - ballX);
-      var y = 15;
-      var x = 15 / vector;
+      //Grab the starting position
+      var startPosition = {
+        x: this.x,
+        y: this.y
+      }; //Calculate the midpoint between the ball and bumper
+
+      var targetX = (this.x + position.x) / 2;
+      var targetY = (this.y + position.y) / 2; //Tween to that point
+
       this.scene.tweens.add({
         targets: this,
-        x: "-=".concat(x),
-        y: "-=".concat(y),
+        x: targetX,
+        y: targetY,
         yoyo: true,
-        duration: 20
-      });
+        duration: 10
+      }); //Reset the bumper after a brief delay
+
       setTimeout(function () {
-        _this5.x = bumperX;
-        _this5.y = bumperY;
+        _this6.x = startPosition.x;
+        _this6.y = startPosition.y;
       }, 50);
     }
   }]);
 
   return Bumper;
+}(StaticShape);
+
+var Pill =
+/*#__PURE__*/
+function (_StaticShape3) {
+  _inherits(Pill, _StaticShape3);
+
+  function Pill(scene, x, y, name) {
+    var _this7;
+
+    _classCallCheck(this, Pill);
+
+    _this7 = _possibleConstructorReturn(this, _getPrototypeOf(Pill).call(this, scene, x, y, name));
+    _this7.chamfer = 10;
+    return _this7;
+  }
+
+  return Pill;
 }(StaticShape);
 
 var config = {
@@ -229,8 +271,8 @@ function create() {
   bottomFrame = new StaticCustomShape(this, 210, 830, 'bottomFrame');
   center = new StaticCustomShape(this, 197, 275, 'center');
   center.restitution = 0.5;
-  wallRight = new StaticCustomShape(this, 370, 315, 'wallRight');
-  wallRightInner = new StaticCustomShape(this, 305, 170, 'wallRightInner');
+  wallRight = new StaticCustomShape(this, 372, 315, 'wallRight');
+  wallRightInner = new StaticCustomShape(this, 312, 170, 'wallRightInner');
   ballStashInner = new StaticCustomShape(this, 107, 130, 'ballStashInner');
   ballStashOuter = new StaticCustomShape(this, 72, 150, 'ballStashOuter');
   chuteLeft = new StaticCustomShape(this, 80, 705, 'chuteLeft');
@@ -243,8 +285,8 @@ function create() {
   pillD = new StaticCustomShape(this, 265, 125, 'pill');
   bumperA = new Bumper(this, 124, 178, 'bumperA');
   bumperB = new Bumper(this, 200, 243, 'bumperB');
-  bumperC = new Bumper(this, 301, 220, 'bumperC');
-  rightWall = this.matter.add.image(390, 595, 'rectA').setScale(0.02, 4.2).setStatic(true);
+  bumperC = new Bumper(this, 307, 220, 'bumperC');
+  rightWall = this.matter.add.image(398, 630, 'rectA').setScale(0.05, 5.4).setStatic(true);
   leftDivider = this.matter.add.image(40, 630, 'rectA').setScale(0.01, 1.7).setStatic(true);
   rightDivider = this.matter.add.image(352, 600, 'rectA').setScale(0.01, 1).setStatic(true);
   rightTrapDoor = this.matter.add.image(365, 660, 'rectA').setScale(0.01, .9);
@@ -301,7 +343,8 @@ function update() {
   rightFlipper.hold();
 
   if (Phaser.Input.Keyboard.JustDown(spacebar)) {
-    ball = new Ball(this, 130, 625, 'ball');
+    ball = new Ball(this, 416, 773, 'ball');
+    ball.launch();
   }
 
   if (Phaser.Input.Keyboard.JustDown(left)) {

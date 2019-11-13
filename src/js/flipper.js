@@ -2,7 +2,7 @@
 //set a circle in the beginning of the flipper and constrain it to the pivot directly. no offset. 
 
 class Flipper {
-    constructor(scene, x, y){
+    constructor(scene, x, y, options){
         this.scene = scene
         this.x = x
         this.y = y

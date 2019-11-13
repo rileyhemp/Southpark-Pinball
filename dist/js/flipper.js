@@ -26,7 +26,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var Flipper =
 /*#__PURE__*/
 function () {
-  function Flipper(scene, x, y) {
+  function Flipper(scene, x, y, options) {
     _classCallCheck(this, Flipper);
 
     this.scene = scene;
