@@ -46,9 +46,9 @@ function (_Phaser$Physics$Matte) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Ball).call(this, scene.matter.world, x, y, texture));
 
-    _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .24);
+    _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .21);
 
-    _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 10);
+    _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.75);
 
     _this.body.friction = 0; //this.body.frictionAir = 0.00001
 
@@ -104,9 +104,7 @@ function () {
     this.width = width;
     this.height = height;
     this.rotation = rotation;
-    this.drawShape();
-    this.body.collisionFilter.category = collisionGroup;
-    console.log(this);
+    this.drawShape(); //this.body.collisionFilter.category = collisionGroup
   }
 
   _createClass(StaticShape, [{
@@ -118,7 +116,7 @@ function () {
           angle: this.rotation
         });
       } else if (this.type === 'circle') {
-        this.scene.matter.add.circle(this.x, this.y, this.width, {
+        this.body = this.scene.matter.add.circle(this.x, this.y, this.width, {
           isStatic: true
         });
       } else {
@@ -163,19 +161,21 @@ function (_Phaser$Physics$Matte2) {
 
 var Bumper =
 /*#__PURE__*/
-function (_StaticShape) {
-  _inherits(Bumper, _StaticShape);
+function (_Phaser$Physics$Matte3) {
+  _inherits(Bumper, _Phaser$Physics$Matte3);
 
   function Bumper(scene, x, y, name) {
     var _this4;
 
     _classCallCheck(this, Bumper);
 
-    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Bumper).call(this, scene, x, y, name));
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Bumper).call(this, scene.matter.world, x, y, name));
 
-    _this4.setCircle(26);
+    _this4.setCircle(24);
 
     _this4.setStatic(true);
+
+    _this4.setScale(0.85);
 
     _this4.body.mass = .999;
     _this4.x = x;
@@ -206,7 +206,7 @@ function (_StaticShape) {
         x: targetX,
         y: targetY,
         yoyo: true,
-        duration: 10
+        duration: 20
       }); //Reset the bumper after a brief delay
 
       setTimeout(function () {
@@ -217,5 +217,5 @@ function (_StaticShape) {
   }]);
 
   return Bumper;
-}(StaticShape);
+}(Phaser.Physics.Matter.Image);
 //# sourceMappingURL=classes.js.map

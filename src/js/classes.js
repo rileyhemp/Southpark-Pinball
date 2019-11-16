@@ -1,8 +1,8 @@
 class Ball extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, texture) {
         super(scene.matter.world, x, y, texture)
-        super.setScale(.24) 
-        super.setCircle(10)
+        super.setScale(.21) 
+        super.setCircle(8.75)
         this.body.friction = 0
         //this.body.frictionAir = 0.00001
         scene.sys.displayList.add(this)
@@ -36,8 +36,7 @@ class StaticShape {
         this.height = height
         this.rotation = rotation
         this.drawShape()
-        this.body.collisionFilter.category = collisionGroup
-        console.log(this)
+        //this.body.collisionFilter.category = collisionGroup
     }
     drawShape(){
         if (this.type === 'rectangle'){
@@ -46,7 +45,7 @@ class StaticShape {
                 angle: this.rotation
             })
         } else if (this.type === 'circle'){
-            this.scene.matter.add.circle(this.x, this.y, this.width, {
+            this.body = this.scene.matter.add.circle(this.x, this.y, this.width, {
                 isStatic: true
             })
         } else {
@@ -68,11 +67,13 @@ class StaticCustomShape extends Phaser.Physics.Matter.Image {
     }
 }
 
-class Bumper extends StaticShape {
+
+class Bumper extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, name){
-        super(scene, x, y, name)
-        this.setCircle(26)
+        super(scene.matter.world, x, y, name)
+        this.setCircle(24)
         this.setStatic(true)
+        this.setScale(0.85)
         this.body.mass = .999
         this.x = x
         this.y = y
@@ -97,7 +98,7 @@ class Bumper extends StaticShape {
             x: targetX,
             y: targetY,
             yoyo: true,
-            duration: 10
+            duration: 20
         })
         //Reset the bumper after a brief delay
         setTimeout(()=>{

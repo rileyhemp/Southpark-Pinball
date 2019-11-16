@@ -36,6 +36,7 @@ let
     leftFlipper, 
     rightFlipper, 
     testShape,
+    bumperA, bumperB, bumperC,
 
     //Background
     playfield,
@@ -69,8 +70,8 @@ function preload() {
 function create() {
 
     //Set some things up, inputs, collisiongroups, etc. 
-    collisionGroupA = this.matter.world.nextCategory()
-    collisionGroupB = this.matter.world.nextCategory()
+    collisionGroupA = this.matter.world.nextCategory() // Ball
+    collisionGroupB = this.matter.world.nextCategory() // Walls
     collisionGroupC = this.matter.world.nextCategory()
     collisionGroupD = this.matter.world.nextCategory()
     collisionGroupE = this.matter.world.nextCategory()
@@ -103,34 +104,76 @@ function create() {
     //Flippers
     leftFlipper = new LeftFlipper(this, 147, 634) 
     rightFlipper = new RightFlipper(this, 330, 634)
+
+    //Pop bumpers
+    bumperA = new Bumper(this, 305, 100, 'bumperA')
+    bumperB = new Bumper(this, 392, 95, 'bumperB')
+    bumperC = new Bumper(this, 360, 149, 'bumperC')
     
     //Static Objects
     /*********************************************************/
-    //Remove variable names later if unused in global scope
-    new StaticCustomShape(this, 160, 168, 'leftRampRight', collisionGroupB)
-    new StaticCustomShape(this, 378, 591, 'rightLane', collisionGroupB)
-    testShape = new StaticCustomShape(this, 97, 591, 'leftLane', collisionGroupB)
-    new StaticCustomShape(this, 369, 185, 'rightTrapCowl', collisionGroupB)
-    new StaticCustomShape(this, 481, 455, 'farRightWall', collisionGroupB)
-    new StaticCustomShape(this, 135, 222, 'leftRampLeft', collisionGroupB)
-    new StaticCustomShape(this, 282, 112, 'rightRampLeft', collisionGroupB)
-    new StaticCustomShape(this, 445, 530, 'rightWallA', collisionGroupB).setScale(1, 1.1)
-    new StaticCustomShape(this, 431, 310, 'rightWallB', collisionGroupB)
-    new StaticCustomShape(this, 250, 740, 'killZone', collisionGroupB)
-    new StaticCustomShape(this, 120, 535, 'leftSlingshot', collisionGroupB)
-    new StaticCustomShape(this, 355, 535, 'rightSlingshot', collisionGroupB)
-    new StaticCustomShape(this, 342, 137, 'rightRampRight', collisionGroupB)
-    new StaticCustomShape(this, 40, 488, 'leftWall', collisionGroupB).setScale(1,1.1)
-    new StaticCustomShape(this, 130, 170, 'topLoop', collisionGroupB)
-    new StaticCustomShape(this, 125, 110, 'leftLoopTop', collisionGroupB)
-    new StaticCustomShape(this, 218, 90, 'midTargetLeft', collisionGroupB)
-    new StaticCustomShape(this, 398, 392, 'rightTargets', collisionGroupB)
-    new StaticShape(this, 'rectangle', 260, 197, 75, 15, .02, 3) // top middle
-    new StaticShape(this, 'rectangle', 156, 110, 90, 15, 1.45, 3) // left center
+    //StaticCustomShape(scene, x, y, path, collision group)
+    //StaticShape(scene, type, x, y, width, height, rotation, collision group)
+
+    //First level (collision group B)
+    // new StaticCustomShape(this, 160, 168, 'leftRampRight', collisionGroupB)
+    // new StaticCustomShape(this, 378, 591, 'rightLane', collisionGroupB)
+    // new StaticCustomShape(this, 97, 591, 'leftLane', collisionGroupB)
+    // new StaticCustomShape(this, 369, 185, 'rightTrapCowl', collisionGroupB)
+    // new StaticCustomShape(this, 481, 455, 'farRightWall', collisionGroupB)
+    // new StaticCustomShape(this, 135, 222, 'leftRampLeft', collisionGroupB)
+    // new StaticCustomShape(this, 282, 112, 'rightRampLeft', collisionGroupB)
+    // new StaticCustomShape(this, 445, 530, 'rightWallA', collisionGroupB).setScale(1, 1.1)
+    // new StaticCustomShape(this, 431, 310, 'rightWallB', collisionGroupB)
+    // new StaticCustomShape(this, 250, 740, 'killZone', collisionGroupB)
+    // new StaticCustomShape(this, 120, 535, 'leftSlingshot', collisionGroupB)
+    // new StaticCustomShape(this, 355, 535, 'rightSlingshot', collisionGroupB)
+    // new StaticCustomShape(this, 342, 140, 'rightRampRight', collisionGroupB).setBounce(1)
+    // new StaticCustomShape(this, 40, 488, 'leftWall', collisionGroupB).setScale(1,1.1)
+    // new StaticCustomShape(this, 130, 170, 'topLoop', collisionGroupB)
+    // new StaticCustomShape(this, 125, 110, 'leftLoopTop', collisionGroupB)
+    // new StaticCustomShape(this, 218, 90, 'midTargetLeft', collisionGroupB)
+    // new StaticCustomShape(this, 398, 392, 'rightTargets', collisionGroupB) 
+    // new StaticShape(this, 'rectangle', 260, 197, 75, 15, .02, 3) 
+    // new StaticShape(this, 'rectangle', 156, 110, 90, 15, 1.45, 3) 
+
+    //Second level (collision group C)
+    new StaticCustomShape(this, 24, 491, 'leftRampBottomLeft', collisionGroupC)
+    new StaticCustomShape(this, 113, 437, 'leftRampBottomRight', collisionGroupC)
+    //new StaticCustomShape(this, 349, 83, 'rightRampBottom', collisionGroupC) change to big circle
+    new StaticCustomShape(this, 354, 2, 'rightRampTop', collisionGroupC)
+    new StaticCustomShape(this, 181, 110, 'rightRampDivider', collisionGroupC)
+    new StaticCustomShape(this, 115, 7, 'leftRampTop', collisionGroupC)
+    new StaticCustomShape(this, 128, 83, 'leftRampBottom', collisionGroupC)
+    new StaticCustomShape(this, 126, 25, 'leftRampDiverter', collisionGroupC)
+    
+    //Small round rubbers
+    new StaticShape(this, 'circle', 403, 482, 5, null, null, 3) 
+    new StaticShape(this, 'circle', 72, 482, 5, null, null, 3) 
+    new StaticShape(this, 'circle', 298, 73, 5, null, null, 3) 
+    new StaticShape(this, 'circle', 405, 121, 5, null, null, 3)  
+
+    //Medium round rubbers
+    new StaticShape(this, 'circle', 236, 698, 8, null, null, 3) // Center post
+    new StaticShape(this, 'circle', 88, 421, 8, null, null, 3) 
+    new StaticShape(this, 'circle', 140, 571, 8, null, null, 3) //Slingshot corners
+    new StaticShape(this, 'circle', 365, 487, 8, null, null, 3) // 
+    new StaticShape(this, 'circle', 331, 570, 8, null, null, 3) // 
+    new StaticShape(this, 'circle', 108, 487, 8, null, null, 3) // 
+    new StaticShape(this, 'circle', 291, 38, 8, null, null, 3)//Top tri-lane
+    new StaticShape(this, 'circle', 325, 39, 8, null, null, 3)//Top tri-lane
+    new StaticShape(this, 'circle', 359, 37, 8, null, null, 3)//Top tri-lane
+    new StaticShape(this, 'circle', 392, 37, 8, null, null, 3)//Top tri-lane
+    new StaticShape(this, 'circle', 292, 59, 8, null, null, 3)//Top tri-lane
+    new StaticShape(this, 'circle', 326, 59, 8, null, null, 3)//Top tri-lane
+    new StaticShape(this, 'circle', 360, 58, 8, null, null, 3)//Top tri-lane
+    new StaticShape(this, 'circle', 394, 58, 8, null, null, 3)//Top tri-lane
+
+    //Sensors 
 
     //Collision events
     /*********************************************************/
-    //Change to one <------------
+    //Consolidate into one function
     let canCallA = true
     let canCallB = true
     let canCallC = true
