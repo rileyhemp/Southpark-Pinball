@@ -65,10 +65,11 @@ class Flipper {
     }
 
     setCollisionGroups(){
-        [ this.block, this.stopper, this.flipper ].forEach( el => {
+        [ this.block, this.stopper ].forEach( el => {
             el.setCollisionCategory(flipperCollisionGroup)
         })
         this.stopper.setCollidesWith(flipperCollisionGroup)
+        this.flipper.setCollisionCategory(collisionGroupA)
         this.flipper.setCollidesWith([ collisionGroupA, flipperCollisionGroup ])
 
         this.setPhysicsProperties()

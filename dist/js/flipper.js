@@ -89,10 +89,11 @@ function () {
   }, {
     key: "setCollisionGroups",
     value: function setCollisionGroups() {
-      [this.block, this.stopper, this.flipper].forEach(function (el) {
+      [this.block, this.stopper].forEach(function (el) {
         el.setCollisionCategory(flipperCollisionGroup);
       });
       this.stopper.setCollidesWith(flipperCollisionGroup);
+      this.flipper.setCollisionCategory(collisionGroupA);
       this.flipper.setCollidesWith([collisionGroupA, flipperCollisionGroup]);
       this.setPhysicsProperties();
     }

@@ -6,11 +6,14 @@ class Ball extends Phaser.Physics.Matter.Image {
         this.body.friction = 0
         //this.body.frictionAir = 0.00001
         scene.sys.displayList.add(this)
+        this.setCollidesWith([collisionGroupA, collisionGroupB])
         this.setCollisionCategory(collisionGroupA)
         this.body.density = 0.25 
         this.setDepth(1)
         this.body.label = 'Ball'
         this.killZoneCheck()
+        this.id = this.body.id
+        balls.push(this.body)
     }
     launch(){
         super.setVelocityY(-20.5)
@@ -18,8 +21,8 @@ class Ball extends Phaser.Physics.Matter.Image {
     killZoneCheck(){
         let i = setInterval(()=>{
             if (this.y > 720){
-                this.destroy()
-                clearInterval(i)
+                // this.destroy()
+                // clearInterval(i)
             }
         }, 100)
     }
@@ -67,7 +70,6 @@ class StaticCustomShape extends Phaser.Physics.Matter.Image {
     }
 }
 
-
 class Bumper extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, name){
         super(scene.matter.world, x, y, name)
@@ -80,7 +82,6 @@ class Bumper extends Phaser.Physics.Matter.Image {
         this.body.label = name
         this.scene = scene
         this.body.restitution = 1.5
-        console.log(this)
     }
     fire(position){
         //Grab the starting position
@@ -105,5 +106,16 @@ class Bumper extends Phaser.Physics.Matter.Image {
             this.x = startPosition.x
             this.y = startPosition.y
         }, 50)
+    }
+}
+
+class Sensor extends StaticShape {
+    constructor(scene, x, y, type, level, id){
+        super(scene, 'circle', x, y, 12)
+        this.body.collisionFilter.category = 2
+        this.body.isSensor = true
+        this.body.type = type
+        this.level = level
+        this.id = id
     }
 }

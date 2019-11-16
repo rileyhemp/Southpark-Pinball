@@ -23,9 +23,10 @@ var config = {
 }; //Declare global variables 
 
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
-var balls, spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, testShape, bumperA, bumperB, bumperC, //Background
+var balls = [];
+var spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, testShape, bumperA, bumperB, bumperC, //Background
 playfield, plastics, //Utilities
-collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, flipperCollisionGroup, test, tween;
+collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensors, isOnRamp, flipperCollisionGroup, test, tween;
 var game = new Phaser.Game(config); //Load assets
 
 function preload() {
@@ -40,6 +41,8 @@ function preload() {
 
 function create() {
   //Set some things up, inputs, collisiongroups, etc. 
+  sensors = this.matter.world.nextCategory(); // Sensors collision group
+
   collisionGroupA = this.matter.world.nextCategory(); // Ball
 
   collisionGroupB = this.matter.world.nextCategory(); // Walls
@@ -48,6 +51,7 @@ function create() {
   collisionGroupD = this.matter.world.nextCategory();
   collisionGroupE = this.matter.world.nextCategory();
   flipperCollisionGroup = this.matter.world.nextCategory();
+  isOnRamp = false;
   test = this;
   bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true);
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -55,8 +59,9 @@ function create() {
   spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //Add a ball where you click
 
   this.input.on('pointerdown', function (pointer) {
-    ball = new Ball(this, pointer.x, pointer.y, 'ball');
-    console.log(pointer.x + ',', pointer.y);
+    ball = new Ball(this, pointer.x, pointer.y, 'ball'); //ball.setCollisionCategory(sensors)
+
+    ball.setCollidesWith([collisionGroupC, sensors]);
   }, this); //Layout overlay
 
   var blueprint = this.add.image(260, 400, 'blueprint'); // playfield = this.add.image(220, 445, 'playfield')
@@ -101,7 +106,8 @@ function create() {
   //Second level (collision group C)
 
   new StaticCustomShape(this, 24, 491, 'leftRampBottomLeft', collisionGroupC);
-  new StaticCustomShape(this, 113, 437, 'leftRampBottomRight', collisionGroupC); //new StaticCustomShape(this, 349, 83, 'rightRampBottom', collisionGroupC) change to big circle
+  new StaticCustomShape(this, 113, 437, 'leftRampBottomRight', collisionGroupC);
+  new StaticCustomShape(this, 349, 83, 'rightRampBottom', collisionGroupC); //change to big circle
 
   new StaticCustomShape(this, 354, 2, 'rightRampTop', collisionGroupC);
   new StaticCustomShape(this, 181, 110, 'rightRampDivider', collisionGroupC);
@@ -141,20 +147,41 @@ function create() {
 
   new StaticShape(this, 'circle', 394, 58, 8, null, null, 3); //Top tri-lane
   //Sensors 
+  //Ramp on / off sensors
+
+  new Sensor(this, 126, 170, 'ramp', 1, 'leftRampOn');
+  new Sensor(this, 187, 146, 'ramp', 1, 'centerRampOn');
+  new Sensor(this, 20, 700, 'ramp', 2, 'leftRampOff'); //90, 508,
   //Collision events
 
   /*********************************************************/
-  //Consolidate into one function
 
-  var canCallA = true;
-  var canCallB = true;
-  var canCallC = true;
   this.matter.world.on('collisionstart', function (event, bodyA, bodyB) {
+    //Sensors
+    if (bodyB.label === 'Ball' && bodyA.isSensor) {
+      if (bodyA.type === 'ramp') {
+        if (!isOnRamp) {
+          isOnRamp = true;
+          console.log('fizz'); // bodyB.collisionFilter.mask = 18
+        } else if (isOnRamp) {
+          isOnRamp = false;
+          console.log('buzz'); // bodyB.collisionFilter.mask = 14
+        }
+
+        console.log(isOnRamp);
+      }
+    } //Slingshots
+
+
     if (bodyB.label === 'Ball' && bodyA.label === 'Slingshot') {
       slingshotA.fire();
       slingshotB.fire();
-    } //Change to one <------------------
+    } //Pop bumpers
 
+
+    var canCallA = true;
+    var canCallB = true;
+    var canCallC = true;
 
     if (bodyA.label === "bumperA" && bodyB.label === 'Ball' && canCallA) {
       canCallA = false;
@@ -209,6 +236,16 @@ function update() {
   if (Phaser.Input.Keyboard.JustUp(right)) {
     rightFlipper.isFlipping = false;
     rightFlipper.release();
+  }
+
+  if (balls.length && !isOnRamp) {
+    balls.forEach(function (ball) {
+      ball.collisionFilter.mask = 14;
+    });
+  } else if (balls.length && isOnRamp) {
+    balls.forEach(function (ball) {
+      ball.collisionFilter.mask = 18;
+    });
   }
 }
 //# sourceMappingURL=game.js.map

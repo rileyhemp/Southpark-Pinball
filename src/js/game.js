@@ -26,8 +26,9 @@ const config = {
 
 const Bodies = Phaser.Physics.Matter.Matter.Bodies
 
+let balls = []
+
 let 
-    balls, 
     spacebar, 
     left,
     right,
@@ -48,6 +49,8 @@ let
     collisionGroupC,
     collisionGroupD,
     collisionGroupE,
+    sensors,
+    isOnRamp,
     flipperCollisionGroup,
     test,
     tween
@@ -70,12 +73,14 @@ function preload() {
 function create() {
 
     //Set some things up, inputs, collisiongroups, etc. 
+    sensors = this.matter.world.nextCategory() // Sensors collision group
     collisionGroupA = this.matter.world.nextCategory() // Ball
     collisionGroupB = this.matter.world.nextCategory() // Walls
     collisionGroupC = this.matter.world.nextCategory()
     collisionGroupD = this.matter.world.nextCategory()
     collisionGroupE = this.matter.world.nextCategory()
     flipperCollisionGroup = this.matter.world.nextCategory()
+    isOnRamp = false
 
     test = this
     bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true)
@@ -86,7 +91,8 @@ function create() {
     //Add a ball where you click
     this.input.on('pointerdown', function(pointer){
         ball = new Ball(this, pointer.x, pointer.y, 'ball') 
-        console.log(pointer.x + ',', pointer.y)
+        //ball.setCollisionCategory(sensors)
+        ball.setCollidesWith([collisionGroupC, sensors])
     }, this)
 
     
@@ -140,7 +146,7 @@ function create() {
     //Second level (collision group C)
     new StaticCustomShape(this, 24, 491, 'leftRampBottomLeft', collisionGroupC)
     new StaticCustomShape(this, 113, 437, 'leftRampBottomRight', collisionGroupC)
-    //new StaticCustomShape(this, 349, 83, 'rightRampBottom', collisionGroupC) change to big circle
+    new StaticCustomShape(this, 349, 83, 'rightRampBottom', collisionGroupC) //change to big circle
     new StaticCustomShape(this, 354, 2, 'rightRampTop', collisionGroupC)
     new StaticCustomShape(this, 181, 110, 'rightRampDivider', collisionGroupC)
     new StaticCustomShape(this, 115, 7, 'leftRampTop', collisionGroupC)
@@ -171,19 +177,43 @@ function create() {
 
     //Sensors 
 
+    //Ramp on / off sensors
+    new Sensor(this, 126, 170, 'ramp', 1, 'leftRampOn')
+    new Sensor(this, 187, 146, 'ramp', 1, 'centerRampOn')
+    new Sensor(this, 20, 700, 'ramp', 2, 'leftRampOff')  //90, 508,
+
     //Collision events
     /*********************************************************/
-    //Consolidate into one function
-    let canCallA = true
-    let canCallB = true
-    let canCallC = true
+
+
     this.matter.world.on('collisionstart', function(event, bodyA, bodyB){
 
+        //Sensors
+        if (bodyB.label === 'Ball' && bodyA.isSensor) {
+            if (bodyA.type === 'ramp') {
+                if (!isOnRamp) {
+                    isOnRamp = true
+                    console.log('fizz')
+                    // bodyB.collisionFilter.mask = 18
+                } else if (isOnRamp){
+                    isOnRamp = false
+                    console.log('buzz')
+                    // bodyB.collisionFilter.mask = 14
+                }
+                console.log(isOnRamp)
+            }
+        }
+        
+        //Slingshots
         if (bodyB.label === 'Ball' && bodyA.label === 'Slingshot'){
             slingshotA.fire()
             slingshotB.fire()
         }
-        //Change to one <------------------
+
+        //Pop bumpers
+        let canCallA = true
+        let canCallB = true
+        let canCallC = true
         if ( bodyA.label === "bumperA" && bodyB.label  === 'Ball' && canCallA) {
             canCallA = false
             bumperA.fire(bodyB.position, "bumperA")
@@ -237,6 +267,16 @@ function update() {
         rightFlipper.isFlipping = false
         rightFlipper.release()
     } 
+
+    if (balls.length && !isOnRamp){
+        balls.forEach(ball => {
+            ball.collisionFilter.mask = 14
+        })
+    } else if (balls.length && isOnRamp){
+        balls.forEach(ball => {
+            ball.collisionFilter.mask = 18
+        })
+    }
 
 
     

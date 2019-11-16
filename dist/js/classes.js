@@ -54,6 +54,8 @@ function (_Phaser$Physics$Matte) {
 
     scene.sys.displayList.add(_assertThisInitialized(_this));
 
+    _this.setCollidesWith([collisionGroupA, collisionGroupB]);
+
     _this.setCollisionCategory(collisionGroupA);
 
     _this.body.density = 0.25;
@@ -64,6 +66,8 @@ function (_Phaser$Physics$Matte) {
 
     _this.killZoneCheck();
 
+    _this.id = _this.body.id;
+    balls.push(_this.body);
     return _this;
   }
 
@@ -78,10 +82,8 @@ function (_Phaser$Physics$Matte) {
       var _this2 = this;
 
       var i = setInterval(function () {
-        if (_this2.y > 720) {
-          _this2.destroy();
-
-          clearInterval(i);
+        if (_this2.y > 720) {// this.destroy()
+          // clearInterval(i)
         }
       }, 100);
     }
@@ -183,7 +185,6 @@ function (_Phaser$Physics$Matte3) {
     _this4.body.label = name;
     _this4.scene = scene;
     _this4.body.restitution = 1.5;
-    console.log(_assertThisInitialized(_this4));
     return _this4;
   }
 
@@ -218,4 +219,26 @@ function (_Phaser$Physics$Matte3) {
 
   return Bumper;
 }(Phaser.Physics.Matter.Image);
+
+var Sensor =
+/*#__PURE__*/
+function (_StaticShape) {
+  _inherits(Sensor, _StaticShape);
+
+  function Sensor(scene, x, y, type, level, id) {
+    var _this6;
+
+    _classCallCheck(this, Sensor);
+
+    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Sensor).call(this, scene, 'circle', x, y, 12));
+    _this6.body.collisionFilter.category = 2;
+    _this6.body.isSensor = true;
+    _this6.body.type = type;
+    _this6.level = level;
+    _this6.id = id;
+    return _this6;
+  }
+
+  return Sensor;
+}(StaticShape);
 //# sourceMappingURL=classes.js.map
