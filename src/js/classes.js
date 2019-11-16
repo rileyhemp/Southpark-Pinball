@@ -21,8 +21,8 @@ class Ball extends Phaser.Physics.Matter.Image {
     killZoneCheck(){
         let i = setInterval(()=>{
             if (this.y > 720){
-                // this.destroy()
-                // clearInterval(i)
+                this.destroy()
+                clearInterval(i)
             }
         }, 100)
     }
@@ -39,7 +39,7 @@ class StaticShape {
         this.height = height
         this.rotation = rotation
         this.drawShape()
-        //this.body.collisionFilter.category = collisionGroup
+        this.body.collisionFilter.category = collisionGroup
     }
     drawShape(){
         if (this.type === 'rectangle'){
@@ -110,12 +110,12 @@ class Bumper extends Phaser.Physics.Matter.Image {
 }
 
 class Sensor extends StaticShape {
-    constructor(scene, x, y, type, level, id){
+    constructor(scene, x, y, type, level, label){
         super(scene, 'circle', x, y, 12)
         this.body.collisionFilter.category = 2
         this.body.isSensor = true
         this.body.type = type
         this.level = level
-        this.id = id
+        this.body.label = label
     }
 }

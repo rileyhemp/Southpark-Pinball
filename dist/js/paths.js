@@ -599,7 +599,7 @@ var PATHS = {
     "x": 30.880000000000003,
     "y": 49.48
   }]],
-  leftRampBottomLeft: [[{
+  leftLaneBottomLeft: [[{
     "x": 25,
     "y": 0
   }, {
@@ -621,7 +621,7 @@ var PATHS = {
     "x": 11.39,
     "y": 0
   }]],
-  leftRampBottomRight: [[{
+  leftLaneBottomRight: [[{
     "x": 0.23,
     "y": 0
   }, {

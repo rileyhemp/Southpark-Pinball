@@ -82,8 +82,10 @@ function (_Phaser$Physics$Matte) {
       var _this2 = this;
 
       var i = setInterval(function () {
-        if (_this2.y > 720) {// this.destroy()
-          // clearInterval(i)
+        if (_this2.y > 720) {
+          _this2.destroy();
+
+          clearInterval(i);
         }
       }, 100);
     }
@@ -106,7 +108,8 @@ function () {
     this.width = width;
     this.height = height;
     this.rotation = rotation;
-    this.drawShape(); //this.body.collisionFilter.category = collisionGroup
+    this.drawShape();
+    this.body.collisionFilter.category = collisionGroup;
   }
 
   _createClass(StaticShape, [{
@@ -225,7 +228,7 @@ var Sensor =
 function (_StaticShape) {
   _inherits(Sensor, _StaticShape);
 
-  function Sensor(scene, x, y, type, level, id) {
+  function Sensor(scene, x, y, type, level, label) {
     var _this6;
 
     _classCallCheck(this, Sensor);
@@ -235,7 +238,7 @@ function (_StaticShape) {
     _this6.body.isSensor = true;
     _this6.body.type = type;
     _this6.level = level;
-    _this6.id = id;
+    _this6.body.label = label;
     return _this6;
   }
 

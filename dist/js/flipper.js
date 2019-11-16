@@ -39,7 +39,7 @@ function () {
     this.stopperOffsetY = -23;
     this.flipperOffsetX = 25;
     this.flipperOffsetY = 5;
-    this.torque = -5;
+    this.torque = -8;
     this.staticTorque = 1;
     this.flipperLength = 78;
     this.isFlipping = false;
@@ -92,7 +92,6 @@ function () {
       [this.block, this.stopper].forEach(function (el) {
         el.setCollisionCategory(flipperCollisionGroup);
       });
-      this.stopper.setCollidesWith(flipperCollisionGroup);
       this.flipper.setCollisionCategory(collisionGroupA);
       this.flipper.setCollidesWith([collisionGroupA, flipperCollisionGroup]);
       this.setPhysicsProperties();
