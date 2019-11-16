@@ -39,7 +39,7 @@ function () {
     this.stopperOffsetY = -23;
     this.flipperOffsetX = 25;
     this.flipperOffsetY = 5;
-    this.torque = -11;
+    this.torque = -9;
     this.staticTorque = 2;
     this.flipperLength = 78;
     this.isFlipping = false;
@@ -68,6 +68,9 @@ function () {
       this.pivot.setScale(.2);
       this.pivot.setCircle(1);
       this.pivot.setStatic(true); //Flipper 
+      //The flipper is made up of two rectangles, one slightly smaller then the other. The reason for this is that the ball would occassionally miss the flipper at high speed, 
+      //and the second rectangle is there as a backup. It works most of the time, but is not ideal. 
+      //
 
       var rectA = Phaser.Physics.Matter.Matter.Bodies.rectangle(this.x + this.flipperOffsetX, this.y + this.flipperOffsetY, this.flipperLength, 24, {
         chamfer: 10
@@ -83,7 +86,9 @@ function () {
       });
       this.flipper = this.scene.matter.add.image(150, 0, null).setExistingBody(this.flipperBody).setVisible(false);
       this.flipperInner = this.scene.matter.add.image(150, 0, null).setExistingBody(this.flipperBodyInner).setVisible(false);
-      this.flipper.body.restitution = 0.1; //Joint
+      this.flipper.body.restitution = 0.1;
+      this.flipper.setBounce(0.2);
+      this.flipperInner.setBounce(0.2); //Joint
 
       this.pin = this.scene.matter.add.constraint(this.pivot, this.flipper);
       this.pin.stiffness = 0.9;

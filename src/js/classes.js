@@ -4,15 +4,16 @@ class Ball extends Phaser.Physics.Matter.Image {
         super.setScale(.21) 
         super.setCircle(8.75)
         this.body.friction = 0
-        //this.body.frictionAir = 0.00001
+        this.body.frictionAir = 0.0001
         scene.sys.displayList.add(this)
         this.setCollidesWith([collisionGroupA, collisionGroupB])
         this.setCollisionCategory(collisionGroupA)
-        this.body.density = .0005
+        this.setDensity(.0009)
         this.setDepth(1)
+        // this.body.restitution = 0.2
+        // this.setBounce(0.2)
         this.body.label = 'Ball'
-        //this.killZoneCheck()
-        console.log(this)
+        this.killZoneCheck()
         this.id = this.body.id
         balls.push(this.body)
     }

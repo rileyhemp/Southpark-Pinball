@@ -50,21 +50,24 @@ function (_Phaser$Physics$Matte) {
 
     _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.75);
 
-    _this.body.friction = 0; //this.body.frictionAir = 0.00001
-
+    _this.body.friction = 0;
+    _this.body.frictionAir = 0.0001;
     scene.sys.displayList.add(_assertThisInitialized(_this));
 
     _this.setCollidesWith([collisionGroupA, collisionGroupB]);
 
     _this.setCollisionCategory(collisionGroupA);
 
-    _this.body.density = .0005;
+    _this.setDensity(.0009);
 
-    _this.setDepth(1);
+    _this.setDepth(1); // this.body.restitution = 0.2
+    // this.setBounce(0.2)
 
-    _this.body.label = 'Ball'; //this.killZoneCheck()
 
-    console.log(_assertThisInitialized(_this));
+    _this.body.label = 'Ball';
+
+    _this.killZoneCheck();
+
     _this.id = _this.body.id;
     balls.push(_this.body);
     return _this;

@@ -11,7 +11,7 @@ var config = {
       debug: true,
       gravity: {
         x: 0,
-        y: .85
+        y: 1
       }
     }
   },
