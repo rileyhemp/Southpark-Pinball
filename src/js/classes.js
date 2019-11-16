@@ -1,13 +1,13 @@
 class Ball extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, texture) {
         super(scene.matter.world, x, y, texture)
-        super.setScale(.2) 
-        super.setCircle(8.75)
-         this.body.friction = 0
-        this.body.frictionAir = 0.00001
+        super.setScale(.24) 
+        super.setCircle(10)
+        this.body.friction = 0
+        //this.body.frictionAir = 0.00001
         scene.sys.displayList.add(this)
         this.setCollisionCategory(collisionGroupA)
-        this.body.density = 0.5 
+        this.body.density = 0.25 
         this.setDepth(1)
         this.body.label = 'Ball'
         this.killZoneCheck()

@@ -46,17 +46,17 @@ function (_Phaser$Physics$Matte) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Ball).call(this, scene.matter.world, x, y, texture));
 
-    _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .2);
+    _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .24);
 
-    _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.75);
+    _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 10);
 
-    _this.body.friction = 0;
-    _this.body.frictionAir = 0.00001;
+    _this.body.friction = 0; //this.body.frictionAir = 0.00001
+
     scene.sys.displayList.add(_assertThisInitialized(_this));
 
     _this.setCollisionCategory(collisionGroupA);
 
-    _this.body.density = 0.5;
+    _this.body.density = 0.25;
 
     _this.setDepth(1);
 
