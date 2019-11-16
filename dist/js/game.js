@@ -11,7 +11,7 @@ var config = {
       debug: true,
       gravity: {
         x: 0,
-        y: 0.35
+        y: .85
       }
     }
   },
@@ -27,7 +27,7 @@ var balls = [];
 var spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, testShape, bumperA, bumperB, bumperC, //Background
 playfield, plastics, //Utilities
 collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensors, isOnRamp, leftRampDivert, // Default: false
-leftRampDiverter, leftRampBottom, flipperCollisionGroup, test, tween;
+leftRampDiverter, leftRampBottom, flipperCollisionGroup, test, tween, testFlipper;
 var game = new Phaser.Game(config); //Load assets
 
 function preload() {
@@ -178,7 +178,7 @@ function create() {
   //Sensors 
   //Ramp on / off sensors
 
-  testShape = new Sensor(this, 126, 170, 'ramp', 1, 'leftRampOn');
+  new Sensor(this, 126, 170, 'ramp', 1, 'leftRampOn');
   new Sensor(this, 187, 146, 'ramp', 1, 'centerRampOn');
   new Sensor(this, 89, 506, 'ramp', 2, 'leftRampOff');
   new Sensor(this, 309, 135, 'ramp', 2, 'rightRampOn');

@@ -11,7 +11,7 @@ const config = {
             debug: true,
             gravity: {
                 x: 0,
-                y: 0.35
+                y: .85
             }
         }
     },
@@ -56,7 +56,8 @@ let
     leftRampBottom,
     flipperCollisionGroup,
     test,
-    tween
+    tween,
+    testFlipper
     
 const game = new Phaser.Game(config)
 
@@ -196,11 +197,13 @@ function create() {
     //Sensors 
 
     //Ramp on / off sensors
-    testShape = new Sensor(this, 126, 170, 'ramp', 1, 'leftRampOn')
+    new Sensor(this, 126, 170, 'ramp', 1, 'leftRampOn')
     new Sensor(this, 187, 146, 'ramp', 1, 'centerRampOn')
     new Sensor(this, 89, 506, 'ramp', 2, 'leftRampOff')  
     new Sensor(this, 309, 135, 'ramp', 2, 'rightRampOn')  
     new Sensor(this, 386, 507, 'ramp', 2, 'rightRampOff')  
+
+
 
     //Collision events
     /*********************************************************/
@@ -267,6 +270,7 @@ function update() {
     
     leftFlipper.hold()
     rightFlipper.hold()
+
     
     if(Phaser.Input.Keyboard.JustDown(spacebar)){
         ball = new Ball(this, 416, 773, 'ball') 

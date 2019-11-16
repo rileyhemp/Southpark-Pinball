@@ -39,8 +39,8 @@ function () {
     this.stopperOffsetY = -23;
     this.flipperOffsetX = 25;
     this.flipperOffsetY = 5;
-    this.torque = -8;
-    this.staticTorque = 1;
+    this.torque = -11;
+    this.staticTorque = 2;
     this.flipperLength = 78;
     this.isFlipping = false;
   }
@@ -67,25 +67,35 @@ function () {
       this.pivot = this.scene.matter.add.image(this.x, this.y, null, this.scene);
       this.pivot.setScale(.2);
       this.pivot.setCircle(1);
-      this.pivot.setStatic(true); //Flipper
+      this.pivot.setStatic(true); //Flipper 
 
       var rectA = Phaser.Physics.Matter.Matter.Bodies.rectangle(this.x + this.flipperOffsetX, this.y + this.flipperOffsetY, this.flipperLength, 24, {
+        chamfer: 10
+      });
+      var rectB = Phaser.Physics.Matter.Matter.Bodies.rectangle(this.x + this.flipperOffsetX, this.y + this.flipperOffsetY, this.flipperLength, 16, {
         chamfer: 10
       });
       this.flipperBody = this.scene.matter.body.create({
         parts: [rectA]
       });
-      this.flipper = this.scene.matter.add.image(150, 0, null).setScale(0.2).setExistingBody(this.flipperBody);
-      this.flipper.body.restitution = 0; //Joint
+      this.flipperBodyInner = this.scene.matter.body.create({
+        parts: [rectB]
+      });
+      this.flipper = this.scene.matter.add.image(150, 0, null).setExistingBody(this.flipperBody).setVisible(false);
+      this.flipperInner = this.scene.matter.add.image(150, 0, null).setExistingBody(this.flipperBodyInner).setVisible(false);
+      this.flipper.body.restitution = 0.1; //Joint
 
       this.pin = this.scene.matter.add.constraint(this.pivot, this.flipper);
       this.pin.stiffness = 0.9;
       this.pin.length = 0;
+      this.pin2 = this.scene.matter.add.constraint(this.pivot, this.flipperInner);
+      this.pin2.stiffness = 0.9;
+      this.pin2.length = 0;
+      this.pin3 = this.scene.matter.add.constraint(this.flipper, this.flipperInner);
+      this.pin3.stiffness = 0.9;
+      this.pin3.length = 0;
       this.positionPin();
     }
-  }, {
-    key: "setPhysicsProperties",
-    value: function setPhysicsProperties() {}
   }, {
     key: "setCollisionGroups",
     value: function setCollisionGroups() {
@@ -94,7 +104,8 @@ function () {
       });
       this.flipper.setCollisionCategory(collisionGroupA);
       this.flipper.setCollidesWith([collisionGroupA, flipperCollisionGroup]);
-      this.setPhysicsProperties();
+      this.flipperInner.setCollisionCategory(collisionGroupB);
+      this.flipperInner.setCollidesWith([collisionGroupA, flipperCollisionGroup]);
     }
   }, {
     key: "flip",
@@ -103,7 +114,12 @@ function () {
 
       if (this.isFlipping) {
         this.flipper.body.torque = this.torque;
-      }
+      } //When flipping, increase the friction of the ball (simulates rubbers)
+      // ball.setFriction(1)
+      // setTimeout(() => {
+      //     ball.setFriction(0)
+      // }, 100)
+
     }
   }, {
     key: "hold",
@@ -152,6 +168,14 @@ function (_Flipper) {
         x: -this.flipperLength / 2 + 3,
         y: 0
       };
+      this.pin2.pointA = {
+        x: 5,
+        y: 5
+      };
+      this.pin2.pointB = {
+        x: -this.flipperLength / 2 + 3,
+        y: 0
+      };
     }
   }]);
 
@@ -191,6 +215,14 @@ function (_Flipper2) {
         y: 5
       };
       this.pin.pointB = {
+        x: this.flipperLength / 2 - 3,
+        y: 0
+      };
+      this.pin2.pointA = {
+        x: -5,
+        y: 5
+      };
+      this.pin2.pointB = {
         x: this.flipperLength / 2 - 3,
         y: 0
       };

@@ -58,14 +58,13 @@ function (_Phaser$Physics$Matte) {
 
     _this.setCollisionCategory(collisionGroupA);
 
-    _this.body.density = 0.25;
+    _this.body.density = .0005;
 
     _this.setDepth(1);
 
-    _this.body.label = 'Ball';
+    _this.body.label = 'Ball'; //this.killZoneCheck()
 
-    _this.killZoneCheck();
-
+    console.log(_assertThisInitialized(_this));
     _this.id = _this.body.id;
     balls.push(_this.body);
     return _this;
