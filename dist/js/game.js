@@ -23,10 +23,9 @@ var config = {
 }; //Declare global variables 
 
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
-var balls, spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, //Static Objects
-bumperA, leftRampRight, rightLane, rightTrapCowl, farRightWall, leftRampLeft, rightRampLeft, rightWallA, killZone, leftSlingshot, rightRampRight, rightWallB, leftLane, leftWall, rightSlingshot, topLoop, leftLoopTop, midTargetLeft, rightTargets, //Background
+var balls, spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, testShape, //Background
 playfield, plastics, //Utilities
-collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, test, tween;
+collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, flipperCollisionGroup, test, tween;
 var game = new Phaser.Game(config); //Load assets
 
 function preload() {
@@ -46,6 +45,7 @@ function create() {
   collisionGroupC = this.matter.world.nextCategory();
   collisionGroupD = this.matter.world.nextCategory();
   collisionGroupE = this.matter.world.nextCategory();
+  flipperCollisionGroup = this.matter.world.nextCategory();
   test = this;
   bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true);
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -65,29 +65,36 @@ function create() {
   // plastics.setDepth(1)
   //Flippers
 
-  leftFlipper = new LeftFlipper(this, 118, 725);
-  rightFlipper = new RightFlipper(this, 274, 725); //Static Objects
+  leftFlipper = new LeftFlipper(this, 147, 634);
+  rightFlipper = new RightFlipper(this, 330, 634); //Static Objects
 
   /*********************************************************/
+  //Remove variable names later if unused in global scope
 
-  leftRampRight = new StaticCustomShape(this, 160, 168, 'leftRampRight', collisionGroupA);
-  rightLane = new StaticCustomShape(this, 378, 591, 'rightLane', collisionGroupA);
-  leftLane = new StaticCustomShape(this, 97, 591, 'leftLane', collisionGroupA);
-  rightTrapCowl = new StaticCustomShape(this, 369, 185, 'rightTrapCowl', collisionGroupA);
-  farRightWall = new StaticCustomShape(this, 481, 455, 'farRightWall', collisionGroupA);
-  leftRampLeft = new StaticCustomShape(this, 135, 222, 'leftRampLeft', collisionGroupA);
-  rightRampLeft = new StaticCustomShape(this, 282, 112, 'rightRampLeft', collisionGroupA);
-  rightWallA = new StaticCustomShape(this, 445, 530, 'rightWallA', collisionGroupA).setScale(1, 1.1);
-  rightWallB = new StaticCustomShape(this, 431, 310, 'rightWallB', collisionGroupA);
-  killZone = new StaticCustomShape(this, 250, 740, 'killZone', collisionGroupA);
-  leftSlingshot = new StaticCustomShape(this, 120, 535, 'leftSlingshot', collisionGroupA);
-  rightSlingshot = new StaticCustomShape(this, 355, 535, 'rightSlingshot', collisionGroupA);
-  rightRampRight = new StaticCustomShape(this, 342, 137, 'rightRampRight', collisionGroupA);
-  leftWall = new StaticCustomShape(this, 40, 488, 'leftWall', collisionGroupA).setScale(1, 1.1);
-  topLoop = new StaticCustomShape(this, 130, 170, 'topLoop', collisionGroupA);
-  leftLoopTop = new StaticCustomShape(this, 125, 110, 'leftLoopTop', collisionGroupA);
-  midTargetLeft = new StaticCustomShape(this, 218, 90, 'midTargetLeft', collisionGroupA);
-  rightTargets = new StaticCustomShape(this, 398, 392, 'rightTargets', collisionGroupA); //Setup collision events
+  new StaticCustomShape(this, 160, 168, 'leftRampRight', collisionGroupB);
+  new StaticCustomShape(this, 378, 591, 'rightLane', collisionGroupB);
+  testShape = new StaticCustomShape(this, 97, 591, 'leftLane', collisionGroupB);
+  new StaticCustomShape(this, 369, 185, 'rightTrapCowl', collisionGroupB);
+  new StaticCustomShape(this, 481, 455, 'farRightWall', collisionGroupB);
+  new StaticCustomShape(this, 135, 222, 'leftRampLeft', collisionGroupB);
+  new StaticCustomShape(this, 282, 112, 'rightRampLeft', collisionGroupB);
+  new StaticCustomShape(this, 445, 530, 'rightWallA', collisionGroupB).setScale(1, 1.1);
+  new StaticCustomShape(this, 431, 310, 'rightWallB', collisionGroupB);
+  new StaticCustomShape(this, 250, 740, 'killZone', collisionGroupB);
+  new StaticCustomShape(this, 120, 535, 'leftSlingshot', collisionGroupB);
+  new StaticCustomShape(this, 355, 535, 'rightSlingshot', collisionGroupB);
+  new StaticCustomShape(this, 342, 137, 'rightRampRight', collisionGroupB);
+  new StaticCustomShape(this, 40, 488, 'leftWall', collisionGroupB).setScale(1, 1.1);
+  new StaticCustomShape(this, 130, 170, 'topLoop', collisionGroupB);
+  new StaticCustomShape(this, 125, 110, 'leftLoopTop', collisionGroupB);
+  new StaticCustomShape(this, 218, 90, 'midTargetLeft', collisionGroupB);
+  new StaticCustomShape(this, 398, 392, 'rightTargets', collisionGroupB);
+  new StaticShape(this, 'rectangle', 260, 197, 75, 15, .02, 3); // top middle
+
+  new StaticShape(this, 'rectangle', 156, 110, 90, 15, 1.45, 3); // left center
+  //Collision events
+
+  /*********************************************************/
   //Change to one <------------
 
   var canCallA = true;
@@ -142,6 +149,7 @@ function update() {
 
   if (Phaser.Input.Keyboard.JustUp(left)) {
     leftFlipper.isFlipping = false;
+    leftFlipper.release();
   }
 
   if (Phaser.Input.Keyboard.JustDown(right)) {
@@ -151,6 +159,7 @@ function update() {
 
   if (Phaser.Input.Keyboard.JustUp(right)) {
     rightFlipper.isFlipping = false;
+    rightFlipper.release();
   }
 }
 //# sourceMappingURL=game.js.map

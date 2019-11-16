@@ -7,15 +7,15 @@ class Flipper {
         this.x = x
         this.y = y
         this.blockOffsetX = 25
-        this.blockOffsetY = 37
+        this.blockOffsetY = 45
         this.blockRotation = .50
         this.stopperOffsetX = 25
-        this.stopperOffsetY = -25
+        this.stopperOffsetY = -23
         this.flipperOffsetX = 25
         this.flipperOffsetY = 5
-        this.torque = -1.5
-        this.staticTorque = 0.5
-        this.flipperLength = 62
+        this.torque = -5
+        this.staticTorque = 1
+        this.flipperLength = 78
         this.isFlipping = false
     }
     createComponents(){
@@ -44,13 +44,14 @@ class Flipper {
         this.pivot.setStatic(true)
 
         //Flipper
-        let rectA = Phaser.Physics.Matter.Matter.Bodies.rectangle(this.x + this.flipperOffsetX , this.y + this.flipperOffsetY, this.flipperLength, 16, {
+        let rectA = Phaser.Physics.Matter.Matter.Bodies.rectangle(this.x + this.flipperOffsetX , this.y + this.flipperOffsetY, this.flipperLength, 24, {
             chamfer: 10,
         })
         this.flipperBody = this.scene.matter.body.create({
             parts: [ rectA ]
         })
         this.flipper = this.scene.matter.add.image(150, 0, null).setScale(0.2).setExistingBody(this.flipperBody)
+        this.flipper.body.restitution = 0
 
         //Joint
         this.pin = this.scene.matter.add.constraint(this.pivot, this.flipper)
@@ -65,10 +66,10 @@ class Flipper {
 
     setCollisionGroups(){
         [ this.block, this.stopper, this.flipper ].forEach( el => {
-            el.setCollisionCategory(collisionGroupB)
+            el.setCollisionCategory(flipperCollisionGroup)
         })
-        this.stopper.setCollidesWith(collisionGroupB)
-        this.flipper.setCollidesWith([ collisionGroupA, collisionGroupB ])
+        this.stopper.setCollidesWith(flipperCollisionGroup)
+        this.flipper.setCollidesWith([ collisionGroupA, flipperCollisionGroup ])
 
         this.setPhysicsProperties()
     }
@@ -81,10 +82,12 @@ class Flipper {
     }
 
     hold(){
-        this.flipper.body.torque = this.staticTorque
         if (this.isFlipping){
             this.flipper.body.torque = -this.staticTorque
         }
+    }
+    release(){
+        this.flipper.body.torque = this.staticTorque
     }
 
 }
