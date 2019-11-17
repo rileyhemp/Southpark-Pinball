@@ -235,4 +235,56 @@ function (_Flipper2) {
 
   return RightFlipper;
 }(Flipper);
+
+var SideFlipper =
+/*#__PURE__*/
+function (_Flipper3) {
+  _inherits(SideFlipper, _Flipper3);
+
+  function SideFlipper(scene, x, y) {
+    var _this3;
+
+    _classCallCheck(this, SideFlipper);
+
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(SideFlipper).call(this, scene, x, y));
+    _this3.blockOffsetX = 5;
+    _this3.blockOffsetY = 40;
+    _this3.blockRotation = -1.2;
+    _this3.stopperOffsetX = -40;
+    _this3.stopperOffsetY = -5;
+    _this3.flipperLength = 70;
+    _this3.torque = -_this3.torque;
+    _this3.staticTorque = -_this3.staticTorque;
+
+    _get(_getPrototypeOf(SideFlipper.prototype), "createComponents", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3));
+
+    _get(_getPrototypeOf(SideFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3));
+
+    return _this3;
+  }
+
+  _createClass(SideFlipper, [{
+    key: "positionPin",
+    value: function positionPin() {
+      this.pin.pointA = {
+        x: -5,
+        y: 5
+      };
+      this.pin.pointB = {
+        x: this.flipperLength / 2 - 3,
+        y: 0
+      };
+      this.pin2.pointA = {
+        x: -5,
+        y: 5
+      };
+      this.pin2.pointB = {
+        x: this.flipperLength / 2 - 3,
+        y: 0
+      };
+    }
+  }]);
+
+  return SideFlipper;
+}(Flipper);
 //# sourceMappingURL=flipper.js.map

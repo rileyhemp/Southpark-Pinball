@@ -24,9 +24,9 @@ var config = {
 
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
 var balls = [];
-var spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, testShape, bumperA, bumperB, bumperC, //Background
+var spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, sideFlipper, testShape, bumperA, bumperB, bumperC, //Background
 playfield, plastics, //Utilities
-collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, isOnRamp, leftRampDivert, // Default: false
+collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, leftRampDivert, // Default: false
 leftRampDiverter, leftRampBottom, flipperCollisionGroup, test, tween, testFlipper;
 var game = new Phaser.Game(config); //Load assets
 
@@ -75,7 +75,8 @@ function create() {
   //Flippers
 
   leftFlipper = new LeftFlipper(this, 147, 634);
-  rightFlipper = new RightFlipper(this, 330, 634); //Pop bumpers
+  rightFlipper = new RightFlipper(this, 330, 634);
+  sideFlipper = new SideFlipper(this, 420, 295); //Pop bumpers
 
   bumperA = new Bumper(this, 305, 100, 'bumperA');
   bumperB = new Bumper(this, 392, 95, 'bumperB');
@@ -237,6 +238,7 @@ function create() {
 function update() {
   leftFlipper.hold();
   rightFlipper.hold();
+  sideFlipper.hold();
 
   if (Phaser.Input.Keyboard.JustDown(spacebar)) {
     ball = new Ball(this, 416, 773, 'ball');
@@ -255,28 +257,16 @@ function update() {
 
   if (Phaser.Input.Keyboard.JustDown(right)) {
     rightFlipper.flip();
+    sideFlipper.flip();
     rightFlipper.isFlipping = true;
+    sideFlipper.isFlipping = true;
   }
 
   if (Phaser.Input.Keyboard.JustUp(right)) {
     rightFlipper.isFlipping = false;
+    sideFlipper.isFlipping = false;
     rightFlipper.release();
-  } //Changes what bodies the ball collides depending on whether it went up a ramp or not. 
-
-
-  if (balls.length && !isOnRamp) {
-    balls.forEach(function (ball) {
-      ball.collisionFilter.mask = 14;
-    });
-  } else if (balls.length && isOnRamp) {
-    balls.forEach(function (ball) {
-      ball.collisionFilter.mask = 18;
-    });
-  } // if (!leftRampDivert) {
-  //     leftRampDiverter.setCollidesWith(collisionGroupB)
-  // } else if (leftRampDivert){
-  //     leftRampDiverter.setCollidesWith(collisionGroupA)
-  // }
-
+    sideFlipper.release();
+  }
 }
 //# sourceMappingURL=game.js.map

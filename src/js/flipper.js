@@ -175,6 +175,40 @@ class RightFlipper extends Flipper {
     }
 }
 
+class SideFlipper extends Flipper {
+    constructor(scene, x, y){
+        super(scene, x, y)
+        this.blockOffsetX = 5
+        this.blockOffsetY = 40
+        this.blockRotation = -1.2
+        this.stopperOffsetX = -40
+        this.stopperOffsetY = -5
+        this.flipperLength = 70
+        this.torque = -this.torque
+        this.staticTorque = -this.staticTorque
+        super.createComponents()
+        super.setCollisionGroups()
+    }
+    positionPin(){
+        this.pin.pointA = {
+            x: -5,  
+            y: 5
+        }
+        this.pin.pointB = {
+            x: this.flipperLength/2-3, 
+            y: 0
+        }
+        this.pin2.pointA = {
+            x: -5,
+            y: 5
+        }
+        this.pin2.pointB = {
+            x: this.flipperLength/2-3, 
+            y: 0
+        }
+    }
+}
+
 
 
 

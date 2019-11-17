@@ -36,6 +36,7 @@ let
     bounds, 
     leftFlipper, 
     rightFlipper, 
+    sideFlipper,
     testShape,
     bumperA, bumperB, bumperC,
 
@@ -46,7 +47,6 @@ let
     //Utilities
     collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE,
     sensorGroupA, sensorGroupB,
-    isOnRamp,
     leftRampDivert, // Default: false
     leftRampDiverter, 
     leftRampBottom,
@@ -110,6 +110,7 @@ function create() {
     //Flippers
     leftFlipper = new LeftFlipper(this, 147, 634) 
     rightFlipper = new RightFlipper(this, 330, 634)
+    sideFlipper = new SideFlipper(this, 420, 295)
 
     //Pop bumpers
     bumperA = new Bumper(this, 305, 100, 'bumperA')
@@ -253,6 +254,7 @@ function update() {
     
     leftFlipper.hold()
     rightFlipper.hold()
+    sideFlipper.hold()
 
     
     if(Phaser.Input.Keyboard.JustDown(spacebar)){
@@ -272,33 +274,15 @@ function update() {
 
     if (Phaser.Input.Keyboard.JustDown(right)){
         rightFlipper.flip()
+        sideFlipper.flip()
         rightFlipper.isFlipping = true
+        sideFlipper.isFlipping = true
     } 
 
     if (Phaser.Input.Keyboard.JustUp(right)){
         rightFlipper.isFlipping = false
+        sideFlipper.isFlipping = false
         rightFlipper.release()
+        sideFlipper.release()
     } 
-
-    //Changes what bodies the ball collides depending on whether it went up a ramp or not. 
-    if (balls.length && !isOnRamp){
-        balls.forEach(ball => {
-            ball.collisionFilter.mask = 14
-        })
-    } else if (balls.length && isOnRamp){
-        balls.forEach(ball => {
-            ball.collisionFilter.mask = 18
-        })
-    }
-
-    // if (!leftRampDivert) {
-    //     leftRampDiverter.setCollidesWith(collisionGroupB)
-    // } else if (leftRampDivert){
-    //     leftRampDiverter.setCollidesWith(collisionGroupA)
-    // }
-
-
-    
-
-
 } 
