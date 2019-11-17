@@ -1,6 +1,3 @@
-
-//set a circle in the beginning of the flipper and constrain it to the pivot directly. no offset. 
-
 class Flipper {
     constructor(scene, x, y, options){
         this.scene = scene
@@ -13,11 +10,12 @@ class Flipper {
         this.stopperOffsetY = -23
         this.flipperOffsetX = 25
         this.flipperOffsetY = 5
-        this.torque = -9
+        this.torque = -8.5
         this.staticTorque = 2 
         this.flipperLength = 78
         this.isFlipping = false
     }
+
     createComponents(){
         
         //Bottom block

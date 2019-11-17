@@ -11,7 +11,7 @@ var config = {
       debug: true,
       gravity: {
         x: 0,
-        y: 1
+        y: .9
       }
     }
   },
@@ -26,7 +26,7 @@ var Bodies = Phaser.Physics.Matter.Matter.Bodies;
 var balls = [];
 var spacebar, left, right, ball, bounds, leftFlipper, rightFlipper, testShape, bumperA, bumperB, bumperC, //Background
 playfield, plastics, //Utilities
-collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensors, isOnRamp, leftRampDivert, // Default: false
+collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, isOnRamp, leftRampDivert, // Default: false
 leftRampDiverter, leftRampBottom, flipperCollisionGroup, test, tween, testFlipper;
 var game = new Phaser.Game(config); //Load assets
 
@@ -42,7 +42,9 @@ function preload() {
 
 function create() {
   //Set some things up, inputs, collisiongroups, etc. 
-  sensors = this.matter.world.nextCategory(); // Sensors collision group
+  sensorGroupA = this.matter.world.nextCategory(); // Ground level sensors
+
+  sensorGroupB = this.matter.world.nextCategory(); // Upper level sensors
 
   collisionGroupA = this.matter.world.nextCategory(); // Ball
 
@@ -52,7 +54,6 @@ function create() {
   collisionGroupD = this.matter.world.nextCategory();
   collisionGroupE = this.matter.world.nextCategory();
   flipperCollisionGroup = this.matter.world.nextCategory();
-  isOnRamp = false;
   leftRampDivert = false;
   test = this;
   bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true);
@@ -62,9 +63,7 @@ function create() {
 
   this.input.on('pointerdown', function (pointer) {
     ball = new Ball(this, pointer.x, pointer.y, 'ball');
-    console.log(pointer.x, ',', pointer.y); //ball.setCollisionCategory(sensors)
-
-    ball.setCollidesWith([collisionGroupC, sensors]);
+    console.log(pointer.x, ',', pointer.y);
   }, this); //Layout overlay
 
   var blueprint = this.add.image(260, 400, 'blueprint'); // playfield = this.add.image(220, 445, 'playfield')
@@ -105,106 +104,96 @@ function create() {
   new StaticCustomShape(this, 125, 110, 'leftLoopTop', collisionGroupB);
   new StaticCustomShape(this, 218, 90, 'midTargetLeft', collisionGroupB);
   new StaticCustomShape(this, 398, 392, 'rightTargets', collisionGroupB);
-  new StaticShape(this, 'rectangle', 260, 197, 75, 15, .02, 8);
-  new StaticShape(this, 'rectangle', 156, 110, 90, 15, 1.45, 8); //Small round rubbers
+  new StaticShape(this, 'rectangle', 260, 197, 75, 15, .02, collisionGroupB);
+  new StaticShape(this, 'rectangle', 156, 110, 90, 15, 1.45, collisionGroupB); //Small round rubbers
 
-  new StaticShape(this, 'circle', 403, 482, 5, null, null, 8);
-  new StaticShape(this, 'circle', 72, 482, 5, null, null, 8);
-  new StaticShape(this, 'circle', 298, 73, 5, null, null, 8);
-  new StaticShape(this, 'circle', 405, 121, 5, null, null, 8); //Medium round rubbers
+  new StaticShape(this, 'circle', 403, 482, 5, null, null, collisionGroupB);
+  new StaticShape(this, 'circle', 72, 482, 5, null, null, collisionGroupB);
+  new StaticShape(this, 'circle', 298, 73, 5, null, null, collisionGroupB);
+  new StaticShape(this, 'circle', 405, 121, 5, null, null, collisionGroupB); //Medium round rubbers
 
-  new StaticShape(this, 'circle', 236, 698, 8, null, null, 8); // Center post
+  new StaticShape(this, 'circle', 236, 698, 6, null, null, collisionGroupB); // Center post
 
-  new StaticShape(this, 'circle', 88, 421, 8, null, null, 8);
-  new StaticShape(this, 'circle', 140, 571, 8, null, null, 8); //Slingshot corners
+  new StaticShape(this, 'circle', 88, 421, 8, null, null, collisionGroupB);
+  new StaticShape(this, 'circle', 140, 571, 8, null, null, collisionGroupB); //Slingshot corners
 
-  new StaticShape(this, 'circle', 365, 487, 8, null, null, 8); // 
+  new StaticShape(this, 'circle', 365, 487, 8, null, null, collisionGroupB); // 
 
-  new StaticShape(this, 'circle', 331, 570, 8, null, null, 8); // 
+  new StaticShape(this, 'circle', 331, 570, 8, null, null, collisionGroupB); // 
 
-  new StaticShape(this, 'circle', 108, 487, 8, null, null, 8); // 
+  new StaticShape(this, 'circle', 108, 487, 8, null, null, collisionGroupB); // 
 
-  new StaticShape(this, 'circle', 291, 38, 8, null, null, 8); //Top tri-lane
+  new StaticShape(this, 'circle', 291, 38, 8, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 325, 39, 8, null, null, 8); //Top tri-lane
+  new StaticShape(this, 'circle', 325, 39, 8, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 359, 37, 8, null, null, 8); //Top tri-lane
+  new StaticShape(this, 'circle', 359, 37, 8, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 392, 37, 8, null, null, 8); //Top tri-lane
+  new StaticShape(this, 'circle', 392, 37, 8, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 292, 59, 8, null, null, 8); //Top tri-lane
+  new StaticShape(this, 'circle', 292, 59, 8, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 326, 59, 8, null, null, 8); //Top tri-lane
+  new StaticShape(this, 'circle', 326, 59, 8, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 360, 58, 8, null, null, 8); //Top tri-lane
+  new StaticShape(this, 'circle', 360, 58, 8, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 394, 58, 8, null, null, 8); //Top tri-lane
+  new StaticShape(this, 'circle', 394, 58, 8, null, null, collisionGroupB); //Top tri-lane
   //Second level (collision group C)
 
-  new StaticCustomShape(this, 45, 500, 'leftLaneBottomLeft', collisionGroupC); // lane Lane bottom L
+  new StaticCustomShape(this, 45, 500, 'leftLaneBottomLeft', collisionGroupC); // Left Lane bottom L
 
   new StaticCustomShape(this, 92, 450, 'leftLaneBottomRight', collisionGroupC); // Left lane bottom R
 
-  new StaticCustomShape(this, 150, 110, 'rightRampDivider', collisionGroupC);
-  new StaticCustomShape(this, 135, 7, 'leftRampTop', collisionGroupC);
-  leftRampDiverter = new StaticCustomShape(this, 130, 10, 'leftRampDiverter', collisionGroupC);
+  new StaticCustomShape(this, 150, 110, 'rightRampDivider', collisionGroupC); // Ramp divider
+
+  new StaticCustomShape(this, 135, 7, 'leftRampTop', collisionGroupC); // Left ramp top
+  //leftRampDiverter = new StaticCustomShape(this, 130, 10, 'leftRampDiverter', collisionGroupC)
+
   leftRampBottom = new StaticShape(this, 'circle', 128, 50, 25, null, null, collisionGroupC); // Left ramp bottom
 
   new StaticShape(this, 'circle', 365, 80, 50, null, null, collisionGroupC); //Right ramp bottom
 
   new StaticCustomShape(this, 345, 16, 'rightRampTop', collisionGroupC); // Right ramp top
 
-  new StaticShape(this, 'rectangle', 55, 228, 15, 360, 0.095, 16); // Left lane L
+  new StaticShape(this, 'rectangle', 55, 228, 15, 360, 0.095, collisionGroupC); // Left lane L
 
-  new StaticShape(this, 'rectangle', 92, 228, 15, 360, 0.095, 16); // Left lane R
+  new StaticShape(this, 'rectangle', 92, 228, 15, 360, 0.095, collisionGroupC); // Left lane R
 
-  new StaticShape(this, 'rectangle', 100, 522, 15, 25, 1, 16); // Left ramp termination
+  new StaticShape(this, 'rectangle', 100, 522, 15, 25, 1, collisionGroupC); // Left ramp termination
 
-  new StaticShape(this, 'rectangle', 200, 72, 15, 150, -0.2, 16); // Mid ramp right
+  new StaticShape(this, 'rectangle', 200, 72, 15, 150, -0.2, collisionGroupC); // Mid ramp right
 
-  new StaticShape(this, 'rectangle', 275, 90, 15, 110, -0.2, 16); // Right ramp left
+  new StaticShape(this, 'rectangle', 275, 90, 15, 110, -0.2, collisionGroupC); // Right ramp left
 
-  new StaticShape(this, 'rectangle', 325, 95, 15, 80, -0.2, 16); // Right ramp right
+  new StaticShape(this, 'rectangle', 325, 95, 15, 80, -0.2, collisionGroupC); // Right ramp right
 
-  new StaticShape(this, 'rectangle', 422, 228, 15, 345, -0.095, 16); // Right lane L
+  new StaticShape(this, 'rectangle', 422, 228, 15, 345, -0.095, collisionGroupC); // Right lane L
 
-  new StaticShape(this, 'rectangle', 464, 228, 15, 360, -0.095, 16); // Right lane R
+  new StaticShape(this, 'rectangle', 464, 228, 15, 360, -0.095, collisionGroupC); // Right lane R
 
-  new StaticShape(this, 'rectangle', 401, 449, 140, 15, -1, 16); // Right lane Bottom L
+  new StaticShape(this, 'rectangle', 401, 449, 140, 15, -1, collisionGroupC); // Right lane Bottom L
 
-  new StaticShape(this, 'rectangle', 438, 469, 150, 15, -1, 16); // Right lane Bottom R
+  new StaticShape(this, 'rectangle', 438, 469, 150, 15, -1, collisionGroupC); // Right lane Bottom R
 
-  new StaticShape(this, 'rectangle', 376, 523, 15, 25, -1, 16); // Right lane termination
+  new StaticShape(this, 'rectangle', 376, 523, 15, 25, -1, collisionGroupC); // Right lane termination
   //Sensors 
   //Ramp on / off sensors
 
-  new Sensor(this, 126, 170, 'ramp', 1, 'leftRampOn');
-  new Sensor(this, 187, 146, 'ramp', 1, 'centerRampOn');
-  new Sensor(this, 89, 506, 'ramp', 2, 'leftRampOff');
-  new Sensor(this, 309, 135, 'ramp', 2, 'rightRampOn');
-  new Sensor(this, 386, 507, 'ramp', 2, 'rightRampOff'); //Collision events
+  new Sensor(this, 126, 170, 0, 'ramp', 'leftRampOn', sensorGroupA);
+  new Sensor(this, 187, 146, 0, 'ramp', 'centerRampOn', sensorGroupA);
+  new Sensor(this, 309, 135, 0, 'ramp', 'rightRampOn', sensorGroupA);
+  new Sensor(this, 89, 506, 0, 'ramp', 'leftRampOff', sensorGroupB);
+  new Sensor(this, 386, 507, 0, 'ramp', 'rightRampOff', sensorGroupB); //Collision events
 
   /*********************************************************/
 
   this.matter.world.on('collisionstart', function (event, bodyA, bodyB) {
     //Sensors
     if (bodyB.label === 'Ball' && bodyA.isSensor) {
-      console.log(bodyA); //Indicates if the ball is on a ramp
-
+      //Toggles the balls isOnRamp state
       if (bodyA.type === 'ramp') {
-        isOnRamp = !isOnRamp;
-        console.log(isOnRamp);
-      } //Toggles the left ramp diverter
-
-
-      if (bodyA.label === "leftRampOn") {
-        leftRampDivert = true;
-        console.log('Left ramp divert', leftRampDivert);
-      }
-
-      if (bodyA.label === "centerRampOn") {
-        leftRampDivert = false;
-        console.log('Left ramp divert', leftRampDivert);
+        bodyB.isOnRamp = !bodyB.isOnRamp;
+        console.log(bodyB.isOnRamp);
       }
     } //Slingshots
 
@@ -283,12 +272,11 @@ function update() {
     balls.forEach(function (ball) {
       ball.collisionFilter.mask = 18;
     });
-  }
+  } // if (!leftRampDivert) {
+  //     leftRampDiverter.setCollidesWith(collisionGroupB)
+  // } else if (leftRampDivert){
+  //     leftRampDiverter.setCollidesWith(collisionGroupA)
+  // }
 
-  if (!leftRampDivert) {
-    leftRampDiverter.setCollidesWith(collisionGroupB);
-  } else if (leftRampDivert) {
-    leftRampDiverter.setCollidesWith(collisionGroupA);
-  }
 }
 //# sourceMappingURL=game.js.map

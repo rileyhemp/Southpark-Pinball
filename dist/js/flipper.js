@@ -22,7 +22,6 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-//set a circle in the beginning of the flipper and constrain it to the pivot directly. no offset. 
 var Flipper =
 /*#__PURE__*/
 function () {
@@ -39,7 +38,7 @@ function () {
     this.stopperOffsetY = -23;
     this.flipperOffsetX = 25;
     this.flipperOffsetY = 5;
-    this.torque = -9;
+    this.torque = -8.5;
     this.staticTorque = 2;
     this.flipperLength = 78;
     this.isFlipping = false;

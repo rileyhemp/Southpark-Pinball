@@ -50,46 +50,65 @@ function (_Phaser$Physics$Matte) {
 
     _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.75);
 
-    _this.body.friction = 0;
-    _this.body.frictionAir = 0.0001;
-    scene.sys.displayList.add(_assertThisInitialized(_this));
-
-    _this.setCollidesWith([collisionGroupA, collisionGroupB]);
-
-    _this.setCollisionCategory(collisionGroupA);
-
-    _this.setDensity(.0009);
-
-    _this.setDepth(1); // this.body.restitution = 0.2
-    // this.setBounce(0.2)
-
-
+    _this.id = _this.body.id;
+    _this.scene = scene;
     _this.body.label = 'Ball';
 
-    _this.killZoneCheck();
+    _this.setupBall();
 
-    _this.id = _this.body.id;
-    balls.push(_this.body);
+    _this.update();
+
     return _this;
   }
 
   _createClass(Ball, [{
+    key: "setupBall",
+    value: function setupBall() {
+      this.setCollisions('table');
+      this.body.isOnRamp = false;
+      this.body.friction = 0;
+      this.body.frictionAir = 0.0001;
+      this.setDensity(.0009);
+      this.setDepth(1);
+      this.setCollisionCategory(collisionGroupA);
+      balls.push(this.body);
+      this.scene.sys.displayList.add(this);
+    }
+  }, {
+    key: "setCollisions",
+    value: function setCollisions(level) {
+      //Changes what the ball can collide with depending on where it is
+      if (level === 'table') {
+        this.setCollidesWith([collisionGroupA, collisionGroupB, sensorGroupA]);
+      } else if (level === 'ramps') {
+        this.setCollidesWith([collisionGroupA, collisionGroupC, sensorGroupB]);
+      }
+    }
+  }, {
     key: "launch",
     value: function launch() {
       _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -20.5);
     }
   }, {
-    key: "killZoneCheck",
-    value: function killZoneCheck() {
+    key: "update",
+    value: function update() {
       var _this2 = this;
 
       var i = setInterval(function () {
+        //Check if the ball is on a ramp
+        if (_this2.body.isOnRamp) {
+          _this2.setCollisions('ramps');
+        } else if (!_this2.body.isOnRamp) {
+          _this2.setCollisions('table');
+        } //Check if the ball is in killzone
+
+
         if (_this2.y > 720) {
           _this2.destroy();
 
           clearInterval(i);
         }
-      }, 100);
+      }, 16.66666);
     }
   }]);
 
@@ -110,8 +129,10 @@ function () {
     this.width = width;
     this.height = height;
     this.rotation = rotation;
-    this.drawShape();
-    this.body.collisionFilter.category = collisionGroup;
+    this.drawShape(); //this.body.collisionFilter.category = collisionGroup
+
+    this.object = this.scene.matter.add.image(this.x, this.y, null).setExistingBody(this.body).setVisible(false);
+    this.object.setCollisionCategory(collisionGroup);
   }
 
   _createClass(StaticShape, [{
@@ -230,17 +251,15 @@ var Sensor =
 function (_StaticShape) {
   _inherits(Sensor, _StaticShape);
 
-  function Sensor(scene, x, y, type, level, label) {
+  function Sensor(scene, x, y, rotation, type, name, collisionGroup) {
     var _this6;
 
     _classCallCheck(this, Sensor);
 
-    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Sensor).call(this, scene, 'circle', x, y, 12));
-    _this6.body.collisionFilter.category = 2;
+    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Sensor).call(this, scene, 'rectangle', x, y, 30, 1, rotation, collisionGroup));
     _this6.body.isSensor = true;
     _this6.body.type = type;
-    _this6.level = level;
-    _this6.body.label = label;
+    _this6.body.label = name;
     return _this6;
   }
 

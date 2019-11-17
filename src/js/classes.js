@@ -3,30 +3,49 @@ class Ball extends Phaser.Physics.Matter.Image {
         super(scene.matter.world, x, y, texture)
         super.setScale(.21) 
         super.setCircle(8.75)
+        this.id = this.body.id
+        this.scene = scene
+        this.body.label = 'Ball'
+        this.setupBall()
+        this.update()
+    }
+    setupBall(){
+        this.setCollisions('table')
+        this.body.isOnRamp = false
         this.body.friction = 0
         this.body.frictionAir = 0.0001
-        scene.sys.displayList.add(this)
-        this.setCollidesWith([collisionGroupA, collisionGroupB])
-        this.setCollisionCategory(collisionGroupA)
         this.setDensity(.0009)
         this.setDepth(1)
-        // this.body.restitution = 0.2
-        // this.setBounce(0.2)
-        this.body.label = 'Ball'
-        this.killZoneCheck()
-        this.id = this.body.id
+        this.setCollisionCategory(collisionGroupA)
         balls.push(this.body)
+        this.scene.sys.displayList.add(this)
+
+    }
+    setCollisions(level){ 
+        //Changes what the ball can collide with depending on where it is
+        if ( level === 'table' ){
+            this.setCollidesWith([collisionGroupA, collisionGroupB, sensorGroupA])
+        } else if ( level === 'ramps' ){
+            this.setCollidesWith([collisionGroupA, collisionGroupC, sensorGroupB])
+        }
     }
     launch(){
         super.setVelocityY(-20.5)
     }
-    killZoneCheck(){
+    update(){
         let i = setInterval(()=>{
+            //Check if the ball is on a ramp
+            if (this.body.isOnRamp){
+                this.setCollisions('ramps')
+            } else if (!this.body.isOnRamp){
+                this.setCollisions('table')
+            } 
+            //Check if the ball is in killzone
             if (this.y > 720){
                 this.destroy()
                 clearInterval(i)
             }
-        }, 100)
+        }, 16.66666)
     }
 }
 
@@ -41,7 +60,9 @@ class StaticShape {
         this.height = height
         this.rotation = rotation
         this.drawShape()
-        this.body.collisionFilter.category = collisionGroup
+        //this.body.collisionFilter.category = collisionGroup
+        this.object = this.scene.matter.add.image(this.x, this.y, null).setExistingBody(this.body).setVisible(false)
+        this.object.setCollisionCategory(collisionGroup)
     }
     drawShape(){
         if (this.type === 'rectangle'){
@@ -112,12 +133,10 @@ class Bumper extends Phaser.Physics.Matter.Image {
 }
 
 class Sensor extends StaticShape {
-    constructor(scene, x, y, type, level, label){
-        super(scene, 'circle', x, y, 12)
-        this.body.collisionFilter.category = 2
+    constructor(scene, x, y, rotation, type, name, collisionGroup){
+        super(scene, 'rectangle', x, y, 30, 1, rotation, collisionGroup)
         this.body.isSensor = true
         this.body.type = type
-        this.level = level
-        this.body.label = label
+        this.body.label = name
     }
 }
