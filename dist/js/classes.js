@@ -46,7 +46,7 @@ function (_Phaser$Physics$Matte) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Ball).call(this, scene.matter.world, x, y, texture));
 
-    _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .21);
+    _get(_getPrototypeOf(Ball.prototype), "setScale", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), .8);
 
     _get(_getPrototypeOf(Ball.prototype), "setCircle", _assertThisInitialized(_this)).call(_assertThisInitialized(_this), 8.75);
 
@@ -98,8 +98,14 @@ function (_Phaser$Physics$Matte) {
         //Check if the ball is on a ramp
         if (_this2.body.isOnRamp) {
           _this2.setCollisions('ramps');
+
+          _this2.setDepth(3);
+
+          _this2.setDensity(0.00108);
         } else if (!_this2.body.isOnRamp) {
           _this2.setCollisions('table');
+
+          _this2.setDepth(1);
         } //Check if the ball is in killzone
 
 

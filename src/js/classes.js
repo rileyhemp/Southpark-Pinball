@@ -1,7 +1,7 @@
 class Ball extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, texture) {
         super(scene.matter.world, x, y, texture)
-        super.setScale(.21) 
+        super.setScale(.8) 
         super.setCircle(8.75)
         this.id = this.body.id
         this.scene = scene
@@ -37,8 +37,11 @@ class Ball extends Phaser.Physics.Matter.Image {
             //Check if the ball is on a ramp
             if (this.body.isOnRamp){
                 this.setCollisions('ramps')
+                this.setDepth(3)
+                this.setDensity(0.00108)
             } else if (!this.body.isOnRamp){
                 this.setCollisions('table')
+                this.setDepth(1)
             } 
             //Check if the ball is in killzone
             if (this.y > 720){
