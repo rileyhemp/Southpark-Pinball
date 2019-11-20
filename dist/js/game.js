@@ -99,55 +99,65 @@ function create() {
   leftFlipper = new LeftFlipper(this, 147, 634);
   rightFlipper = new RightFlipper(this, 330, 634);
   sideFlipper = new SideFlipper(this, 420, 295); //Pop bumpers
-  // bumperA = new Bumper(this, 305, 100, 'bumperA')
-  // bumperB = new Bumper(this, 392, 95, 'bumperB')
-  // bumperC = new Bumper(this, 360, 149, 'bumperC')
-  //Static Objects
+
+  bumperA = new Bumper(this, 300, 125, 'bumper');
+  bumperB = new Bumper(this, 370, 125, 'bumper');
+  bumperC = new Bumper(this, 330, 175, 'bumper'); //Static Objects
 
   /*********************************************************/
   //StaticCustomShape(scene, x, y, path, collision group)
   //StaticShape(scene, type, x, y, width, height, rotation, collision group)
   //First level (collision group B)
 
-  new StaticCustomShape(this, 147, 200, 'topLoop', collisionGroupB).setScale(0.85, 0.9); // new StaticCustomShape(this, 160, 168, 'leftRampRight', collisionGroupB)
-  // new StaticCustomShape(this, 378, 591, 'rightLane', collisionGroupB)
-  // new StaticCustomShape(this, 97, 591, 'leftLane', collisionGroupB)
-  // new StaticCustomShape(this, 369, 185, 'rightTrapCowl', collisionGroupB)
-  // new StaticCustomShape(this, 481, 455, 'farRightWall', collisionGroupB)
-  // new StaticCustomShape(this, 135, 222, 'leftRampLeft', collisionGroupB)
-  // new StaticCustomShape(this, 282, 112, 'rightRampLeft', collisionGroupB)
-  // new StaticCustomShape(this, 445, 530, 'rightWallA', collisionGroupB).setScale(1, 1.1)
-  // new StaticCustomShape(this, 431, 310, 'rightWallB', collisionGroupB)
-  // new StaticCustomShape(this, 250, 740, 'killZone', collisionGroupB)
-  // new StaticCustomShape(this, 120, 535, 'leftSlingshot', collisionGroupB)
-  // new StaticCustomShape(this, 355, 535, 'rightSlingshot', collisionGroupB)
-  // new StaticCustomShape(this, 342, 140, 'rightRampRight', collisionGroupB).setBounce(1)
-  // new StaticCustomShape(this, 40, 488, 'leftWall', collisionGroupB).setScale(1,1.1)
-  // new StaticCustomShape(this, 125, 110, 'leftLoopTop', collisionGroupB)
-  // new StaticCustomShape(this, 218, 90, 'midTargetLeft', collisionGroupB)
-  // new StaticCustomShape(this, 398, 392, 'rightTargets', collisionGroupB) 
-  // new StaticShape(this, 'rectangle', 260, 197, 75, 15, .02, collisionGroupB) 
-  // new StaticShape(this, 'rectangle', 156, 110, 90, 15, 1.45, collisionGroupB) 
-  //Small round rubbers
-  // new StaticShape(this, 'circle', 403, 482, 5, null, null, collisionGroupB) 
-  // new StaticShape(this, 'circle', 72, 482, 5, null, null, collisionGroupB) 
-  // new StaticShape(this, 'circle', 298, 73, 5, null, null, collisionGroupB) 
-  // new StaticShape(this, 'circle', 405, 121, 5, null, null, collisionGroupB)  
+  new StaticCustomShape(this, 250, 740, 'killZone', collisionGroupB).setScale(0.9, 1);
+  new StaticCustomShape(this, 147, 200, 'topLoop', collisionGroupB).setScale(0.85, 0.9); //new StaticCustomShape(this, 160, 168, 'leftRampRight', collisionGroupB)
+
+  new StaticCustomShape(this, 365, 593, 'rightLane', collisionGroupB).setScale(0.82, 1);
+  new StaticCustomShape(this, 107, 593, 'leftLane', collisionGroupB).setScale(0.82, 1);
+  new StaticCustomShape(this, 350, 218, 'rightTrapCowl', collisionGroupB).setScale(0.82, 1);
+  new StaticCustomShape(this, 450, 455, 'farRightWall', collisionGroupB).setAngle(-.5);
+  new StaticCustomShape(this, 155, 244, 'leftRampLeft', collisionGroupB).setScale(0.82, 1);
+  new StaticCustomShape(this, 155, 244, 'leftRampLeft', collisionGroupC).setScale(0.82, 1); //new StaticCustomShape(this, 282, 112, 'rightRampLeft', collisionGroupB)
+
+  new StaticCustomShape(this, 423, 530, 'rightWallA', collisionGroupB).setScale(1, 1.1).setAngle(-2.2);
+  new StaticCustomShape(this, 405, 310, 'rightWallB', collisionGroupB);
+  new StaticCustomShape(this, 130, 540, 'leftSlingshot', collisionGroupB).setScale(0.82, 1);
+  new StaticCustomShape(this, 345, 540, 'rightSlingshot', collisionGroupB).setScale(0.82, 1); //new StaticCustomShape(this, 342, 140, 'rightRampRight', collisionGroupB).setBounce(1)
+
+  new StaticCustomShape(this, 60, 488, 'leftWall', collisionGroupB).setScale(1, 1.1);
+  new StaticCustomShape(this, 157, 132, 'leftLoopTop', collisionGroupB).setAngle(11); //new StaticCustomShape(this, 218, 90, 'midTargetLeft', collisionGroupB)
+
+  new StaticCustomShape(this, 378, 400, 'rightTargets', collisionGroupB).setScale(1, 1);
+  new StaticShape(this, 'rectangle', 257, 224, 62, 15, .02, collisionGroupB); // Cartmen targets
+
+  new StaticShape(this, 'rectangle', 247, 91, 130, 15, 6.1, collisionGroupB); //Small round rubbers
+
+  new StaticShape(this, 'circle', 407, 451, 5, null, null, collisionGroupB);
+  new StaticShape(this, 'circle', 319, 148, 5, null, null, collisionGroupB);
+  new StaticShape(this, 'circle', 314, 76, 5, null, null, collisionGroupB); //Top tri-lane
+
+  new StaticShape(this, 'circle', 341, 76, 5, null, null, collisionGroupB); //Top tri-lane
+
+  new StaticShape(this, 'circle', 371, 76, 5, null, null, collisionGroupB); //Top tri-lane
+
+  new StaticShape(this, 'circle', 314, 98, 5, null, null, collisionGroupB); //Top tri-lane
+
+  new StaticShape(this, 'circle', 341, 98, 5, null, null, collisionGroupB); //Top tri-lane
+
+  new StaticShape(this, 'circle', 371, 98, 5, null, null, collisionGroupB); //Top tri-lane
   //Medium round rubbers
-  // new StaticShape(this, 'circle', 236, 698, 6, null, null, collisionGroupB) // Center post
-  // new StaticShape(this, 'circle', 88, 421, 8, null, null, collisionGroupB) 
-  // new StaticShape(this, 'circle', 140, 571, 8, null, null, collisionGroupB) //Slingshot corners
-  // new StaticShape(this, 'circle', 365, 487, 8, null, null, collisionGroupB) // 
-  // new StaticShape(this, 'circle', 331, 570, 8, null, null, collisionGroupB) // 
-  // new StaticShape(this, 'circle', 108, 487, 8, null, null, collisionGroupB) // 
-  // new StaticShape(this, 'circle', 291, 38, 8, null, null, collisionGroupB)//Top tri-lane
-  // new StaticShape(this, 'circle', 325, 39, 8, null, null, collisionGroupB)//Top tri-lane
-  // new StaticShape(this, 'circle', 359, 37, 8, null, null, collisionGroupB)//Top tri-lane
-  // new StaticShape(this, 'circle', 392, 37, 8, null, null, collisionGroupB)//Top tri-lane
-  // new StaticShape(this, 'circle', 292, 59, 8, null, null, collisionGroupB)//Top tri-lane
-  // new StaticShape(this, 'circle', 326, 59, 8, null, null, collisionGroupB)//Top tri-lane
-  // new StaticShape(this, 'circle', 360, 58, 8, null, null, collisionGroupB)//Top tri-lane
-  // new StaticShape(this, 'circle', 394, 58, 8, null, null, collisionGroupB)//Top tri-lane
+
+  new StaticShape(this, 'circle', 236, 698, 6, null, null, collisionGroupB); // Center post
+
+  new StaticShape(this, 'circle', 100, 435, 8, null, null, collisionGroupB); // Left lane
+
+  new StaticShape(this, 'circle', 121, 491, 8, null, null, collisionGroupB); // Slingshot corners
+
+  new StaticShape(this, 'circle', 350, 491, 8, null, null, collisionGroupB); // 
+
+  new StaticShape(this, 'circle', 148, 575, 8, null, null, collisionGroupB); // 
+
+  new StaticShape(this, 'circle', 326, 575, 8, null, null, collisionGroupB); // 
   //Second level (collision group C)
   // new StaticCustomShape(this, 45, 500, 'leftLaneBottomLeft', collisionGroupC) // Left Lane bottom L
   // new StaticCustomShape(this, 92, 450, 'leftLaneBottomRight', collisionGroupC) // Left lane bottom R
@@ -199,32 +209,8 @@ function create() {
     } //Pop bumpers
 
 
-    var canCallA = true;
-    var canCallB = true;
-    var canCallC = true;
-
-    if (bodyA.label === "bumperA" && bodyB.label === 'Ball' && canCallA) {
-      canCallA = false;
-      bumperA.fire(bodyB.position, "bumperA");
-      setTimeout(function () {
-        canCallA = true;
-      }, 100);
-    }
-
-    if (bodyA.label === "bumperB" && bodyB.label === 'Ball' && canCallB) {
-      canCallB = false;
-      bumperB.fire(bodyB.position, "bumperB");
-      setTimeout(function () {
-        canCallB = true;
-      }, 100);
-    }
-
-    if (bodyA.label === "bumperC" && bodyB.label === 'Ball' && canCallC) {
-      canCallC = false;
-      bumperC.fire(bodyB.position, "bumperC");
-      setTimeout(function () {
-        canCallC = true;
-      }, 100);
+    if (bodyA.label === "bumper" && bodyB.label === 'Ball') {
+      bodyA.gameObject.fire(bodyB.position);
     }
   });
 }

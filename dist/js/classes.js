@@ -216,7 +216,11 @@ function (_Phaser$Physics$Matte3) {
     _this4.y = y;
     _this4.body.label = name;
     _this4.scene = scene;
-    _this4.body.restitution = 1.5;
+    _this4.body.restitution = 1;
+
+    _this4.setCollisionCategory(collisionGroupB);
+
+    _this4.canAnimate = true;
     return _this4;
   }
 
@@ -226,26 +230,32 @@ function (_Phaser$Physics$Matte3) {
       var _this5 = this;
 
       //Grab the starting position
-      var startPosition = {
-        x: this.x,
-        y: this.y
-      }; //Calculate the midpoint between the ball and bumper
+      if (this.canAnimate) {
+        this.canAnimate = false;
+        var startPosition = {
+          x: this.x,
+          y: this.y
+        }; //Calculate the midpoint between the ball and bumper
 
-      var targetX = (this.x + position.x) / 2;
-      var targetY = (this.y + position.y) / 2; //Tween to that point
+        var targetX = (this.x + position.x) / 2;
+        var targetY = (this.y + position.y) / 2; //Tween to that point
 
-      this.scene.tweens.add({
-        targets: this,
-        x: targetX,
-        y: targetY,
-        yoyo: true,
-        duration: 20
-      }); //Reset the bumper after a brief delay
-
-      setTimeout(function () {
-        _this5.x = startPosition.x;
-        _this5.y = startPosition.y;
-      }, 50);
+        this.scene.tweens.add({
+          targets: this,
+          x: targetX,
+          y: targetY,
+          yoyo: true,
+          duration: 40,
+          repeat: 0
+        });
+        setTimeout(function () {
+          _this5.x = startPosition.x;
+          _this5.y = startPosition.y;
+          setTimeout(function () {
+            _this5.canAnimate = true;
+          }, 100);
+        }, 40);
+      }
     }
   }]);
 

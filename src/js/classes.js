@@ -19,7 +19,6 @@ class Ball extends Phaser.Physics.Matter.Image {
         this.setCollisionCategory(collisionGroupA)
         balls.push(this.body)
         this.scene.sys.displayList.add(this)
-
     }
     setCollisions(level){ 
         //Changes what the ball can collide with depending on where it is
@@ -107,31 +106,47 @@ class Bumper extends Phaser.Physics.Matter.Image {
         this.y = y
         this.body.label = name
         this.scene = scene
-        this.body.restitution = 1.5
+        this.body.restitution = 1
+        this.setCollisionCategory(collisionGroupB)
+        this.canAnimate = true
     }
     fire(position){
         //Grab the starting position
-        let startPosition = {
-            x: this.x,
-            y: this.y
-        }
-        //Calculate the midpoint between the ball and bumper
-        let targetX = (this.x + position.x) / 2
-        let targetY = (this.y + position.y) / 2
+        if (this.canAnimate) {
 
-        //Tween to that point
-        this.scene.tweens.add({
-            targets: this,
-            x: targetX,
-            y: targetY,
-            yoyo: true,
-            duration: 20
-        })
-        //Reset the bumper after a brief delay
-        setTimeout(()=>{
-            this.x = startPosition.x
-            this.y = startPosition.y
-        }, 50)
+            this.canAnimate = false
+
+            let startPosition = {
+                x: this.x,
+                y: this.y
+            }
+            //Calculate the midpoint between the ball and bumper
+            let targetX = (this.x + position.x) / 2
+            let targetY = (this.y + position.y) / 2
+
+    
+            //Tween to that point
+            this.scene.tweens.add({
+                targets: this,
+                x: targetX,
+                y: targetY,
+                yoyo: true,
+                duration: 40,
+                repeat: 0
+            })
+
+            setTimeout(()=>{
+                this.x = startPosition.x
+                this.y = startPosition.y
+                setTimeout(()=>{
+                    this.canAnimate = true
+                }, 100)
+            }, 40)
+
+            
+
+
+        }
     }
 }
 
