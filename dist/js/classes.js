@@ -66,8 +66,9 @@ function (_Phaser$Physics$Matte) {
     value: function setupBall() {
       this.setCollisions('table');
       this.body.isOnRamp = false;
-      this.body.friction = 0;
+      this.body.friction = 0.0002;
       this.body.frictionAir = 0.0001;
+      this.body.inertia = Infinity;
       this.setDensity(.0009);
       this.setDepth(1);
       this.setCollisionCategory(collisionGroupA);
@@ -99,9 +100,8 @@ function (_Phaser$Physics$Matte) {
         if (_this2.body.isOnRamp) {
           _this2.setCollisions('ramps');
 
-          _this2.setDepth(3);
+          _this2.setDepth(3); //this.setDensity(0.00108)
 
-          _this2.setDensity(0.00108);
         } else if (!_this2.body.isOnRamp) {
           _this2.setCollisions('table');
 
@@ -245,7 +245,7 @@ function (_Phaser$Physics$Matte3) {
           x: targetX,
           y: targetY,
           yoyo: true,
-          duration: 40,
+          duration: 20,
           repeat: 0
         });
         setTimeout(function () {
@@ -267,12 +267,12 @@ var Sensor =
 function (_StaticShape) {
   _inherits(Sensor, _StaticShape);
 
-  function Sensor(scene, x, y, rotation, type, name, collisionGroup) {
+  function Sensor(scene, x, y, width, rotation, type, name, collisionGroup) {
     var _this6;
 
     _classCallCheck(this, Sensor);
 
-    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Sensor).call(this, scene, 'rectangle', x, y, 30, 1, rotation, collisionGroup));
+    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Sensor).call(this, scene, 'rectangle', x, y, width, 10, rotation, collisionGroup));
     _this6.body.isSensor = true;
     _this6.body.type = type;
     _this6.body.label = name;

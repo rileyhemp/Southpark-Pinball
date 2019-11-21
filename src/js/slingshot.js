@@ -15,7 +15,7 @@ class Slingshot {
 
         this.boxes = scene.matter.add.stack(x1, y1, links, 1, 0, 0, function(x, y) {
             return Phaser.Physics.Matter.Matter.Bodies.rectangle(x - 20, y, width, height, { 
-                collisionFilter: { group: group },
+                collisionFilter: { category: 16 },
                 chamfer: 0,
                 density: .01,
                 frictionAir: 0,
@@ -32,11 +32,6 @@ class Slingshot {
                 visible: false
             }
         })
-
-
-
-
-        
 
         scene.matter.add.worldConstraint(this.boxes.bodies[0], .2, 0.9, {
             pointA: { x: x1, y: y1},
@@ -65,12 +60,11 @@ class Slingshot {
     }
 
     fire(){
-        this.constraint.stiffness = .4
+        this.constraint.stiffness = .5
 
         setTimeout(()=>{
             this.constraint.stiffness = .0001
         }, 20)
-        //game.time.events.add(Phaser.Timer.SECOND * 1, this.release, this)
     }
 
     charge(){

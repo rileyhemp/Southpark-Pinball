@@ -12,8 +12,9 @@ class Ball extends Phaser.Physics.Matter.Image {
     setupBall(){
         this.setCollisions('table')
         this.body.isOnRamp = false
-        this.body.friction = 0
+        this.body.friction = 0.0002
         this.body.frictionAir = 0.0001
+        this.body.inertia = Infinity
         this.setDensity(.0009)
         this.setDepth(1)
         this.setCollisionCategory(collisionGroupA)
@@ -37,7 +38,7 @@ class Ball extends Phaser.Physics.Matter.Image {
             if (this.body.isOnRamp){
                 this.setCollisions('ramps')
                 this.setDepth(3)
-                this.setDensity(0.00108)
+                //this.setDensity(0.00108)
             } else if (!this.body.isOnRamp){
                 this.setCollisions('table')
                 this.setDepth(1)
@@ -131,7 +132,7 @@ class Bumper extends Phaser.Physics.Matter.Image {
                 x: targetX,
                 y: targetY,
                 yoyo: true,
-                duration: 40,
+                duration: 20,
                 repeat: 0
             })
 
@@ -151,8 +152,8 @@ class Bumper extends Phaser.Physics.Matter.Image {
 }
 
 class Sensor extends StaticShape {
-    constructor(scene, x, y, rotation, type, name, collisionGroup){
-        super(scene, 'rectangle', x, y, 30, 1, rotation, collisionGroup)
+    constructor(scene, x, y, width, rotation, type, name, collisionGroup){
+        super(scene, 'rectangle', x, y, width, 10, rotation, collisionGroup)
         this.body.isSensor = true
         this.body.type = type
         this.body.label = name

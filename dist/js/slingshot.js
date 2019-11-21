@@ -23,7 +23,7 @@ function () {
     this.boxes = scene.matter.add.stack(x1, y1, links, 1, 0, 0, function (x, y) {
       return Phaser.Physics.Matter.Matter.Bodies.rectangle(x - 20, y, width, height, {
         collisionFilter: {
-          group: group
+          category: 16
         },
         chamfer: 0,
         density: .01,
@@ -84,10 +84,10 @@ function () {
     value: function fire() {
       var _this = this;
 
-      this.constraint.stiffness = .4;
+      this.constraint.stiffness = .5;
       setTimeout(function () {
         _this.constraint.stiffness = .0001;
-      }, 20); //game.time.events.add(Phaser.Timer.SECOND * 1, this.release, this)
+      }, 20);
     }
   }, {
     key: "charge",
