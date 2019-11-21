@@ -54,7 +54,7 @@ let
     test,
     tween,
     testFlipper
-    
+const Bodies = Phaser.Physics.Matter.Matter.Bodies
 const game = new Phaser.Game(config)
 
 //Load assets
@@ -66,7 +66,7 @@ function preload() {
     this.load.image('blueprint', 'dist/assets/blueprint.png')
     this.load.image('plastics', 'dist/assets/Plasticos.png')
     this.load.image('playfield', 'dist/assets/Playfield.png')
-    //this.load.image('render', 'dist/assets/render.png')
+    this.load.image('render', 'dist/assets/render.png')
     this.load.image('characters', 'dist/assets/table/characters.png')
     this.load.image('ramps', 'dist/assets/table/ramps.png')
     this.load.image('table', 'dist/assets/table/table.png')
