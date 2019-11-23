@@ -8,7 +8,7 @@ const config = {
     physics: {
         default: 'matter',
         matter: {
-            debug: true,
+            debug: false,
             gravity: {
                 x: 0,
                 y: .9
@@ -129,8 +129,8 @@ function create() {
     // playfield.setScale(1)
     // playfield.setDepth(1)
 
-    // table = this.add.image(260, 400, 'table')
-    // table.setDepth(1)
+    table = this.add.image(260, 400, 'table')
+    table.setDepth(1)
     ramps = this.add.image(260, 400, 'ramps')
     ramps.setDepth(2)
     characters = this.add.image(260, 400, 'characters')
@@ -152,8 +152,10 @@ function create() {
     bumperC = new Bumper(this, 330, 175, 'bumper')
 
     //Slingshots
-    slingshotA = new Slingshot(this, 122, 490, 148, 574, 177, 518, 5)
-    slingshotB = new Slingshot(this, 353, 491, 327, 574, 298, 518, 5)
+
+    //Redo slingshots and replace with a shape
+    // slingshotA = new Slingshot(this, 122, 490, 148, 574, 177, 518, 5)
+    // slingshotB = new Slingshot(this, 353, 491, 327, 574, 298, 518, 5)
     
     //Static Objects
     /*********************************************************/
