@@ -11,7 +11,7 @@ class Flipper {
         this.flipperWidth = 40
         this.speed = 60
         this.startPosition = 28
-        this.endPosition = 105
+        this.endPosition = 100
     }
 
     createComponents(){
@@ -135,14 +135,12 @@ class RightFlipper extends Flipper {
 class SideFlipper extends Flipper {
     constructor(scene, x, y){
         super(scene, x, y)
-        this.blockOffsetX = 5
-        this.blockOffsetY = 40
-        this.blockRotation = -1.2
-        this.stopperOffsetX = -40
-        this.stopperOffsetY = -5
-        this.flipperLength = 70
-        this.torque = -this.torque
-        this.staticTorque = -this.staticTorque
+        this.blockOffsetX = 25
+        this.blockOffsetY = 60
+        this.flipperLength = 55
+        this.startPosition = 50
+        this.endPosition = 80
+        this.speed = 28
         super.createComponents()
         super.setCollisionGroups()
     }

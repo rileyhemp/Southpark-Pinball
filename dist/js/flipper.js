@@ -39,7 +39,7 @@ function () {
     this.flipperWidth = 40;
     this.speed = 60;
     this.startPosition = 28;
-    this.endPosition = 105;
+    this.endPosition = 100;
   }
 
   _createClass(Flipper, [{
@@ -201,14 +201,12 @@ function (_Flipper3) {
     _classCallCheck(this, SideFlipper);
 
     _this3 = _possibleConstructorReturn(this, _getPrototypeOf(SideFlipper).call(this, scene, x, y));
-    _this3.blockOffsetX = 5;
-    _this3.blockOffsetY = 40;
-    _this3.blockRotation = -1.2;
-    _this3.stopperOffsetX = -40;
-    _this3.stopperOffsetY = -5;
-    _this3.flipperLength = 70;
-    _this3.torque = -_this3.torque;
-    _this3.staticTorque = -_this3.staticTorque;
+    _this3.blockOffsetX = 25;
+    _this3.blockOffsetY = 60;
+    _this3.flipperLength = 55;
+    _this3.startPosition = 50;
+    _this3.endPosition = 80;
+    _this3.speed = 28;
 
     _get(_getPrototypeOf(SideFlipper.prototype), "createComponents", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3));
 

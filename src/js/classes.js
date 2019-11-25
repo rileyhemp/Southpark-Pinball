@@ -12,10 +12,11 @@ class Ball extends Phaser.Physics.Matter.Image {
     setupBall(){
         this.setCollisions('table')
         this.body.isOnRamp = false
-        this.body.friction = 0.0002
-        this.body.frictionAir = 0.0001
+        this.body.isOnCenterRamp = false
+        this.body.friction = 0
+        this.body.frictionAir = 0
         this.body.inertia = Infinity
-        this.setDensity(.0009)
+        this.setDensity(.001)
         this.setDepth(1)
         this.setCollisionCategory(collisionGroupA)
         balls.push(this.body)
@@ -26,7 +27,9 @@ class Ball extends Phaser.Physics.Matter.Image {
         if ( level === 'table' ){
             this.setCollidesWith([collisionGroupA, collisionGroupB, sensorGroupA])
         } else if ( level === 'ramps' ){
-            this.setCollidesWith([collisionGroupA, collisionGroupC, sensorGroupB])
+            this.setCollidesWith([collisionGroupA, collisionGroupC, collisionGroupE, sensorGroupB])
+        } else if ( level === 'centerRamp' ){
+            this.setCollidesWith([collisionGroupA, collisionGroupC, collisionGroupD, sensorGroupB])
         }
     }
     launch(){
@@ -35,10 +38,13 @@ class Ball extends Phaser.Physics.Matter.Image {
     update(){
         let i = setInterval(()=>{
             //Check if the ball is on a ramp
-            if (this.body.isOnRamp){
-                this.setCollisions('ramps')
+            if (this.body.isOnRamp && this.body.isOnCenterRamp){
+                this.setCollisions('centerRamp')
                 this.setDepth(3)
-                //this.setDensity(0.00108)
+                //Increase gravity (density) by 20% if ball is on ramp 
+                // this.setDensity(0.00108)
+            } else if (this.body.isOnRamp){
+                this.setCollisions('ramps')
             } else if (!this.body.isOnRamp){
                 this.setCollisions('table')
                 this.setDepth(1)
@@ -101,7 +107,7 @@ class Bumper extends Phaser.Physics.Matter.Image {
         super(scene.matter.world, x, y, name)
         this.setCircle(24)
         this.setStatic(true)
-        this.setScale(0.85)
+        this.setScale(0.75)
         this.body.mass = .999
         this.x = x
         this.y = y
@@ -153,7 +159,7 @@ class Bumper extends Phaser.Physics.Matter.Image {
 
 class Sensor extends StaticShape {
     constructor(scene, x, y, width, rotation, type, name, collisionGroup){
-        super(scene, 'rectangle', x, y, width, 10, rotation, collisionGroup)
+        super(scene, 'rectangle', x, y, width, 20, rotation, collisionGroup)
         this.body.isSensor = true
         this.body.type = type
         this.body.label = name

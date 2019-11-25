@@ -66,10 +66,11 @@ function (_Phaser$Physics$Matte) {
     value: function setupBall() {
       this.setCollisions('table');
       this.body.isOnRamp = false;
-      this.body.friction = 0.0002;
-      this.body.frictionAir = 0.0001;
+      this.body.isOnCenterRamp = false;
+      this.body.friction = 0;
+      this.body.frictionAir = 0;
       this.body.inertia = Infinity;
-      this.setDensity(.0009);
+      this.setDensity(.001);
       this.setDepth(1);
       this.setCollisionCategory(collisionGroupA);
       balls.push(this.body);
@@ -82,7 +83,9 @@ function (_Phaser$Physics$Matte) {
       if (level === 'table') {
         this.setCollidesWith([collisionGroupA, collisionGroupB, sensorGroupA]);
       } else if (level === 'ramps') {
-        this.setCollidesWith([collisionGroupA, collisionGroupC, sensorGroupB]);
+        this.setCollidesWith([collisionGroupA, collisionGroupC, collisionGroupE, sensorGroupB]);
+      } else if (level === 'centerRamp') {
+        this.setCollidesWith([collisionGroupA, collisionGroupC, collisionGroupD, sensorGroupB]);
       }
     }
   }, {
@@ -97,11 +100,14 @@ function (_Phaser$Physics$Matte) {
 
       var i = setInterval(function () {
         //Check if the ball is on a ramp
-        if (_this2.body.isOnRamp) {
+        if (_this2.body.isOnRamp && _this2.body.isOnCenterRamp) {
+          _this2.setCollisions('centerRamp');
+
+          _this2.setDepth(3); //Increase gravity (density) by 20% if ball is on ramp 
+          // this.setDensity(0.00108)
+
+        } else if (_this2.body.isOnRamp) {
           _this2.setCollisions('ramps');
-
-          _this2.setDepth(3); //this.setDensity(0.00108)
-
         } else if (!_this2.body.isOnRamp) {
           _this2.setCollisions('table');
 
@@ -209,7 +215,7 @@ function (_Phaser$Physics$Matte3) {
 
     _this4.setStatic(true);
 
-    _this4.setScale(0.85);
+    _this4.setScale(0.75);
 
     _this4.body.mass = .999;
     _this4.x = x;
@@ -272,7 +278,7 @@ function (_StaticShape) {
 
     _classCallCheck(this, Sensor);
 
-    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Sensor).call(this, scene, 'rectangle', x, y, width, 10, rotation, collisionGroup));
+    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Sensor).call(this, scene, 'rectangle', x, y, width, 20, rotation, collisionGroup));
     _this6.body.isSensor = true;
     _this6.body.type = type;
     _this6.body.label = name;
