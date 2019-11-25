@@ -67,6 +67,7 @@ function (_Phaser$Physics$Matte) {
       this.setCollisions('table');
       this.body.isOnRamp = false;
       this.body.isOnCenterRamp = false;
+      this.body.isOnLauncher = false;
       this.body.friction = 0;
       this.body.frictionAir = 0;
       this.body.inertia = Infinity;
@@ -81,7 +82,9 @@ function (_Phaser$Physics$Matte) {
     value: function setCollisions(level) {
       //Changes what the ball can collide with depending on where it is
       if (level === 'table') {
-        this.setCollidesWith([collisionGroupA, collisionGroupB, sensorGroupA]);
+        this.setCollidesWith([collisionGroupA, collisionGroupB, collisionGroupD, sensorGroupA]);
+      } else if (level === 'launcher') {
+        this.setCollidesWith([collisionGroupA, collisionGroupB, collisionGroupE, sensorGroupA]);
       } else if (level === 'ramps') {
         this.setCollidesWith([collisionGroupA, collisionGroupC, collisionGroupE, sensorGroupB]);
       } else if (level === 'centerRamp') {
@@ -94,6 +97,12 @@ function (_Phaser$Physics$Matte) {
       _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -20.5);
     }
   }, {
+    key: "readyBall",
+    value: function readyBall() {
+      this.x = 455;
+      this.y = 690;
+    }
+  }, {
     key: "update",
     value: function update() {
       var _this2 = this;
@@ -103,19 +112,28 @@ function (_Phaser$Physics$Matte) {
         if (_this2.body.isOnRamp && _this2.body.isOnCenterRamp) {
           _this2.setCollisions('centerRamp');
 
-          _this2.setDepth(3); //Increase gravity (density) by 20% if ball is on ramp 
-          // this.setDensity(0.00108)
-
+          _this2.setDepth(3);
         } else if (_this2.body.isOnRamp) {
           _this2.setCollisions('ramps');
-        } else if (!_this2.body.isOnRamp) {
+
+          _this2.setDepth(3);
+        } else if (!_this2.body.isOnRamp && _this2.body.isOnLauncher) {
+          _this2.setCollisions('launcher');
+
+          _this2.setDepth(1);
+        } else {
           _this2.setCollisions('table');
 
           _this2.setDepth(1);
-        } //Check if the ball is in killzone
+        } //Checks if the ball has escaped the map
 
 
-        if (_this2.y > 720) {
+        if (_this2.x < 0 || _this2.x > game.config.width || _this2.y < 0 || _this2.y > game.config.height) {
+          _this2.readyBall();
+        } //Check if the ball is in a killzone
+
+
+        if (_this2.x < 425 && _this2.y > 650 && (_this2.x < 192 || _this2.x > 330) || _this2.y > 720) {
           _this2.destroy();
 
           clearInterval(i);
@@ -287,4 +305,68 @@ function (_StaticShape) {
 
   return Sensor;
 }(StaticShape);
+
+var Launcher =
+/*#__PURE__*/
+function () {
+  function Launcher(scene, x, y) {
+    _classCallCheck(this, Launcher);
+
+    this.x = x;
+    this.y = y;
+    this.scene = scene;
+    this.createComponents();
+  }
+
+  _createClass(Launcher, [{
+    key: "createComponents",
+    value: function createComponents() {
+      //Create a dynamic body for the top
+      var rectA = Phaser.Physics.Matter.Matter.Bodies.circle(this.x, this.y, 15);
+      var body = this.scene.matter.body.create({
+        parts: [rectA]
+      });
+      this.top = this.scene.matter.add.image(150, 0, null).setExistingBody(body).setVisible(false);
+      this.top.setCollisionCategory(collisionGroupA);
+      this.top.setCollidesWith(collisionGroupA);
+      this.top.body.inertia = Infinity;
+      this.bottom = new StaticShape(this.scene, 'rectangle', this.x, this.y + 50, 40, 20, 0, collisionGroupA);
+      this.left = new StaticShape(this.scene, 'rectangle', this.x - 10, this.y, 10, 100, 0, collisionGroupA);
+      this.right = new StaticShape(this.scene, 'rectangle', this.x + 10, this.y, 10, 100, 0, collisionGroupA);
+      this.spring = this.scene.matter.add.constraint(this.bottom, this.top);
+      this.spring.length = 90;
+    }
+  }, {
+    key: "charge",
+    value: function charge() {
+      var _this7 = this;
+
+      this.update = setInterval(function () {
+        _this7.spring.length--;
+
+        if (_this7.spring.length < 70) {
+          clearInterval(_this7.update);
+        }
+      }, 40);
+    }
+  }, {
+    key: "fire",
+    value: function fire() {
+      var _this8 = this;
+
+      clearInterval(this.update);
+      this.scene.tweens.add({
+        targets: this.spring,
+        length: 102,
+        duration: 20
+      }); //Reset the spring
+
+      setTimeout(function () {
+        _this8.spring.length = 90;
+      }, 50);
+    }
+  }]);
+
+  return Launcher;
+}();
 //# sourceMappingURL=classes.js.map

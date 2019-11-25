@@ -24,7 +24,7 @@ var config = {
 
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
 var balls = [];
-var spacebar, left, right, shift, ball, bounds, leftFlipper, rightFlipper, sideFlipper, testShape, bumperA, bumperB, bumperC, slingshotA, slingshotB, //Background
+var spacebar, left, right, down, ball, bounds, leftFlipper, rightFlipper, sideFlipper, launcher, bumperA, bumperB, bumperC, slingshotA, slingshotB, //Background
 playfield, plastics, table, ramps, characters, //Utilities
 collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, leftRampDivert, // Default: false
 leftRampDiverter, leftRampBottom, flipperCollisionGroup, test, tween, testFlipper;
@@ -62,16 +62,16 @@ function create() {
   test = this;
   bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true);
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-  shift = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+  down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
   spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //Utility functions
   //Add a ball where you click
 
   this.input.on('pointerdown', function (pointer) {
-    ball = new Ball(this, pointer.x, pointer.y, 'ball'); // ball.setVelocityY(-15)
-    // ball.setVelocityX(-15)
-
     console.log(pointer.x, ',', pointer.y);
+    ball = new Ball(this, pointer.x, pointer.y, 'ball'); //ball.readyBall()
+    // ball.setVelocityY(-15)
+    // ball.setVelocityX(-5)
   }, this); //Creates paths used to draw physics shapes. 
 
   var vertices = [];
@@ -87,9 +87,9 @@ function create() {
   // playfield = this.add.image(260, 390, 'render')
   // playfield.setScale(1)
   // playfield.setDepth(1)
-  // table = this.add.image(260, 400, 'table')
-  // table.setDepth(1)
 
+  table = this.add.image(260, 400, 'table');
+  table.setDepth(1);
   ramps = this.add.image(260, 400, 'ramps');
   ramps.setDepth(2);
   characters = this.add.image(260, 400, 'characters');
@@ -100,19 +100,22 @@ function create() {
 
   leftFlipper = new LeftFlipper(this, 144, 632);
   rightFlipper = new RightFlipper(this, 327, 632);
-  sideFlipper = new SideFlipper(this, 405, 318); //Pop bumpers
+  sideFlipper = new SideFlipper(this, 407, 313); //Pop bumpers
 
   bumperA = new Bumper(this, 308, 125, 'bumper');
   bumperB = new Bumper(this, 365, 135, 'bumper');
   bumperC = new Bumper(this, 335, 190, 'bumper'); //Slingshots
 
   slingshotA = new Slingshot(this, 122, 490, 148, 574, 177, 518, 5);
-  slingshotB = new Slingshot(this, 353, 491, 327, 574, 298, 518, 5); //Static Objects
+  slingshotB = new Slingshot(this, 353, 491, 327, 574, 298, 518, 5); //Launcher
+
+  launcher = new Launcher(this, 455, 755); //Static Objects
 
   /*********************************************************/
   //StaticCustomShape(scene, x, y, path, collision group)
   //StaticShape(scene, type, x, y, width, height, rotation, collision group)
   //First level (collision group B)
+  //new StaticCustomShape(this, 218, 90, 'midTargetLeft', collisionGroupB)
 
   new StaticCustomShape(this, 250, 740, 'killZone', collisionGroupB).setScale(0.9, 1);
   new StaticCustomShape(this, 147, 200, 'topLoop', collisionGroupB).setScale(0.85, 0.9);
@@ -123,34 +126,45 @@ function create() {
 
   new StaticCustomShape(this, 60, 488, 'leftWall', collisionGroupB).setScale(1, 1.1);
   new StaticCustomShape(this, 423, 530, 'rightWallA', collisionGroupB).setScale(1, 1.1).setAngle(-2.2);
-  new StaticCustomShape(this, 405, 310, 'rightWallB', collisionGroupB);
+  new StaticCustomShape(this, 405, 320, 'rightWallB', collisionGroupB).setScale(.8, 1);
   new StaticCustomShape(this, 350, 218, 'rightTrapCowl', collisionGroupB).setScale(0.82, 1); // Butters trap
 
   new StaticCustomShape(this, 450, 455, 'farRightWall', collisionGroupB).setAngle(-.5);
   new StaticCustomShape(this, 365, 593, 'rightLane', collisionGroupB).setScale(0.82, 1);
   new StaticCustomShape(this, 107, 593, 'leftLane', collisionGroupB).setScale(0.82, 1);
   new StaticCustomShape(this, 130, 540, 'leftSlingshot', collisionGroupB).setScale(0.82, 1).setCollidesWith(collisionGroupA);
-  new StaticCustomShape(this, 345, 540, 'rightSlingshot', collisionGroupB).setScale(0.82, 1).setCollidesWith(collisionGroupA); //new StaticCustomShape(this, 218, 90, 'midTargetLeft', collisionGroupB)
-
+  new StaticCustomShape(this, 345, 540, 'rightSlingshot', collisionGroupB).setScale(0.82, 1).setCollidesWith(collisionGroupA);
   new StaticCustomShape(this, 378, 400, 'rightTargets', collisionGroupB).setScale(1, 1);
   new StaticShape(this, 'rectangle', 257, 215, 62, 30, .02, collisionGroupB); // Cartmen targets
-  //Small round rubbers
+
+  new StaticShape(this, 'rectangle', 447, 700, 10, 5, 1, collisionGroupB); // Launcher align
+
+  new StaticShape(this, 'rectangle', 463, 700, 10, 5, -1, collisionGroupB); // Launcher align
+
+  new StaticShape(this, 'rectangle', 425, 475, 1, 470, -0.08, collisionGroupB); // Launcher lane inner
+
+  new StaticShape(this, 'rectangle', 415, 187, 10, 150, .15, collisionGroupD); // Launcher lane gate
+
+  new StaticShape(this, 'circle', 310, 64, 10, null, null, collisionGroupE); //Launcher top loop gate
+
+  new StaticShape(this, 'circle', 385, 488, 5, null, null, collisionGroupB); // Right lane topper
+
+  new StaticShape(this, 'circle', 86, 488, 5, null, null, collisionGroupB); // Left lane topper
 
   new StaticShape(this, 'circle', 407, 451, 5, null, null, collisionGroupB);
-  new StaticShape(this, 'circle', 320, 160, 10, null, null, collisionGroupB); // Bumpers spacer
-
   new StaticShape(this, 'circle', 314, 80, 5, null, null, collisionGroupB); //Top tri-lane
 
   new StaticShape(this, 'circle', 341, 76, 5, null, null, collisionGroupB); //Top tri-lane
 
   new StaticShape(this, 'circle', 314, 98, 5, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 341, 88, 5, null, null, collisionGroupB); //Top tri-lane
+  new StaticShape(this, 'circle', 341, 94, 5, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 371, 98, 5, null, null, collisionGroupB); //Top tri-lane
-  //Medium round rubbers
+  new StaticShape(this, 'circle', 375, 98, 5, null, null, collisionGroupB); //Top tri-lane
 
-  new StaticShape(this, 'circle', 236, 698, 6, null, null, collisionGroupB); // Center post
+  new StaticShape(this, 'circle', 367, 98, 5, null, null, collisionGroupB); //Top tri-lane
+
+  new StaticShape(this, 'circle', 320, 160, 10, null, null, collisionGroupB); // Bumpers spacer
 
   new StaticShape(this, 'circle', 100, 435, 8, null, null, collisionGroupB); // Left lane
 
@@ -211,11 +225,12 @@ function create() {
   new Sensor(this, 303, 200, 60, -.1, 'ramp-on', 'rightRampOn', sensorGroupA); //Ramp off
 
   new Sensor(this, 78, 461, 30, -.50, 'ramp-off', 'leftRampOff', sensorGroupB);
-  new Sensor(this, 396, 461, 30, .50, 'ramp-off', 'rightRampOff', sensorGroupB); //Large sensor below all ramps incase ball does not make it all te way up. 
+  new Sensor(this, 396, 461, 30, .50, 'ramp-off', 'rightRampOff', sensorGroupB);
+  new Sensor(this, 255, 262, 120, 0, 'ramp-off', 'allRampsOff', sensorGroupB); //Launcher on 
 
-  new Sensor(this, 255, 262, 120, 0, 'ramp-off', 'allRampsOff', sensorGroupB, {
-    width: 100
-  }); //Collision events
+  new Sensor(this, 435, 477, 30, 1.6, 'launcher-on', 'launcherOn', sensorGroupA); //Launcher off
+
+  new Sensor(this, 349, 100, 80, -.1, 'launcher-off', 'launcherOff', sensorGroupA); //Collision events
 
   /*********************************************************/
 
@@ -234,8 +249,16 @@ function create() {
       if (bodyA.type === 'ramp-off') {
         setTimeout(function () {
           bodyB.isOnRamp = false;
-          bodyB.isOnLeftRamp = false;
+          bodyB.isOnCenterRamp = false;
         }, 100);
+      }
+
+      if (bodyA.type === 'launcher-on') {
+        bodyB.isOnLauncher = true;
+      }
+
+      if (bodyA.type === 'launcher-off') {
+        bodyB.isOnLauncher = false;
       } //Slingshots
 
 
@@ -274,6 +297,14 @@ function update() {
   if (Phaser.Input.Keyboard.JustUp(right)) {
     rightFlipper.release();
     sideFlipper.release();
+  }
+
+  if (Phaser.Input.Keyboard.JustDown(down)) {
+    launcher.charge();
+  }
+
+  if (Phaser.Input.Keyboard.JustUp(down)) {
+    launcher.fire();
   }
 }
 //# sourceMappingURL=game.js.map

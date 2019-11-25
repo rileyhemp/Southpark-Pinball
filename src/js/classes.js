@@ -13,6 +13,7 @@ class Ball extends Phaser.Physics.Matter.Image {
         this.setCollisions('table')
         this.body.isOnRamp = false
         this.body.isOnCenterRamp = false
+        this.body.isOnLauncher = false
         this.body.friction = 0
         this.body.frictionAir = 0
         this.body.inertia = Infinity
@@ -25,7 +26,9 @@ class Ball extends Phaser.Physics.Matter.Image {
     setCollisions(level){ 
         //Changes what the ball can collide with depending on where it is
         if ( level === 'table' ){
-            this.setCollidesWith([collisionGroupA, collisionGroupB, sensorGroupA])
+            this.setCollidesWith([collisionGroupA, collisionGroupB, collisionGroupD, sensorGroupA])
+        } else if ( level === 'launcher' ) {
+            this.setCollidesWith([collisionGroupA, collisionGroupB, collisionGroupE, sensorGroupA])
         } else if ( level === 'ramps' ){
             this.setCollidesWith([collisionGroupA, collisionGroupC, collisionGroupE, sensorGroupB])
         } else if ( level === 'centerRamp' ){
@@ -35,22 +38,33 @@ class Ball extends Phaser.Physics.Matter.Image {
     launch(){
         super.setVelocityY(-20.5)
     }
+    readyBall(){
+        this.x = 455
+        this.y = 690
+    }
     update(){
         let i = setInterval(()=>{
             //Check if the ball is on a ramp
             if (this.body.isOnRamp && this.body.isOnCenterRamp){
                 this.setCollisions('centerRamp')
                 this.setDepth(3)
-                //Increase gravity (density) by 20% if ball is on ramp 
-                // this.setDensity(0.00108)
             } else if (this.body.isOnRamp){
                 this.setCollisions('ramps')
-            } else if (!this.body.isOnRamp){
+                this.setDepth(3)
+            } else if (!this.body.isOnRamp && this.body.isOnLauncher){
+                this.setCollisions('launcher')
+                this.setDepth(1)
+            } else {
                 this.setCollisions('table')
                 this.setDepth(1)
             } 
-            //Check if the ball is in killzone
-            if (this.y > 720){
+            //Checks if the ball has escaped the map
+            if (this.x < 0 || this.x > game.config.width || this.y < 0 || this.y > game.config.height){
+                this.readyBall()
+            }
+
+            //Check if the ball is in a killzone
+            if (this.x < 425 && (this.y > 650 && (this.x < 192 || this.x > 330)) || this.y > 720) {
                 this.destroy()
                 clearInterval(i)
             }
@@ -163,5 +177,53 @@ class Sensor extends StaticShape {
         this.body.isSensor = true
         this.body.type = type
         this.body.label = name
+    }
+}
+
+class Launcher {
+    constructor(scene, x, y) {
+        this.x = x
+        this.y = y
+        this.scene = scene
+        this.createComponents()
+    }
+
+    createComponents() {
+
+        //Create a dynamic body for the top
+        let rectA = Phaser.Physics.Matter.Matter.Bodies.circle(this.x , this.y, 15)
+
+        let body = this.scene.matter.body.create({
+            parts: [ rectA ]
+        })
+        this.top = this.scene.matter.add.image(150, 0, null).setExistingBody(body).setVisible(false)
+        this.top.setCollisionCategory(collisionGroupA)
+        this.top.setCollidesWith(collisionGroupA)
+        this.top.body.inertia = Infinity
+        this.bottom = new StaticShape(this.scene, 'rectangle', this.x, this.y + 50, 40, 20, 0, collisionGroupA )
+        this.left = new StaticShape(this.scene, 'rectangle', this.x - 10, this.y, 10, 100, 0, collisionGroupA )
+        this.right = new StaticShape(this.scene, 'rectangle', this.x + 10, this.y, 10, 100, 0, collisionGroupA )
+        this.spring = this.scene.matter.add.constraint(this.bottom, this.top)
+        this.spring.length = 90
+    }
+    charge() {
+        this.update = setInterval(() => {
+            this.spring.length--
+            if (this.spring.length < 70){
+                clearInterval(this.update)
+            }
+        }, 40)
+    }
+    fire() {
+        clearInterval(this.update)
+        this.scene.tweens.add({
+            targets: this.spring,
+            length: 102,
+            duration: 20
+        })
+        //Reset the spring
+        setTimeout(() => {
+            this.spring.length = 90
+        }, 50)
     }
 }

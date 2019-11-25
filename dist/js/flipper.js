@@ -156,11 +156,8 @@ function (_Flipper2) {
 
     _this2 = _possibleConstructorReturn(this, _getPrototypeOf(RightFlipper).call(this, scene, x, y));
     _this2.blockOffsetX = -_this2.blockOffsetX;
-    _this2.blockRotation = -_this2.blockRotation;
-    _this2.stopperOffsetX = -_this2.stopperOffsetX;
     _this2.flipperOffsetX = -_this2.flipperOffsetX;
-    _this2.torque = -_this2.torque;
-    _this2.staticTorque = -_this2.staticTorque;
+    _this2.endPosition = 105;
 
     _get(_getPrototypeOf(RightFlipper.prototype), "createComponents", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2));
 
@@ -203,10 +200,11 @@ function (_Flipper3) {
     _this3 = _possibleConstructorReturn(this, _getPrototypeOf(SideFlipper).call(this, scene, x, y));
     _this3.blockOffsetX = 25;
     _this3.blockOffsetY = 60;
-    _this3.flipperLength = 55;
+    _this3.flipperLength = 70;
+    _this3.flipperWidth = 35;
     _this3.startPosition = 50;
-    _this3.endPosition = 80;
-    _this3.speed = 28;
+    _this3.endPosition = 90;
+    _this3.speed = 40;
 
     _get(_getPrototypeOf(SideFlipper.prototype), "createComponents", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3));
 

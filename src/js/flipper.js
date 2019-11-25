@@ -42,7 +42,6 @@ class Flipper {
             parts: [ rectA ]
         })
 
-        
         this.flipper = this.scene.matter.add.image(150, 0, null).setExistingBody(this.flipperBody).setVisible(false)
 
 
@@ -108,11 +107,8 @@ class RightFlipper extends Flipper {
     constructor(scene, x, y){
         super(scene, x, y)
         this.blockOffsetX = -this.blockOffsetX
-        this.blockRotation = -this.blockRotation
-        this.stopperOffsetX = -this.stopperOffsetX
         this.flipperOffsetX = -this.flipperOffsetX
-        this.torque = -this.torque
-        this.staticTorque = -this.staticTorque
+        this.endPosition = 105
         super.createComponents()
         super.setCollisionGroups()
     }
@@ -137,10 +133,11 @@ class SideFlipper extends Flipper {
         super(scene, x, y)
         this.blockOffsetX = 25
         this.blockOffsetY = 60
-        this.flipperLength = 55
+        this.flipperLength = 70
+        this.flipperWidth = 35
         this.startPosition = 50
-        this.endPosition = 80
-        this.speed = 28
+        this.endPosition = 90
+        this.speed = 40
         super.createComponents()
         super.setCollisionGroups()
     }
