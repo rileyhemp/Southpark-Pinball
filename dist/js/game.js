@@ -8,7 +8,7 @@ var config = {
   physics: {
     default: 'matter',
     matter: {
-      debug: true,
+      debug: false,
       gravity: {
         x: 0,
         y: .9
@@ -24,28 +24,32 @@ var config = {
 
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
 var balls = [];
-var spacebar, left, right, down, ball, bounds, leftFlipper, rightFlipper, sideFlipper, launcher, bumperA, bumperB, bumperC, slingshotA, slingshotB, //Background
+var spacebar, left, right, down, ball, bounds, leftFlipper, rightFlipper, sideFlipper, launcher, bumperA, bumperB, bumperC, slingshotA, slingshotB, spritemap, //Background
 playfield, plastics, table, ramps, characters, //Utilities
 collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, leftRampDivert, // Default: false
 leftRampDiverter, leftRampBottom, flipperCollisionGroup, test, tween, testFlipper;
 var game = new Phaser.Game(config); //Load assets
 
 function preload() {
-  this.load.image('rectA', 'dist/assets/solids/grey-solid.svg');
-  this.load.image('schematic', 'dist/assets/schematic.jpg');
-  this.load.image('blueprint', 'dist/assets/blueprint.png');
-  this.load.image('plastics', 'dist/assets/Plasticos.png');
-  this.load.image('playfield', 'dist/assets/Playfield.png');
-  this.load.image('render', 'dist/assets/render.png');
+  //Table
   this.load.image('characters', 'dist/assets/table/characters.png');
   this.load.image('ramps', 'dist/assets/table/ramps.png');
   this.load.image('table', 'dist/assets/table/table.png');
   this.load.image('ball', 'dist/assets/table/ball.png');
+  this.load.image('flipper', 'dist/assets/table/flipper.png');
+  this.load.image('rightFlipper', 'dist/assets/table/right-flipper.png');
+  this.load.image('sideFlipper', 'dist/assets/table/side-flipper.png'); //Sounds
+
+  this.load.audioSprite('sound_effects', 'dist/assets/sounds/sound_effects.json', ['dist/assets/sounds/sound_effects.ogg', 'dist/assets/sounds/sound_effects.mp3']);
 } //Initialize table
 
 
 function create() {
-  //Set some things up, inputs, collisiongroups, etc. 
+  var _this = this;
+
+  this.matter.world.positionIterations = 10;
+  this.matter.world.velocityIterations = 10; //Set some things up, inputs, collisiongroups, etc. 
+
   sensorGroupA = this.matter.world.nextCategory(); // Ground level sensors
 
   sensorGroupB = this.matter.world.nextCategory(); // Upper level sensors
@@ -59,30 +63,38 @@ function create() {
   collisionGroupE = this.matter.world.nextCategory();
   flipperCollisionGroup = this.matter.world.nextCategory();
   leftRampDivert = false;
+  spritemap = this.cache.json.get('sound_effects').spritemap;
   test = this;
   bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true);
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
   spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //Utility functions
+  // for(let spriteName in spritemap){
+  //     console.log(spriteName)
+  // }
   //Add a ball where you click
 
   this.input.on('pointerdown', function (pointer) {
-    console.log(pointer.x, ',', pointer.y);
-    ball = new Ball(this, pointer.x, pointer.y, 'ball'); //ball.readyBall()
+    // console.log(pointer.x, ',', pointer.y)
+    ball = new Ball(this, pointer.x, pointer.y, 'ball'); //this.sound.playAudioSprite('sound_effects', "BallDrop")
+    //ball.readyBall()
     // ball.setVelocityY(-15)
     // ball.setVelocityX(-5)
   }, this); //Creates paths used to draw physics shapes. 
 
-  var vertices = [];
-  this.input.on('pointerdown', function (pointer) {
-    var value = {
-      x: pointer.x,
-      y: pointer.y
-    };
-    vertices.push(value);
-    console.log(vertices);
-  }, this); //Layout overlay
+  /*
+  let vertices = []
+  this.input.on('pointerdown', function(pointer){
+      let value = {
+          x: pointer.x,
+          y: pointer.y
+      }
+      vertices.push(value)
+      console.log(vertices)
+  }, this)
+  */
+  //Layout overlay
   //let blueprint = this.add.image(260,400, 'blueprint')
   // playfield = this.add.image(260, 390, 'render')
   // playfield.setScale(1)
@@ -98,7 +110,7 @@ function create() {
   // plastics.setDepth(1)
   //Flippers
 
-  leftFlipper = new LeftFlipper(this, 144, 632);
+  leftFlipper = new LeftFlipper(this, 150, 632);
   rightFlipper = new RightFlipper(this, 327, 632);
   sideFlipper = new SideFlipper(this, 407, 313); //Pop bumpers
 
@@ -106,8 +118,10 @@ function create() {
   bumperB = new Bumper(this, 365, 135, 'bumper');
   bumperC = new Bumper(this, 335, 190, 'bumper'); //Slingshots
 
-  slingshotA = new Slingshot(this, 122, 490, 148, 574, 177, 518, 5);
-  slingshotB = new Slingshot(this, 353, 491, 327, 574, 298, 518, 5); //Launcher
+  slingshotA = new Slingshot(this, 121, 490, 152, 574, 177, 510, 5, 'slingshotA');
+  slingshotB = new Slingshot(this, 353, 491, 324, 574, 298, 510, 5, 'slingshotB'); // slingshotA = new Slingshot(this, 137, 533, 'rightSlingshot', collisionGroupB)
+  // slingshotB = new Slingshot(this, 340, 533, 'leftSlingshot', collisionGroupB)
+  //Launcher
 
   launcher = new Launcher(this, 455, 755); //Static Objects
 
@@ -135,7 +149,7 @@ function create() {
   new StaticCustomShape(this, 130, 540, 'leftSlingshot', collisionGroupB).setScale(0.82, 1).setCollidesWith(collisionGroupA);
   new StaticCustomShape(this, 345, 540, 'rightSlingshot', collisionGroupB).setScale(0.82, 1).setCollidesWith(collisionGroupA);
   new StaticCustomShape(this, 378, 400, 'rightTargets', collisionGroupB).setScale(1, 1);
-  new StaticShape(this, 'rectangle', 257, 215, 62, 30, .02, collisionGroupB); // Cartmen targets
+  new StaticShape(this, 'rectangle', 257, 195, 62, 62, .02, collisionGroupB); // Cartmen targets
 
   new StaticShape(this, 'rectangle', 447, 700, 10, 5, 1, collisionGroupB); // Launcher align
 
@@ -144,6 +158,8 @@ function create() {
   new StaticShape(this, 'rectangle', 425, 475, 1, 470, -0.08, collisionGroupB); // Launcher lane inner
 
   new StaticShape(this, 'rectangle', 415, 187, 10, 150, .15, collisionGroupD); // Launcher lane gate
+
+  new StaticShape(this, 'rectangle', 55, 506, 10, 200, .08, collisionGroupD); // Left wall
 
   new StaticShape(this, 'circle', 310, 64, 10, null, null, collisionGroupE); //Launcher top loop gate
 
@@ -168,9 +184,9 @@ function create() {
 
   new StaticShape(this, 'circle', 100, 435, 8, null, null, collisionGroupB); // Left lane
 
-  new StaticShape(this, 'circle', 121, 491, 8, null, null, collisionGroupB); // Slingshot corners
+  new StaticShape(this, 'circle', 125, 491, 12, null, null, collisionGroupB); // Slingshot corners
 
-  new StaticShape(this, 'circle', 350, 491, 8, null, null, collisionGroupB); // 
+  new StaticShape(this, 'circle', 350, 491, 12, null, null, collisionGroupB); // 
 
   new StaticShape(this, 'circle', 148, 575, 8, null, null, collisionGroupB); // 
 
@@ -230,7 +246,9 @@ function create() {
 
   new Sensor(this, 435, 477, 30, 1.6, 'launcher-on', 'launcherOn', sensorGroupA); //Launcher off
 
-  new Sensor(this, 349, 100, 80, -.1, 'launcher-off', 'launcherOff', sensorGroupA); //Collision events
+  new Sensor(this, 349, 100, 80, -.1, 'launcher-off', 'launcherOff', sensorGroupA); //Butters
+
+  new Sensor(this, 348, 237, 30, .3, 'target', 'butters', sensorGroupA); //Collision events
 
   /*********************************************************/
 
@@ -262,17 +280,43 @@ function create() {
       } //Slingshots
 
 
-      if (bodyA.label === 'Slingshot') {
+      if (bodyA.label === 'slingshotA') {
         slingshotA.fire();
+      }
+
+      if (bodyA.label === 'slingshotB') {
         slingshotB.fire();
       } //Pop bumpers
 
 
       if (bodyA.label === "bumper") {
         bodyA.gameObject.fire(bodyB.position);
+      } //Butters target 
+
+
+      if (bodyA.label === 'butters') {
+        registerHit(_this, bodyA.label, bodyB);
+      }
+
+      if (bodyA.label === 'leftFlipper') {
+        console.log(event);
       }
     }
-  });
+  }); //Hit registration
+
+  function registerHit(scene, object, body) {
+    if (object === 'butters') {
+      //Holds the ball for 1.5 seconds and shoots back to left flipper
+      setTimeout(function () {
+        body.destroy();
+        setTimeout(function () {
+          ball = new Ball(scene, 340, 259, 'ball');
+          ball.setVelocityY(3);
+          ball.setVelocityX(-3);
+        }, 1500);
+      }, 50);
+    }
+  }
 }
 
 function update() {

@@ -74,7 +74,8 @@ function (_Phaser$Physics$Matte) {
       this.setDensity(.001);
       this.setDepth(1);
       this.setCollisionCategory(collisionGroupA);
-      balls.push(this.body);
+      balls.push(this.body); //Add the ball to the display list
+
       this.scene.sys.displayList.add(this);
     }
   }, {
@@ -94,7 +95,9 @@ function (_Phaser$Physics$Matte) {
   }, {
     key: "launch",
     value: function launch() {
-      _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -20.5);
+      _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -20);
+
+      _get(_getPrototypeOf(Ball.prototype), "setVelocityX", this).call(this, -1);
     }
   }, {
     key: "readyBall",
@@ -245,6 +248,7 @@ function (_Phaser$Physics$Matte3) {
     _this4.setCollisionCategory(collisionGroupB);
 
     _this4.canAnimate = true;
+    _this4.canPlaySound = true;
     return _this4;
   }
 
@@ -253,8 +257,10 @@ function (_Phaser$Physics$Matte3) {
     value: function fire(position) {
       var _this5 = this;
 
-      //Grab the starting position
+      var sounds = ['Bumper', 'BumperLeft', 'BumperMiddle', 'BumperRight']; //Grab the starting position
+
       if (this.canAnimate) {
+        this.scene.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random() * sounds.length)]);
         this.canAnimate = false;
         var startPosition = {
           x: this.x,
@@ -354,6 +360,7 @@ function () {
     value: function fire() {
       var _this8 = this;
 
+      this.scene.sound.playAudioSprite('sound_effects', "Plunger");
       clearInterval(this.update);
       this.scene.tweens.add({
         targets: this.spring,

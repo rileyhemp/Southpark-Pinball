@@ -39,7 +39,8 @@ function () {
     this.flipperWidth = 40;
     this.speed = 60;
     this.startPosition = 28;
-    this.endPosition = 100;
+    this.endPosition = 105;
+    this.isFlipping = false;
   }
 
   _createClass(Flipper, [{
@@ -66,7 +67,17 @@ function () {
       this.flipperBody = this.scene.matter.body.create({
         parts: [rectA]
       });
-      this.flipper = this.scene.matter.add.image(150, 0, null).setExistingBody(this.flipperBody).setVisible(false); //Joints
+
+      if (this.orientation === 'left') {
+        this.flipper = this.scene.matter.add.image(150, 0, 'flipper').setExistingBody(this.flipperBody);
+      } else if (this.orientation === 'right') {
+        this.flipper = this.scene.matter.add.image(150, 0, 'rightFlipper').setExistingBody(this.flipperBody);
+      } else {
+        this.flipper = this.scene.matter.add.image(150, 0, 'sideFlipper').setExistingBody(this.flipperBody);
+      }
+
+      this.flipper.setDepth(2);
+      this.flipper.displayOriginY = this.flipperWidth / 2; //Joints
 
       this.pin = this.scene.matter.add.constraint(this.pivot, this.flipper);
       this.pin.stiffness = 0.9;
@@ -84,6 +95,13 @@ function () {
   }, {
     key: "flip",
     value: function flip() {
+      if (this.orientation === 'left') {
+        this.scene.sound.playAudioSprite('sound_effects', "FlipperUpLeft");
+      } else if (this.orientation === 'right') {
+        this.scene.sound.playAudioSprite('sound_effects', "FlipperUpRight");
+      }
+
+      this.isFlipping = true;
       this.scene.tweens.add({
         targets: this.pistonPin,
         length: this.endPosition,
@@ -93,6 +111,11 @@ function () {
   }, {
     key: "release",
     value: function release() {
+      var _this = this;
+
+      setTimeout(function () {
+        _this.isFlipping = false;
+      }, 100);
       this.scene.tweens.add({
         targets: this.pistonPin,
         length: this.startPosition,
@@ -110,17 +133,22 @@ function (_Flipper) {
   _inherits(LeftFlipper, _Flipper);
 
   function LeftFlipper(scene, x, y) {
-    var _this;
+    var _this2;
 
     _classCallCheck(this, LeftFlipper);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(LeftFlipper).call(this, scene, x, y));
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(LeftFlipper).call(this, scene, x, y));
+    _this2.orientation = 'left';
 
-    _get(_getPrototypeOf(LeftFlipper.prototype), "createComponents", _assertThisInitialized(_this)).call(_assertThisInitialized(_this));
+    _get(_getPrototypeOf(LeftFlipper.prototype), "createComponents", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2));
 
-    _get(_getPrototypeOf(LeftFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this)).call(_assertThisInitialized(_this));
+    _this2.endPosition = 102;
 
-    return _this;
+    _get(_getPrototypeOf(LeftFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2));
+
+    _this2.flipper.displayOriginX = 42;
+    _this2.flipper.body.parts[1].label = 'leftFlipper';
+    return _this2;
   }
 
   _createClass(LeftFlipper, [{
@@ -150,20 +178,22 @@ function (_Flipper2) {
   _inherits(RightFlipper, _Flipper2);
 
   function RightFlipper(scene, x, y) {
-    var _this2;
+    var _this3;
 
     _classCallCheck(this, RightFlipper);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(RightFlipper).call(this, scene, x, y));
-    _this2.blockOffsetX = -_this2.blockOffsetX;
-    _this2.flipperOffsetX = -_this2.flipperOffsetX;
-    _this2.endPosition = 105;
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(RightFlipper).call(this, scene, x, y));
+    _this3.orientation = 'right';
+    _this3.blockOffsetX = -_this3.blockOffsetX;
+    _this3.flipperOffsetX = -_this3.flipperOffsetX;
 
-    _get(_getPrototypeOf(RightFlipper.prototype), "createComponents", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2));
+    _get(_getPrototypeOf(RightFlipper.prototype), "createComponents", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3));
 
-    _get(_getPrototypeOf(RightFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2));
+    _get(_getPrototypeOf(RightFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3));
 
-    return _this2;
+    _this3.flipper.displayOriginX = 30;
+    _this3.flipper.body.parts[1].label = 'RightFlipper';
+    return _this3;
   }
 
   _createClass(RightFlipper, [{
@@ -193,24 +223,26 @@ function (_Flipper3) {
   _inherits(SideFlipper, _Flipper3);
 
   function SideFlipper(scene, x, y) {
-    var _this3;
+    var _this4;
 
     _classCallCheck(this, SideFlipper);
 
-    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(SideFlipper).call(this, scene, x, y));
-    _this3.blockOffsetX = 25;
-    _this3.blockOffsetY = 60;
-    _this3.flipperLength = 70;
-    _this3.flipperWidth = 35;
-    _this3.startPosition = 50;
-    _this3.endPosition = 90;
-    _this3.speed = 40;
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(SideFlipper).call(this, scene, x, y));
+    _this4.orientation = 'side';
+    _this4.blockOffsetX = 25;
+    _this4.blockOffsetY = 60;
+    _this4.flipperLength = 70;
+    _this4.flipperWidth = 35;
+    _this4.startPosition = 50;
+    _this4.endPosition = 90;
+    _this4.speed = 40;
 
-    _get(_getPrototypeOf(SideFlipper.prototype), "createComponents", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3));
+    _get(_getPrototypeOf(SideFlipper.prototype), "createComponents", _assertThisInitialized(_this4)).call(_assertThisInitialized(_this4));
 
-    _get(_getPrototypeOf(SideFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3));
+    _get(_getPrototypeOf(SideFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this4)).call(_assertThisInitialized(_this4));
 
-    return _this3;
+    _this4.flipper.displayOriginX = 20;
+    return _this4;
   }
 
   _createClass(SideFlipper, [{

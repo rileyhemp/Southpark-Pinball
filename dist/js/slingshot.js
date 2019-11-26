@@ -9,7 +9,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var Slingshot =
 /*#__PURE__*/
 function () {
-  function Slingshot(scene, x1, y1, x2, y2, x3, y3, links) {
+  function Slingshot(scene, x1, y1, x2, y2, x3, y3, links, name) {
     _classCallCheck(this, Slingshot);
 
     this.scene = scene;
@@ -18,7 +18,7 @@ function () {
     this.y1 = y1;
     this.y2 = y2;
     var group = scene.matter.world.nextGroup(true);
-    var width = 8;
+    var width = 10;
     var height = 20;
     this.boxes = scene.matter.add.stack(x1, y1, links, 1, 0, 0, function (x, y) {
       return Phaser.Physics.Matter.Matter.Bodies.rectangle(x - 20, y, width, height, {
@@ -29,10 +29,15 @@ function () {
         density: .01,
         frictionAir: 0,
         bounce: 0.001,
-        friction: 0,
-        label: 'Slingshot'
+        friction: 0
       });
     });
+
+    for (var i = 1; i < links; i++) {
+      //Only fire on bottom 4 blocks. The top one is too powerful. 
+      this.boxes.bodies[i].label = name;
+    }
+
     this.chain = scene.matter.add.chain(this.boxes, 0.5, 0, -0.5, 0, {
       stiffness: 1,
       length: .2,
@@ -84,6 +89,8 @@ function () {
     value: function fire() {
       var _this = this;
 
+      var sounds = ["SlingshotLeft", "SlingshotRight"];
+      this.scene.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random() * sounds.length)]);
       this.constraint.stiffness = .5;
       setTimeout(function () {
         _this.constraint.stiffness = .0001;

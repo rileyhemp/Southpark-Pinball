@@ -21,6 +21,7 @@ class Ball extends Phaser.Physics.Matter.Image {
         this.setDepth(1)
         this.setCollisionCategory(collisionGroupA)
         balls.push(this.body)
+        //Add the ball to the display list
         this.scene.sys.displayList.add(this)
     }
     setCollisions(level){ 
@@ -36,7 +37,8 @@ class Ball extends Phaser.Physics.Matter.Image {
         }
     }
     launch(){
-        super.setVelocityY(-20.5)
+        super.setVelocityY(-20)
+        super.setVelocityX(-1)
     }
     readyBall(){
         this.x = 455
@@ -130,13 +132,18 @@ class Bumper extends Phaser.Physics.Matter.Image {
         this.body.restitution = 1
         this.setCollisionCategory(collisionGroupB)
         this.canAnimate = true
+        this.canPlaySound = true
     }
     fire(position){
+
+        let sounds = ['Bumper', 'BumperLeft', 'BumperMiddle', 'BumperRight']
+        
         //Grab the starting position
         if (this.canAnimate) {
-
+            this.scene.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random()*sounds.length)])
+            
             this.canAnimate = false
-
+            
             let startPosition = {
                 x: this.x,
                 y: this.y
@@ -215,6 +222,7 @@ class Launcher {
         }, 40)
     }
     fire() {
+        this.scene.sound.playAudioSprite('sound_effects', "Plunger")
         clearInterval(this.update)
         this.scene.tweens.add({
             targets: this.spring,

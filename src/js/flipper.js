@@ -11,7 +11,9 @@ class Flipper {
         this.flipperWidth = 40
         this.speed = 60
         this.startPosition = 28
-        this.endPosition = 100
+        this.endPosition = 105
+        this.isFlipping = false
+        
     }
 
     createComponents(){
@@ -41,8 +43,16 @@ class Flipper {
         this.flipperBody = this.scene.matter.body.create({
             parts: [ rectA ]
         })
+        if (this.orientation === 'left') {
+            this.flipper = this.scene.matter.add.image(150, 0, 'flipper').setExistingBody(this.flipperBody)
+        } else if (this.orientation === 'right') {
+            this.flipper = this.scene.matter.add.image(150, 0, 'rightFlipper').setExistingBody(this.flipperBody)
+        } else {
+            this.flipper = this.scene.matter.add.image(150, 0, 'sideFlipper').setExistingBody(this.flipperBody)
+        }
+        this.flipper.setDepth(2)
 
-        this.flipper = this.scene.matter.add.image(150, 0, null).setExistingBody(this.flipperBody).setVisible(false)
+        this.flipper.displayOriginY = this.flipperWidth / 2
 
 
         //Joints
@@ -64,6 +74,13 @@ class Flipper {
     }
 
     flip(){
+        
+        if (this.orientation === 'left'){
+            this.scene.sound.playAudioSprite('sound_effects', "FlipperUpLeft")
+        } else if (this.orientation === 'right'){
+            this.scene.sound.playAudioSprite('sound_effects', "FlipperUpRight")            
+        }
+        this.isFlipping = true
         this.scene.tweens.add({
             targets: this.pistonPin,
             length: this.endPosition,
@@ -72,6 +89,9 @@ class Flipper {
     }
 
     release(){
+        setTimeout(()=>{
+            this.isFlipping = false
+        }, 100)
         this.scene.tweens.add({
             targets: this.pistonPin,
             length: this.startPosition,
@@ -84,8 +104,12 @@ class Flipper {
 class LeftFlipper extends Flipper {
     constructor(scene, x, y){
         super(scene, x, y)
+        this.orientation = 'left'
         super.createComponents()
+        this.endPosition = 102
         super.setCollisionGroups()
+        this.flipper.displayOriginX = 42
+        this.flipper.body.parts[1].label = 'leftFlipper'
     }
     positionPin(){
         this.pin.pointA = {
@@ -106,11 +130,13 @@ class LeftFlipper extends Flipper {
 class RightFlipper extends Flipper {
     constructor(scene, x, y){
         super(scene, x, y)
+        this.orientation = 'right'
         this.blockOffsetX = -this.blockOffsetX
         this.flipperOffsetX = -this.flipperOffsetX
-        this.endPosition = 105
         super.createComponents()
         super.setCollisionGroups()
+        this.flipper.displayOriginX = 30
+        this.flipper.body.parts[1].label = 'RightFlipper'
     }
     positionPin(){
         this.pin.pointA = {
@@ -131,6 +157,7 @@ class RightFlipper extends Flipper {
 class SideFlipper extends Flipper {
     constructor(scene, x, y){
         super(scene, x, y)
+        this.orientation = 'side'
         this.blockOffsetX = 25
         this.blockOffsetY = 60
         this.flipperLength = 70
@@ -140,6 +167,7 @@ class SideFlipper extends Flipper {
         this.speed = 40
         super.createComponents()
         super.setCollisionGroups()
+        this.flipper.displayOriginX = 20
     }
     positionPin(){
         this.pin.pointA = {
