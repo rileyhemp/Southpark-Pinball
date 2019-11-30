@@ -13,7 +13,6 @@ class Flipper {
         this.startPosition = 28
         this.endPosition = 105
         this.isFlipping = false
-        
     }
 
     createComponents(){
@@ -63,7 +62,7 @@ class Flipper {
 
         this.pistonPin = this.scene.matter.add.constraint(this.flipper, this.block)
         this.pistonPin.length = this.startPosition
-
+        this.flipper.body.parts[1].label = 'flipper'
         this.positionPin()
     }
 
@@ -109,7 +108,6 @@ class LeftFlipper extends Flipper {
         this.endPosition = 102
         super.setCollisionGroups()
         this.flipper.displayOriginX = 42
-        this.flipper.body.parts[1].label = 'leftFlipper'
     }
     positionPin(){
         this.pin.pointA = {

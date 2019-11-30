@@ -65,6 +65,7 @@ function (_Phaser$Physics$Matte) {
     key: "setupBall",
     value: function setupBall() {
       this.setCollisions('table');
+      this.body.hasCollided = false;
       this.body.isOnRamp = false;
       this.body.isOnCenterRamp = false;
       this.body.isOnLauncher = false;
@@ -76,7 +77,13 @@ function (_Phaser$Physics$Matte) {
       this.setCollisionCategory(collisionGroupA);
       balls.push(this.body); //Add the ball to the display list
 
-      this.scene.sys.displayList.add(this);
+      this.scene.sys.displayList.add(this); //Add sound
+
+      this.sfx = this.scene.sound.add('ball_rolling', {
+        loop: true
+      });
+      this.sfx.play();
+      console.log(this);
     }
   }, {
     key: "setCollisions",
@@ -111,7 +118,8 @@ function (_Phaser$Physics$Matte) {
       var _this2 = this;
 
       var i = setInterval(function () {
-        //Check if the ball is on a ramp
+        _this2.sfx.volume = _this2.body.speed / 8; //Check if the ball is on a ramp
+
         if (_this2.body.isOnRamp && _this2.body.isOnCenterRamp) {
           _this2.setCollisions('centerRamp');
 
@@ -137,7 +145,11 @@ function (_Phaser$Physics$Matte) {
 
 
         if (_this2.x < 425 && _this2.y > 650 && (_this2.x < 192 || _this2.x > 330) || _this2.y > 720) {
+          balls.pop();
+
           _this2.destroy();
+
+          _this2.sfx.stop();
 
           clearInterval(i);
         }
@@ -151,7 +163,7 @@ function (_Phaser$Physics$Matte) {
 var StaticShape =
 /*#__PURE__*/
 function () {
-  function StaticShape(scene, type, x, y, width, height, rotation, collisionGroup) {
+  function StaticShape(scene, type, x, y, width, height, rotation, collisionGroup, label) {
     _classCallCheck(this, StaticShape);
 
     this.body = {};
@@ -166,6 +178,7 @@ function () {
 
     this.object = this.scene.matter.add.image(this.x, this.y, null).setExistingBody(this.body).setVisible(false);
     this.object.setCollisionCategory(collisionGroup);
+    this.body.label = label;
   }
 
   _createClass(StaticShape, [{
@@ -204,6 +217,7 @@ function (_Phaser$Physics$Matte2) {
     _this3.setExistingBody(Bodies.fromVertices(0, 0, PATHS["".concat(name)]));
 
     _this3.body.restitution = 0;
+    _this3.body.label = "StaticCustomShape";
 
     _this3.setVisible(false);
 
@@ -297,12 +311,12 @@ var Sensor =
 function (_StaticShape) {
   _inherits(Sensor, _StaticShape);
 
-  function Sensor(scene, x, y, width, rotation, type, name, collisionGroup) {
+  function Sensor(scene, x, y, width, height, rotation, type, name, collisionGroup) {
     var _this6;
 
     _classCallCheck(this, Sensor);
 
-    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Sensor).call(this, scene, 'rectangle', x, y, width, 20, rotation, collisionGroup));
+    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(Sensor).call(this, scene, 'rectangle', x, y, width, height, rotation, collisionGroup));
     _this6.body.isSensor = true;
     _this6.body.type = type;
     _this6.body.label = name;

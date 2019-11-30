@@ -84,6 +84,7 @@ function () {
       this.pin.length = 0;
       this.pistonPin = this.scene.matter.add.constraint(this.flipper, this.block);
       this.pistonPin.length = this.startPosition;
+      this.flipper.body.parts[1].label = 'flipper';
       this.positionPin();
     }
   }, {
@@ -147,7 +148,6 @@ function (_Flipper) {
     _get(_getPrototypeOf(LeftFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2));
 
     _this2.flipper.displayOriginX = 42;
-    _this2.flipper.body.parts[1].label = 'leftFlipper';
     return _this2;
   }
 

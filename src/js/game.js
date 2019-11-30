@@ -27,6 +27,7 @@ const config = {
 const Bodies = Phaser.Physics.Matter.Matter.Bodies
 
 let balls = []
+let ballsRemaining = 3
 
 let 
     spacebar, 
@@ -59,7 +60,11 @@ let
     flipperCollisionGroup,
     test,
     tween,
-    testFlipper
+    testFlipper,
+    ballRolling,
+    gameActive,
+    score,
+    multiplier
     
 const game = new Phaser.Game(config)
 
@@ -75,7 +80,48 @@ function preload() {
     this.load.image('rightFlipper', 'dist/assets/table/right-flipper.png')
     this.load.image('sideFlipper', 'dist/assets/table/side-flipper.png')
     //Sounds
-    this.load.audioSprite('sound_effects', 'dist/assets/sounds/sound_effects.json', [ 'dist/assets/sounds/sound_effects.ogg', 'dist/assets/sounds/sound_effects.mp3' ])
+    this.load.audioSprite('sound_effects', 'dist/assets/sounds/sound_effects.json', 
+        [ 
+            'dist/assets/sounds/sound_effects.ogg', 
+            'dist/assets/sounds/sound_effects.mp3' 
+        ]
+    )
+    this.load.audio('ball_rolling', 
+        [
+            'dist/assets/sounds/fx_ballrolling.ogg',
+            'dist/assets/sounds/fx_ballrolling.mp3'
+        ]
+    )
+}
+
+function newGame(scene)
+{
+    gameActive = true
+    score = 0
+    multiplier = 1
+    getNewBall(scene)
+}
+
+function endGame()
+{
+    console.log('game over')
+    score = 0
+}
+
+function getNewBall(scene)
+{
+    ball = new Ball(scene, 455, 689, 'ball') 
+    scene.sound.playAudioSprite('sound_effects', "rollover")
+        ballsRemaining--
+        document.querySelector('.balls-remaining').textContent = ballsRemaining
+}
+
+function addScore(amount)
+{
+    let total = amount * multiplier
+    score += total
+    document.querySelector('.score').textContent = score
+    console.log(score)
 }
 
 //Initialize table
@@ -102,43 +148,22 @@ function create() {
     down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
     right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-    
+    let ballHasCollided = false
 
     //Utility functions
-    // for(let spriteName in spritemap){
-    //     console.log(spriteName)
-    // }
+
     //Add a ball where you click
-    this.input.on('pointerdown', function(pointer){
-        // console.log(pointer.x, ',', pointer.y)
-        ball = new Ball(this, pointer.x, pointer.y, 'ball') 
-        //this.sound.playAudioSprite('sound_effects', "BallDrop")
-        //ball.readyBall()
+    this.input.on('pointerdown', function(pointer)
+    {
+        console.log(pointer.x, ',', pointer.y)
+        // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+        // //ball.readyBall()
         // ball.setVelocityY(-15)
         // ball.setVelocityX(-5)
+        newGame(this)
     }, this)
 
-    //Creates paths used to draw physics shapes. 
-    /*
-    let vertices = []
-    this.input.on('pointerdown', function(pointer){
-        let value = {
-            x: pointer.x,
-            y: pointer.y
-        }
-        vertices.push(value)
-        console.log(vertices)
-    }, this)
-    */
-
-    
-    //Layout overlay
-    //let blueprint = this.add.image(260,400, 'blueprint')
-    
-    // playfield = this.add.image(260, 390, 'render')
-    // playfield.setScale(1)
-    // playfield.setDepth(1)
-
+    //Textures
     table = this.add.image(260, 400, 'table')
     table.setDepth(1)
     ramps = this.add.image(260, 400, 'ramps')
@@ -146,15 +171,10 @@ function create() {
     characters = this.add.image(260, 400, 'characters')
     characters.setDepth(4)
     
-    // plastics = this.add.image(220, 445, 'plastics')
-    // plastics.setScale(0.21)
-    // plastics.setDepth(1)
-    
     //Flippers
     leftFlipper = new LeftFlipper(this, 150, 632) 
     rightFlipper = new RightFlipper(this, 327, 632)
     sideFlipper = new SideFlipper(this, 407, 313)
-
 
     //Pop bumpers
     bumperA = new Bumper(this, 308, 125, 'bumper')
@@ -199,22 +219,22 @@ function create() {
     new StaticShape(this, 'rectangle', 425, 475, 1, 470, -0.08, collisionGroupB)// Launcher lane inner
     new StaticShape(this, 'rectangle', 415, 187, 10, 150, .15, collisionGroupD)// Launcher lane gate
     new StaticShape(this, 'rectangle', 55, 506, 10, 200, .08, collisionGroupD)// Left wall
-    new StaticShape(this, 'circle', 310, 64, 10, null, null, collisionGroupE)//Launcher top loop gate
-    new StaticShape(this, 'circle', 385, 488, 5, null, null, collisionGroupB) // Right lane topper
-    new StaticShape(this, 'circle', 86, 488, 5, null, null, collisionGroupB) // Left lane topper
-    new StaticShape(this, 'circle', 407, 451, 5, null, null, collisionGroupB) 
-    new StaticShape(this, 'circle', 314, 80, 5, null, null, collisionGroupB)//Top tri-lane
-    new StaticShape(this, 'circle', 341, 76, 5, null, null, collisionGroupB)//Top tri-lane
-    new StaticShape(this, 'circle', 314, 98, 5, null, null, collisionGroupB)//Top tri-lane
-    new StaticShape(this, 'circle', 341, 94, 5, null, null, collisionGroupB)//Top tri-lane
-    new StaticShape(this, 'circle', 375, 98, 5, null, null, collisionGroupB)//Top tri-lane
-    new StaticShape(this, 'circle', 367, 98, 5, null, null, collisionGroupB)//Top tri-lane
-    new StaticShape(this, 'circle', 320, 160, 10, null, null, collisionGroupB) // Bumpers spacer
-    new StaticShape(this, 'circle', 100, 435, 8, null, null, collisionGroupB) // Left lane
-    new StaticShape(this, 'circle', 125, 491, 12, null, null, collisionGroupB) // Slingshot corners
-    new StaticShape(this, 'circle', 350, 491, 12, null, null, collisionGroupB) // 
-    new StaticShape(this, 'circle', 148, 575, 8, null, null, collisionGroupB) // 
-    new StaticShape(this, 'circle', 326, 575, 8, null, null, collisionGroupB) // 
+    new StaticShape(this, 'circle', 310, 64, 10, null, null, collisionGroupE, 'rubber')//Launcher top loop gate
+    new StaticShape(this, 'circle', 385, 488, 5, null, null, collisionGroupB, 'rubber') // Right lane topper
+    new StaticShape(this, 'circle', 86, 488, 5, null, null, collisionGroupB, 'rubber') // Left lane topper
+    new StaticShape(this, 'circle', 407, 451, 5, null, null, collisionGroupB, 'rubber') 
+    new StaticShape(this, 'circle', 314, 80, 5, null, null, collisionGroupB, 'rubber')//Top tri-lane
+    new StaticShape(this, 'circle', 341, 76, 5, null, null, collisionGroupB, 'rubber')//Top tri-lane
+    new StaticShape(this, 'circle', 314, 98, 5, null, null, collisionGroupB, 'rubber')//Top tri-lane
+    new StaticShape(this, 'circle', 341, 94, 5, null, null, collisionGroupB, 'rubber')//Top tri-lane
+    new StaticShape(this, 'circle', 375, 98, 5, null, null, collisionGroupB, 'rubber')//Top tri-lane
+    new StaticShape(this, 'circle', 367, 98, 5, null, null, collisionGroupB, 'rubber')//Top tri-lane
+    new StaticShape(this, 'circle', 320, 160, 10, null, null, collisionGroupB, 'rubber') // Bumpers spacer
+    new StaticShape(this, 'circle', 100, 435, 8, null, null, collisionGroupB, 'rubber') // Left lane
+    new StaticShape(this, 'circle', 125, 491, 12, null, null, collisionGroupB, 'rubber') // Slingshot corners
+    new StaticShape(this, 'circle', 350, 491, 12, null, null, collisionGroupB, 'rubber') // 
+    new StaticShape(this, 'circle', 148, 575, 8, null, null, collisionGroupB, 'rubber') // 
+    new StaticShape(this, 'circle', 326, 575, 8, null, null, collisionGroupB, 'rubber') // 
     
     //Second level (collision group C)
     new StaticCustomShape(this, 147, 10, 'leftRampDiverter', collisionGroupE)
@@ -243,24 +263,27 @@ function create() {
     //constructor(scene, x, y, width, rotation, type, name, collisionGroup)
 
     //Ramp on
-    new Sensor(this, 170, 235, 30, 1.6, 'ramp-on', 'leftRampOn', sensorGroupA)
-    new Sensor(this, 207, 205, 50, -.1, 'ramp-on', 'centerRampOn', sensorGroupA)
-    new Sensor(this, 303, 200, 60, -.1, 'ramp-on', 'rightRampOn', sensorGroupA)  
+    new Sensor(this, 170, 235, 30, 20, 1.6, 'ramp-on', 'leftRampOn', sensorGroupA)
+    new Sensor(this, 207, 205, 50, 20, -.1, 'ramp-on', 'centerRampOn', sensorGroupA)
+    new Sensor(this, 303, 200, 60, 20, -.1, 'ramp-on', 'rightRampOn', sensorGroupA)  
     //Ramp off
-    new Sensor(this, 78, 461, 30, -.50, 'ramp-off', 'leftRampOff', sensorGroupB)  
-    new Sensor(this, 396, 461, 30, .50, 'ramp-off', 'rightRampOff', sensorGroupB) 
-    new Sensor(this, 255, 262, 120, 0, 'ramp-off', 'allRampsOff', sensorGroupB)  
+    new Sensor(this, 78, 461, 30, 20, -.50, 'ramp-off', 'leftRampOff', sensorGroupB)  
+    new Sensor(this, 396, 461, 30, 20, .50, 'ramp-off', 'rightRampOff', sensorGroupB) 
+    new Sensor(this, 255, 262, 120, 20, 0, 'ramp-off', 'allRampsOff', sensorGroupB)  
     //Launcher on 
-    new Sensor(this, 435, 477, 30, 1.6, 'launcher-on', 'launcherOn', sensorGroupA)
+    new Sensor(this, 435, 477, 30, 20, 1.6, 'launcher-on', 'launcherOn', sensorGroupA)
     //Launcher off
-    new Sensor(this, 349, 100, 80, -.1, 'launcher-off', 'launcherOff', sensorGroupA)
+    new Sensor(this, 349, 100, 80, 20, -.1, 'launcher-off', 'launcherOff', sensorGroupA)
     //Butters
-    new Sensor(this, 348, 237, 30, .3, 'target', 'butters', sensorGroupA)
+    new Sensor(this, 348, 237, 30, 10, .3, 'target', 'butters', sensorGroupA)
+    //Rails 
+    new Sensor(this, 107, 47, 30, 20, 0, 'rail', null, sensorGroupB)
+    new Sensor(this, 408, 47, 30, 20, 0, 'rail', null, sensorGroupB)
 
     //Collision events
     /*********************************************************/
 
-    this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+    this.matter.world.on(['collisionend'], (event, bodyA, bodyB) => {
 
         //Sensors
         if (bodyB.label === 'Ball') {
@@ -279,7 +302,7 @@ function create() {
                     bodyB.isOnCenterRamp = false
                 }, 100)
             }
-
+            console.log(bodyA)
             if (bodyA.type === 'launcher-on'){
                 bodyB.isOnLauncher = true
             }
@@ -300,26 +323,47 @@ function create() {
             //Pop bumpers
             if ( bodyA.label === "bumper") {
                 bodyA.gameObject.fire(bodyB.position)
+                addScore(1000)
             }
 
             //Butters target 
             if ( bodyA.label === 'butters' ) {   
                 registerHit(this, bodyA.label, bodyB)
+                addScore(10000)
             }
 
-            if ( bodyA.label === 'leftFlipper' ) {
-                console.log(event)
+            //Rails 
+            if (bodyA.type === 'rail'){
+                this.sound.playAudioSprite('sound_effects', 'WireRamp')
+                addScore(5000)
             }
 
+            //Rubbers 
+            if (bodyA.label === 'rubber'){
+                let sounds = ['rubber_hit_1', 'rubber_hit_2', 'rubber_hit_3']
+                this.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random()*3)])
+                console.log('rubber')
+            }
+
+            //Flippers 
+            if (bodyA.label === 'flipper'){
+                let sounds = ['flip_hit_1', 'flip_hit_2', 'flip_hit_3']
+                this.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random()*sounds.length)])
+            }
         }
 
     })
+    
+
+    
+
     
     //Hit registration
 
     function registerHit(scene, object, body) {
         
         if (object === 'butters') {
+            scene.sound.playAudioSprite('sound_effects', 'hole_enter')
             //Holds the ball for 1.5 seconds and shoots back to left flipper
             setTimeout(()=>{
                 body.destroy()
@@ -327,6 +371,7 @@ function create() {
                     ball = new Ball(scene, 340, 259, 'ball') 
                     ball.setVelocityY(3)
                     ball.setVelocityX(-3)
+                    scene.sound.playAudioSprite('sound_effects', 'ExitSandman')
                 }, 1500)
             }, 50)
         }
@@ -337,34 +382,56 @@ function create() {
 
 function update() {
 
-    if(Phaser.Input.Keyboard.JustDown(spacebar)){
+    if(Phaser.Input.Keyboard.JustDown(spacebar))
+    {
         ball = new Ball(this, 416, 773, 'ball') 
         ball.launch()
     }
     
-    if (Phaser.Input.Keyboard.JustDown(left)){
+    if (Phaser.Input.Keyboard.JustDown(left))
+    {
         leftFlipper.flip() 
     } 
     
-    if (Phaser.Input.Keyboard.JustUp(left)){
+    if (Phaser.Input.Keyboard.JustUp(left))
+    {
         leftFlipper.release()
     } 
 
-    if (Phaser.Input.Keyboard.JustDown(right)){
+    if (Phaser.Input.Keyboard.JustDown(right))
+    {
         rightFlipper.flip()
         sideFlipper.flip()
     } 
 
-    if (Phaser.Input.Keyboard.JustUp(right)){
+    if (Phaser.Input.Keyboard.JustUp(right))
+    {
         rightFlipper.release()
         sideFlipper.release()
     } 
 
-    if (Phaser.Input.Keyboard.JustDown(down)){
+    if (Phaser.Input.Keyboard.JustDown(down))
+    {
         launcher.charge()
     }
 
-    if (Phaser.Input.Keyboard.JustUp(down)){
+    if (Phaser.Input.Keyboard.JustUp(down))
+    {
         launcher.fire()
+    }
+
+    //Round is over when no balls are in play
+    if (balls.length === 0)
+    {
+        //If there are still balls left and a game running, load another ball
+        if ( ballsRemaining > -1 && gameActive)
+        {
+            getNewBall(this)
+        }
+        //Otherwise the game is over
+        else
+        { 
+            gameActive = false
+        }
     }
 } 
