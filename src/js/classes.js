@@ -50,7 +50,7 @@ class Ball extends Phaser.Physics.Matter.Image {
     readyBall()
     {
         this.x = 455
-        this.y = 690
+        this.y = 689
     }
     update()
     {

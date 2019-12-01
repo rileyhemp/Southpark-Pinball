@@ -25,7 +25,7 @@ var config = {
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
 var balls = [];
 var ballsRemaining = 3;
-var spacebar, left, right, down, ball, bounds, leftFlipper, rightFlipper, sideFlipper, launcher, bumperA, bumperB, bumperC, slingshotA, slingshotB, spritemap, //Background
+var spacebar, left, right, down, ball, bounds, leftFlipper, rightFlipper, sideFlipper, launcher, bumperA, bumperB, bumperC, slingshotA, slingshotB, //Background
 playfield, plastics, table, ramps, characters, //Utilities
 collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, leftRampDivert, // Default: false
 leftRampDiverter, leftRampBottom, flipperCollisionGroup, test, tween, testFlipper, ballRolling, gameActive, score, multiplier;
@@ -39,10 +39,28 @@ function preload() {
   this.load.image('ball', 'dist/assets/table/ball.png');
   this.load.image('flipper', 'dist/assets/table/flipper.png');
   this.load.image('rightFlipper', 'dist/assets/table/right-flipper.png');
-  this.load.image('sideFlipper', 'dist/assets/table/side-flipper.png'); //Sounds
+  this.load.image('sideFlipper', 'dist/assets/table/side-flipper.png'); //Table Sounds
 
   this.load.audioSprite('sound_effects', 'dist/assets/sounds/sound_effects.json', ['dist/assets/sounds/sound_effects.ogg', 'dist/assets/sounds/sound_effects.mp3']);
-  this.load.audio('ball_rolling', ['dist/assets/sounds/fx_ballrolling.ogg', 'dist/assets/sounds/fx_ballrolling.mp3']);
+  this.load.audio('ball_rolling', ['dist/assets/sounds/fx_ballrolling.ogg', 'dist/assets/sounds/fx_ballrolling.mp3']); //Character Sounds
+  //Generic Negative
+
+  this.load.audioSprite('generic_negative', 'dist/assets/sounds/character_sounds/generic_negative.json', ['dist/assets/sounds/character_sounds/generic_negative.ogg', 'dist/assets/sounds/character_sounds/generic_negative.mp3']); //Generic Positive
+
+  this.load.audioSprite('generic_positive', 'dist/assets/sounds/character_sounds/generic_positive.json', ['dist/assets/sounds/character_sounds/generic_positive.ogg', 'dist/assets/sounds/character_sounds/generic_positive.mp3']); //Cartman
+
+  this.load.audioSprite('cartman_block', 'dist/assets/sounds/character_sounds/cartman_block.json', ['dist/assets/sounds/character_sounds/cartman_block.ogg', 'dist/assets/sounds/character_sounds/cartman_block.mp3']);
+  this.load.audioSprite('cartman_damage', 'dist/assets/sounds/character_sounds/cartman_damage.json', ['dist/assets/sounds/character_sounds/cartman_damage.ogg', 'dist/assets/sounds/character_sounds/cartman_damage.mp3']);
+  this.load.audioSprite('cartman_end', 'dist/assets/sounds/character_sounds/cartman_end.json', ['dist/assets/sounds/character_sounds/cartman_end.ogg', 'dist/assets/sounds/character_sounds/cartman_end.mp3']);
+  this.load.audioSprite('cartman_start', 'dist/assets/sounds/character_sounds/cartman_start.json', ['dist/assets/sounds/character_sounds/cartman_start.ogg', 'dist/assets/sounds/character_sounds/cartman_start.mp3']); //Kenny
+
+  this.load.audioSprite('kenny_hit', 'dist/assets/sounds/character_sounds/kenny_hit.json', ['dist/assets/sounds/character_sounds/kenny_hit.ogg', 'dist/assets/sounds/character_sounds/kenny_hit.mp3']); //Kyle
+
+  this.load.audioSprite('kyle_hit', 'dist/assets/sounds/character_sounds/kyle_hit.json', ['dist/assets/sounds/character_sounds/kyle_hit.ogg', 'dist/assets/sounds/character_sounds/kyle_hit.mp3']); //Stan
+
+  this.load.audioSprite('stan_hit', 'dist/assets/sounds/character_sounds/stan_hit.json', ['dist/assets/sounds/character_sounds/stan_hit.ogg', 'dist/assets/sounds/character_sounds/stan_hit.mp3']); //Butters
+
+  this.load.audioSprite('butters_hit', 'dist/assets/sounds/character_sounds/butters_hit.json', ['dist/assets/sounds/character_sounds/butters_hit.ogg', 'dist/assets/sounds/character_sounds/butters_hit.mp3']);
 }
 
 function newGame(scene) {
@@ -68,7 +86,11 @@ function addScore(amount) {
   var total = amount * multiplier;
   score += total;
   document.querySelector('.score').textContent = score;
-  console.log(score);
+}
+
+function playRandomSound(sprite, scene) {
+  var spritemap = Object.keys(scene.cache.json.get(sprite).spritemap);
+  scene.sound.playAudioSprite(sprite, spritemap[Math.floor(Math.random() * spritemap.length)]);
 } //Initialize table
 
 
@@ -90,24 +112,23 @@ function create() {
   collisionGroupD = this.matter.world.nextCategory();
   collisionGroupE = this.matter.world.nextCategory();
   flipperCollisionGroup = this.matter.world.nextCategory();
-  leftRampDivert = false;
-  spritemap = this.cache.json.get('sound_effects').spritemap;
-  test = this;
+  leftRampDivert = false; //test = this
+
   bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true);
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
   spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
   var ballHasCollided = false; //Utility functions
-  //Add a ball where you click
+
+  test = this; //Add a ball where you click
 
   this.input.on('pointerdown', function (pointer) {
-    console.log(pointer.x, ',', pointer.y); // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+    // console.log(pointer.x, ',', pointer.y)
     // //ball.readyBall()
-    // ball.setVelocityY(-15)
-    // ball.setVelocityX(-5)
-
-    newGame(this);
+    ball = new Ball(this, pointer.x, pointer.y, 'ball');
+    ball.setVelocityY(-15); // ball.setVelocityX(-5)
+    //newGame(this)
   }, this); //Textures
 
   table = this.add.image(260, 400, 'table');
@@ -263,25 +284,35 @@ function create() {
   /*********************************************************/
 
   this.matter.world.on(['collisionend'], function (event, bodyA, bodyB) {
-    //Sensors
     if (bodyB.label === 'Ball') {
       //Ramp sensors on / off
+      //Kenny (left) ramp on
+      if (bodyA.label === 'leftRampOn') {
+        playRandomSound('kenny_hit', _this);
+      }
+
+      if (bodyA.label === 'centerRampOn') {
+        playRandomSound('stan_hit', _this);
+        bodyB.isOnCenterRamp = true;
+      }
+
+      if (bodyA.label === 'rightRampOn') {
+        playRandomSound('kyle_hit', _this);
+      } //Generic ramp on
+
+
       if (bodyA.type === 'ramp-on') {
         bodyB.isOnRamp = true;
+      } //Generic ramp off
 
-        if (bodyA.label === 'centerRampOn') {
-          bodyB.isOnCenterRamp = true;
-        }
-      }
 
       if (bodyA.type === 'ramp-off') {
         setTimeout(function () {
           bodyB.isOnRamp = false;
           bodyB.isOnCenterRamp = false;
         }, 100);
-      }
+      } //Launcher on / off
 
-      console.log(bodyA);
 
       if (bodyA.type === 'launcher-on') {
         bodyB.isOnLauncher = true;
@@ -310,6 +341,7 @@ function create() {
       if (bodyA.label === 'butters') {
         registerHit(_this, bodyA.label, bodyB);
         addScore(10000);
+        playRandomSound('butters_hit', _this);
       } //Rails 
 
 
@@ -324,8 +356,6 @@ function create() {
         var sounds = ['rubber_hit_1', 'rubber_hit_2', 'rubber_hit_3'];
 
         _this.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random() * 3)]);
-
-        console.log('rubber');
       } //Flippers 
 
 
@@ -341,6 +371,7 @@ function create() {
     if (object === 'butters') {
       scene.sound.playAudioSprite('sound_effects', 'hole_enter'); //Holds the ball for 1.5 seconds and shoots back to left flipper
 
+      body.render.visible = false;
       setTimeout(function () {
         body.destroy();
         setTimeout(function () {

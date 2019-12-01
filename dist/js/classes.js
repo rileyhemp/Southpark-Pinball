@@ -110,7 +110,7 @@ function (_Phaser$Physics$Matte) {
     key: "readyBall",
     value: function readyBall() {
       this.x = 455;
-      this.y = 690;
+      this.y = 689;
     }
   }, {
     key: "update",
