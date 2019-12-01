@@ -1,0 +1,35 @@
+{
+  "resources": [
+    "cartman_block.ogg",
+    "cartman_block.m4a",
+    "cartman_block.mp3",
+    "cartman_block.ac3"
+  ],
+  "spritemap": {
+    "ch_cartman_block_0282": {
+      "start": 0,
+      "end": 1.0920181405895693,
+      "loop": false
+    },
+    "ch_cartman_block_0501": {
+      "start": 3,
+      "end": 3.4680045351473923,
+      "loop": false
+    },
+    "ch_cartman_block_0502": {
+      "start": 5,
+      "end": 6.041337868480726,
+      "loop": false
+    },
+    "ch_cartman_combat_st_0613": {
+      "start": 8,
+      "end": 8.718684807256237,
+      "loop": false
+    },
+    "ch_cartman_pre_attack_0350": {
+      "start": 10,
+      "end": 11.604013605442177,
+      "loop": false
+    }
+  }
+}

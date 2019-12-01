@@ -1,0 +1,40 @@
+{
+  "resources": [
+    "cartman_damage.ogg",
+    "cartman_damage.m4a",
+    "cartman_damage.mp3",
+    "cartman_damage.ac3"
+  ],
+  "spritemap": {
+    "ch_cartman_block_0498": {
+      "start": 0,
+      "end": 0.8226530612244898,
+      "loop": false
+    },
+    "ch_cartman_combat_st_0616": {
+      "start": 2,
+      "end": 2.961337868480726,
+      "loop": false
+    },
+    "ch_cartman_damage_0135": {
+      "start": 4,
+      "end": 4.8120181405895694,
+      "loop": false
+    },
+    "ch_cartman_damage_0137": {
+      "start": 6,
+      "end": 6.69734693877551,
+      "loop": false
+    },
+    "ch_cartman_damage_0289": {
+      "start": 8,
+      "end": 8.82265306122449,
+      "loop": false
+    },
+    "ch_cartman_damage_0506": {
+      "start": 10,
+      "end": 10.881337868480726,
+      "loop": false
+    }
+  }
+}

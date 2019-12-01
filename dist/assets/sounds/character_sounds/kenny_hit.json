@@ -1,0 +1,40 @@
+{
+  "resources": [
+    "kenny_hit.ogg",
+    "kenny_hit.m4a",
+    "kenny_hit.mp3",
+    "kenny_hit.ac3"
+  ],
+  "spritemap": {
+    "ch_kenny_b_enter_0150": {
+      "start": 0,
+      "end": 2.05734693877551,
+      "loop": false
+    },
+    "ch_kenny_b_enter_0151": {
+      "start": 4,
+      "end": 5.414671201814059,
+      "loop": false
+    },
+    "ch_kenny_b_swap_0148": {
+      "start": 7,
+      "end": 8.275986394557822,
+      "loop": false
+    },
+    "ch_kenny_combat_end_0014": {
+      "start": 10,
+      "end": 11.275986394557822,
+      "loop": false
+    },
+    "ch_kenny_combat_end_0032": {
+      "start": 13,
+      "end": 14.244013605442177,
+      "loop": false
+    },
+    "ch_kenny_combat_st_0065": {
+      "start": 16,
+      "end": 17.158684807256236,
+      "loop": false
+    }
+  }
+}

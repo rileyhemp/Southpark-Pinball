@@ -1,0 +1,45 @@
+{
+  "resources": [
+    "stan_hit.ogg",
+    "stan_hit.m4a",
+    "stan_hit.mp3",
+    "stan_hit.ac3"
+  ],
+  "spritemap": {
+    "ch_stan_b_swap_0226": {
+      "start": 0,
+      "end": 0.8626530612244898,
+      "loop": false
+    },
+    "ch_stan_block_0150": {
+      "start": 2,
+      "end": 2.8973469387755104,
+      "loop": false
+    },
+    "ch_stan_block_0152": {
+      "start": 4,
+      "end": 5.225351473922903,
+      "loop": false
+    },
+    "ch_stan_buddy_fall_0022": {
+      "start": 7,
+      "end": 8.041337868480726,
+      "loop": false
+    },
+    "ch_stan_combat_st_0091": {
+      "start": 10,
+      "end": 11.228004535147392,
+      "loop": false
+    },
+    "ch_stan_evnt_resp_0075": {
+      "start": 13,
+      "end": 13.66,
+      "loop": false
+    },
+    "ch_stan_evnt_resp_0096": {
+      "start": 15,
+      "end": 15.595986394557823,
+      "loop": false
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "resources": [
+    "cartman_end.ogg",
+    "cartman_end.m4a",
+    "cartman_end.mp3",
+    "cartman_end.ac3"
+  ],
+  "spritemap": {
+    "ch_cartman_deaths_0149": {
+      "start": 0,
+      "end": 2.1186848072562356,
+      "loop": false
+    },
+    "ch_cartman_deaths_0151": {
+      "start": 4,
+      "end": 4.998684807256236,
+      "loop": false
+    },
+    "ch_cartman_deaths_0571": {
+      "start": 6,
+      "end": 7.489319727891156,
+      "loop": false
+    },
+    "ch_cartman_deaths_0572": {
+      "start": 9,
+      "end": 9.905351473922902,
+      "loop": false
+    },
+    "ch_cartman_deaths_0573": {
+      "start": 11,
+      "end": 11.892018140589569,
+      "loop": false
+    },
+    "ch_cartman_deaths_0574": {
+      "start": 13,
+      "end": 15.148004535147393,
+      "loop": false
+    },
+    "ch_cartman_deaths_0575": {
+      "start": 17,
+      "end": 18.569319727891155,
+      "loop": false
+    },
+    "ch_cartman_deaths_0576": {
+      "start": 20,
+      "end": 21.635986394557822,
+      "loop": false
+    }
+  }
+}

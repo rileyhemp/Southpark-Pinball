@@ -1,0 +1,80 @@
+{
+  "resources": [
+    "kyle_hit.ogg",
+    "kyle_hit.m4a",
+    "kyle_hit.mp3",
+    "kyle_hit.ac3"
+  ],
+  "spritemap": {
+    "ch_kyle_damage_0060": {
+      "start": 0,
+      "end": 1.02,
+      "loop": false
+    },
+    "ch_kyle_damage_0097": {
+      "start": 3,
+      "end": 3.7186848072562357,
+      "loop": false
+    },
+    "ch_kyle_damage_0099": {
+      "start": 5,
+      "end": 5.69734693877551,
+      "loop": false
+    },
+    "ch_kyle_damage_0106": {
+      "start": 7,
+      "end": 8.086666666666666,
+      "loop": false
+    },
+    "ch_kyle_damage_0108": {
+      "start": 10,
+      "end": 10.614671201814058,
+      "loop": false
+    },
+    "ch_kyle_damage_0113": {
+      "start": 12,
+      "end": 13.041337868480726,
+      "loop": false
+    },
+    "ch_kyle_damage_0120": {
+      "start": 15,
+      "end": 15.926666666666666,
+      "loop": false
+    },
+    "ch_kyle_damage_0122": {
+      "start": 17,
+      "end": 17.878684807256235,
+      "loop": false
+    },
+    "ch_kyle_damage_0129": {
+      "start": 19,
+      "end": 20.166666666666668,
+      "loop": false
+    },
+    "ch_kyle_damage_0171": {
+      "start": 22,
+      "end": 23.065351473922902,
+      "loop": false
+    },
+    "ch_kyle_damage_0180": {
+      "start": 25,
+      "end": 25.93201814058957,
+      "loop": false
+    },
+    "ch_kyle_damage_0198": {
+      "start": 27,
+      "end": 27.70265306122449,
+      "loop": false
+    },
+    "ch_kyle_damage_0200": {
+      "start": 29,
+      "end": 29.764013605442177,
+      "loop": false
+    },
+    "ch_kyle_damage_0202": {
+      "start": 31,
+      "end": 32.030680272108846,
+      "loop": false
+    }
+  }
+}

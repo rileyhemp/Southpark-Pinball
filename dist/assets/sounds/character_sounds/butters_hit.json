@@ -1,0 +1,25 @@
+{
+  "resources": [
+    "butters_hit.ogg",
+    "butters_hit.m4a",
+    "butters_hit.mp3",
+    "butters_hit.ac3"
+  ],
+  "spritemap": {
+    "ch_butters_evnt_resp_0329": {
+      "start": 0,
+      "end": 1.044013605442177,
+      "loop": false
+    },
+    "ch_butters_evnt_resp_0332": {
+      "start": 3,
+      "end": 4.044013605442177,
+      "loop": false
+    },
+    "ch_butters_evnt_resp_0387": {
+      "start": 6,
+      "end": 13.06265306122449,
+      "loop": false
+    }
+  }
+}
