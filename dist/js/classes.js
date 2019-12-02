@@ -105,6 +105,8 @@ function (_Phaser$Physics$Matte) {
   }, {
     key: "readyBall",
     value: function readyBall() {
+      this.setVelocityX(0);
+      this.setVelocityY(0);
       this.x = 455;
       this.y = 689;
     }
@@ -116,13 +118,20 @@ function (_Phaser$Physics$Matte) {
       var i = setInterval(function () {
         //Changes sound when ball is on a ramp
         if (_this2.body.isOnPlastic) {
-          _this2.table_sfx.volume = 0;
-          _this2.ramp_sfx.volume = .25;
+          _this2.table_sfx.volume = _this2.table_sfx.volume - .1;
+          _this2.ramp_sfx.volume = .1;
         } //Sets the volume of the ball rolling to the balls speed. 
         else {
             _this2.ramp_sfx.volume = 0;
-            _this2.table_sfx.volume = _this2.body.speed / 8;
-          } //Check if the ball is on a ramp
+            _this2.table_sfx.volume = _this2.body.speed / 8.5;
+          } //Kills the sound if the ball has been destroyed (by the butters target)
+
+
+        if (_this2.body.isDestroyed) {
+          _this2.table_sfx.stop();
+
+          _this2.ramp_sfx.stop();
+        } //Check balls status and adjust collisions accordingly
 
 
         if (_this2.body.isOnRamp && _this2.body.isOnCenterRamp) {
@@ -151,6 +160,10 @@ function (_Phaser$Physics$Matte) {
 
         if (_this2.x < 425 && _this2.y > 650 && (_this2.x < 192 || _this2.x > 330) || _this2.y > 720) {
           balls.pop();
+
+          _this2.scene.sound.playAudioSprite('sound_effects', 'Drain');
+
+          playRandomSound('generic_negative', _this2.scene, 400);
 
           _this2.destroy();
 
@@ -181,8 +194,7 @@ function () {
     this.width = width;
     this.height = height;
     this.rotation = rotation;
-    this.drawShape(); //this.body.collisionFilter.category = collisionGroup
-
+    this.drawShape();
     this.object = this.scene.matter.add.image(this.x, this.y, null).setExistingBody(this.body).setVisible(false);
     this.object.setCollisionCategory(collisionGroup);
     this.body.label = label;
@@ -224,7 +236,7 @@ function (_Phaser$Physics$Matte2) {
     _this3.setExistingBody(Bodies.fromVertices(0, 0, PATHS["".concat(name)]));
 
     _this3.body.restitution = 0;
-    _this3.body.label = "StaticCustomShape";
+    _this3.body.label = name;
 
     _this3.setVisible(false);
 

@@ -1,0 +1,20 @@
+{
+  "resources": [
+    "loop_hit.ogg",
+    "loop_hit.m4a",
+    "loop_hit.mp3",
+    "loop_hit.ac3"
+  ],
+  "spritemap": {
+    "ch_mr_hankey_fart_react_0006": {
+      "start": 0,
+      "end": 1.4840136054421769,
+      "loop": false
+    },
+    "ch_mr_hankey_summon_start_0008": {
+      "start": 3,
+      "end": 4.958684807256236,
+      "loop": false
+    }
+  }
+}

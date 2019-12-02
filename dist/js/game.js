@@ -28,8 +28,8 @@ var currentBall = 1;
 var multiplier = 1;
 var score = 0;
 var leftFlipper, rightFlipper, sideFlipper, bumperA, bumperB, bumperC, slingshotA, slingshotB, launcher, bounds, ball, //Table
-table, ramps, characters, //Utilities
-spacebar, left, right, down, collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, test, gameActive, backgroundMusic;
+table, ramps, characters, rampsCartmanActive, //Utilities
+spacebar, left, right, down, collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, cartmanLeft, cartmanCenter, cartmanRight, cartmanBlock, objectives, test, gameActive, backgroundMusic, eventMusic;
 var game = new Phaser.Game(config); //Create the table
 
 function create() {
@@ -54,21 +54,30 @@ function create() {
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //Utility functions
+  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //Tracks a hit count for each target, per ball. 
+
+  objectives = {
+    'cartman-left': 0,
+    'cartman-center': 0,
+    'cartman-right': 0,
+    'cartman-himself': 0,
+    'loop-hit': 0
+  }; //Utility functions
   //Add a ball where you click
 
   this.input.on('pointerdown', function (pointer) {
-    console.log(pointer.x, ',', pointer.y); // //ball.readyBall()
+    console.log(pointer.x + ",", pointer.y); // //ball.readyBall()
 
     ball = new Ball(this, pointer.x, pointer.y, 'ball');
-    ball.setVelocityY(-15); // ball.setVelocityX(-5)
-    // newGame(this)
+    ball.setVelocityX(10); // newGame(this)
   }, this); //Textures
 
   table = this.add.image(260, 400, 'table');
   table.setDepth(1);
   ramps = this.add.image(260, 400, 'ramps');
   ramps.setDepth(2);
+  rampsCartmanActive = this.add.image(260, 400, 'ramps_cartman_active');
+  rampsCartmanActive.setDepth(0);
   characters = this.add.image(260, 400, 'characters');
   characters.setDepth(4); //Flippers
 
@@ -110,8 +119,7 @@ function create() {
   new StaticCustomShape(this, 107, 593, 'leftLane', collisionGroupB).setScale(0.82, 1);
   new StaticCustomShape(this, 130, 540, 'leftSlingshot', collisionGroupB).setScale(0.82, 1).setCollidesWith(collisionGroupA);
   new StaticCustomShape(this, 345, 540, 'rightSlingshot', collisionGroupB).setScale(0.82, 1).setCollidesWith(collisionGroupA);
-  new StaticCustomShape(this, 378, 400, 'rightTargets', collisionGroupB).setScale(1, 1);
-  new StaticShape(this, 'rectangle', 257, 195, 62, 62, .02, collisionGroupB); // Cartmen targets
+  new StaticCustomShape(this, 378, 400, 'rightTargets', collisionGroupB).setScale(1, 1); //Randy
 
   new StaticShape(this, 'rectangle', 447, 700, 10, 5, 1, collisionGroupB); // Launcher align
 
@@ -153,6 +161,14 @@ function create() {
   new StaticShape(this, 'circle', 148, 575, 8, null, null, collisionGroupB, 'rubber'); // 
 
   new StaticShape(this, 'circle', 326, 575, 8, null, null, collisionGroupB, 'rubber'); // 
+
+  cartmanBlock = new StaticShape(this, 'rectangle', 257, 202, 62, 62, .02, collisionGroupB); // Cartman targets
+
+  new StaticShape(this, 'rectangle', 249, 125, 62, 30, .02, collisionGroupB); // Cartman back center
+
+  new StaticShape(this, 'rectangle', 219, 160, 82, 10, 1.5, collisionGroupB); // Cartman back left
+
+  new StaticShape(this, 'rectangle', 283, 159, 82, 10, 1.3, collisionGroupB); // Cartman back right
   //Second level (collision group C)
 
   new StaticCustomShape(this, 147, 10, 'leftRampDiverter', collisionGroupE);
@@ -172,8 +188,7 @@ function create() {
   new StaticShape(this, 'circle', 348, 78, 50, null, null, collisionGroupC); //Right ramp bottom
 
   new StaticCustomShape(this, 335, 16, 'rightRampTop', collisionGroupC).setScale(0.8, 1); // Right ramp top
-
-  new StaticShape(this, 'rectangle', 275, 125, 15, 170, -0.05, collisionGroupC); // Right ramp left
+  // new StaticShape(this, 'rectangle', 275, 125, 15, 170, -0.05, collisionGroupC) // Right ramp left
 
   new StaticShape(this, 'rectangle', 319, 160, 20, 140, -0.15, collisionGroupC); // Right ramp right
 
@@ -195,16 +210,28 @@ function create() {
 
   new StaticShape(this, 'rectangle', 363, 514, 15, 30, -1, collisionGroupC); // Right lane termination
   //Sensors 
-  //constructor(scene, x, y, width, rotation, type, name, collisionGroup)
+  //constructor(scene, x, y, width, height, rotation, type, name, collisionGroup)
   //Ramp on
 
-  new Sensor(this, 170, 235, 30, 20, 1.6, 'ramp-on', 'leftRampOn', sensorGroupA);
-  new Sensor(this, 207, 205, 50, 20, -.1, 'ramp-on', 'centerRampOn', sensorGroupA);
-  new Sensor(this, 303, 200, 60, 20, -.1, 'ramp-on', 'rightRampOn', sensorGroupA); //Ramp off
+  new Sensor(this, 165, 235, 30, 20, 1.6, 'ramp-on', 'leftRampOn', sensorGroupA);
+  new Sensor(this, 202, 205, 30, 20, -.1, 'ramp-on', 'centerRampOn', sensorGroupA);
+  new Sensor(this, 303, 200, 30, 20, -.1, 'ramp-on', 'rightRampOn', sensorGroupA); //Ramp off
 
   new Sensor(this, 78, 461, 30, 20, -.50, 'ramp-off', 'leftRampOff', sensorGroupB);
   new Sensor(this, 396, 461, 30, 20, .50, 'ramp-off', 'rightRampOff', sensorGroupB);
-  new Sensor(this, 255, 262, 120, 20, 0, 'ramp-off', 'allRampsOff', sensorGroupB); //Launcher on 
+  new Sensor(this, 255, 262, 120, 20, 0, 'all-ramps-off', 'allRampsOff', sensorGroupB); //Ramp hit
+
+  new Sensor(this, 110, 36, 30, 20, 1.6, 'ramp-hit', 'leftRampHit', sensorGroupB);
+  new Sensor(this, 136, 13, 50, 20, -.1, 'ramp-hit', 'centerRampHit', sensorGroupB);
+  new Sensor(this, 349, 16, 60, 20, -.1, 'ramp-hit', 'rightRampHit', sensorGroupB); //Loop hit
+
+  new Sensor(this, 296, 68, 20, 20, 0, 'loop-hit', null, sensorGroupA); //Cartman hit
+
+  cartmanLeft = new Sensor(this, 257, 226, 18, 20, 0, 'cartman-hit', 'cartman-center', sensorGroupA);
+  cartmanCenter = new Sensor(this, 237, 226, 18, 20, 0, 'cartman-hit', 'cartman-left', sensorGroupA);
+  cartmanRight = new Sensor(this, 277, 226, 18, 20, 0, 'cartman-hit', 'cartman-right', sensorGroupA);
+  new Sensor(this, 249, 153, 40, 10, 0, 'cartman-himself', 'cartman-himself', sensorGroupA); //Cartman himself
+  //Launcher on 
 
   new Sensor(this, 435, 477, 30, 20, 1.6, 'launcher-on', 'launcherOn', sensorGroupA); //Launcher off
 
@@ -217,22 +244,62 @@ function create() {
 
   /*********************************************************/
 
-  this.matter.world.on(['collisionend'], function (event, bodyA, bodyB) {
+  this.matter.world.on('collisionstart', function (event, bodyA, bodyB) {
+    if (bodyB.label === 'Ball') {
+      //Butters target 
+      if (bodyA.label === 'butters') {
+        registerHit(_this, bodyA.label, bodyB);
+        addScore('butters');
+        playRandomSound('butters_hit', _this);
+      } //Generic ramp on
+
+
+      if (bodyA.type === 'ramp-on') {
+        bodyB.isOnRamp = true;
+        bodyB.isOnPlastic = true;
+      }
+
+      if (bodyA.label === 'leftRampOn') {
+        bodyB.isOnPlastic = true;
+      }
+
+      if (bodyA.label === 'cartman-himself') {
+        registerHit(_this, bodyA.type, bodyA.label);
+      }
+
+      if (bodyA.label === 'rightTargets') {
+        registerHit(_this, bodyA.label);
+      }
+    }
+  });
+  this.matter.world.on('collisionend', function (event, bodyA, bodyB) {
     if (bodyB.label === 'Ball') {
       //Kenny ramp
-      if (bodyA.label === 'leftRampOn') {
+      if (bodyA.label === 'leftRampHit' && !bodyB.isOnCenterRamp) {
         playRandomSound('kenny_hit', _this);
       } //Stan ramp
 
 
-      if (bodyA.label === 'centerRampOn') {
+      if (bodyA.label === 'centerRampHit') {
         playRandomSound('stan_hit', _this);
-        bodyB.isOnCenterRamp = true;
       } //Kyle ramp
 
 
-      if (bodyA.label === 'rightRampOn') {
+      if (bodyA.label === 'rightRampHit') {
         playRandomSound('kyle_hit', _this);
+      } //Cartman targets 
+
+
+      if (bodyA.type === 'cartman-hit') {
+        registerHit(_this, bodyA.type, bodyA.label);
+      }
+
+      if (bodyA.label === 'centerRampOn') {
+        bodyB.isOnCenterRamp = true;
+      }
+
+      if (bodyA.type === 'loop-hit') {
+        registerHit(_this, bodyA.type);
       } //Generic ramp on
 
 
@@ -247,6 +314,12 @@ function create() {
           bodyB.isOnRamp = false;
           bodyB.isOnCenterRamp = false;
         }, 100);
+      }
+
+      if (bodyA.type === 'all-ramps-off') {
+        bodyB.isOnRamp = false;
+        bodyB.isOnCenterRamp = false;
+        bodyB.isOnPlastic = false;
       } //Launcher on / off
 
 
@@ -270,14 +343,7 @@ function create() {
 
       if (bodyA.label === "bumper") {
         bodyA.gameObject.fire(bodyB.position);
-        addScore(1000);
-      } //Butters target 
-
-
-      if (bodyA.label === 'butters') {
-        registerHit(_this, bodyA.label, bodyB);
-        addScore(10000);
-        playRandomSound('butters_hit', _this);
+        addScore('bumper');
       } //Rails 
 
 
@@ -287,7 +353,7 @@ function create() {
         });
 
         bodyB.isOnPlastic = false;
-        addScore(5000);
+        addScore('ramp');
       } //Rubbers 
 
 
@@ -306,19 +372,48 @@ function create() {
     }
   }); //Hit registration
 
-  function registerHit(scene, object, body) {
-    if (object === 'butters') {
-      scene.sound.playAudioSprite('sound_effects', 'hole_enter');
-      body.render.visible = false;
-      console.log(body);
-      body.destroy(); //Holds the ball for 1.5 seconds and shoots back to left flipper
+  function registerHit(scene, bodyA, bodyB) {
+    switch (bodyA) {
+      case "butters":
+        scene.sound.playAudioSprite('sound_effects', 'hole_enter');
+        bodyB.render.visible = false;
+        bodyB.isDestroyed = true;
+        bodyB.destroy(); //Holds the ball for 3 seconds and shoots back to left flipper
 
-      setTimeout(function () {
-        ball = new Ball(scene, 340, 259, 'ball');
-        ball.setVelocityY(3.3);
-        ball.setVelocityX(-3.3);
-        scene.sound.playAudioSprite('sound_effects', 'ExitSandman');
-      }, 1500);
+        setTimeout(function () {
+          ball = new Ball(scene, 340, 259, 'ball');
+          ball.setVelocityY(3.3);
+          ball.setVelocityX(-3.3);
+          scene.sound.playAudioSprite('sound_effects', 'ExitSandman');
+        }, 3000);
+        break;
+
+      case "cartman-hit":
+        if (!objectives[bodyB] && bodyB != 'cartman-himself') {
+          objectives[bodyB]++;
+          scene.sound.playAudioSprite('sound_effects', 'target');
+        }
+
+        break;
+
+      case "cartman-himself":
+        objectives[bodyB]++;
+        playRandomSound('cartman_damage', scene);
+        scene.sound.playAudioSprite('sound_effects', 'rubber_hit_2');
+        break;
+
+      case "rightTargets":
+        console.log('asdad');
+        playRandomSound('randy_hit', scene);
+        scene.sound.playAudioSprite('sound_effects', 'rubber_hit_1');
+        addScore('randy');
+        break;
+
+      case "loop-hit":
+        playRandomSound('loop_hit', scene);
+        addScore('loop');
+        objectives[bodyA]++;
+        console.log(objectives);
     }
   }
 } //Update
@@ -365,6 +460,11 @@ function update() {
     else {
         gameActive = false;
       }
+  } //Events
+
+
+  if (objectives['cartman-left'] && objectives['cartman-center'] && objectives['cartman-right']) {
+    startEvent('cartman', this);
   }
 }
 
@@ -389,15 +489,44 @@ function getNewBall(scene) {
   document.querySelector('.balls-remaining').textContent = currentBall;
 }
 
-function addScore(amount) {
+function addScore(name) {
+  var amount;
+
+  switch (name) {
+    case "bumper":
+      amount = 1000;
+      break;
+
+    case "butters":
+      amount = 10000;
+      break;
+
+    case "ramp":
+      amount = 5000;
+      break;
+
+    case "cartman-win":
+      amount = 100000;
+      break;
+
+    case "randy":
+      amount = 2500;
+      break;
+
+    case "loop":
+      amount = 10000;
+      break;
+  }
+
   var total = amount * multiplier;
   score += total;
-  console.log(score);
   document.querySelector('.score').textContent = score;
 }
 
-function playRandomSound(sprite, scene) {
+function playRandomSound(sprite, scene, delay) {
   var spritemap = Object.keys(scene.cache.json.get(sprite).spritemap);
-  scene.sound.playAudioSprite(sprite, spritemap[Math.floor(Math.random() * spritemap.length)]);
+  setTimeout(function () {
+    scene.sound.playAudioSprite(sprite, spritemap[Math.floor(Math.random() * spritemap.length)]);
+  }, delay);
 }
 //# sourceMappingURL=game.js.map

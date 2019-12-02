@@ -45,6 +45,8 @@ class Ball extends Phaser.Physics.Matter.Image {
     }
     readyBall()
     {
+        this.setVelocityX(0)
+        this.setVelocityY(0)
         this.x = 455
         this.y = 689
     }
@@ -55,38 +57,56 @@ class Ball extends Phaser.Physics.Matter.Image {
             //Changes sound when ball is on a ramp
             if (this.body.isOnPlastic) 
             {
-                this.table_sfx.volume = 0
-                this.ramp_sfx.volume = .25
+                this.table_sfx.volume = this.table_sfx.volume - .1
+                this.ramp_sfx.volume = .1
             }
             //Sets the volume of the ball rolling to the balls speed. 
             else
             {
                 this.ramp_sfx.volume = 0
-                this.table_sfx.volume = this.body.speed/8
+                this.table_sfx.volume = this.body.speed/8.5
+            }
+            
+            //Kills the sound if the ball has been destroyed (by the butters target)
+            if (this.body.isDestroyed)
+            {
+                this.table_sfx.stop()
+                this.ramp_sfx.stop()
             }
 
-            //Check if the ball is on a ramp
-            if (this.body.isOnRamp && this.body.isOnCenterRamp){
+            //Check balls status and adjust collisions accordingly
+            if (this.body.isOnRamp && this.body.isOnCenterRamp)
+            {
                 this.setCollisions('centerRamp')
                 this.setDepth(3)
-            } else if (this.body.isOnRamp){
+            } 
+            else if (this.body.isOnRamp)
+            {
                 this.setCollisions('ramps')
                 this.setDepth(3)
-            } else if (!this.body.isOnRamp && this.body.isOnLauncher){
+            } 
+            else if (!this.body.isOnRamp && this.body.isOnLauncher)
+            {
                 this.setCollisions('launcher')
                 this.setDepth(1)
-            } else {
+            } 
+            else 
+            {
                 this.setCollisions('table')
                 this.setDepth(1)
             } 
             //Checks if the ball has escaped the map
-            if (this.x < 0 || this.x > game.config.width || this.y < 0 || this.y > game.config.height){
+            if (this.x < 0 || this.x > game.config.width || this.y < 0 || this.y > game.config.height)
+            {
                 this.readyBall()
             }
 
             //Check if the ball is in a killzone
-            if (this.x < 425 && (this.y > 650 && (this.x < 192 || this.x > 330)) || this.y > 720) {
+            if (this.x < 425 && (this.y > 650 && (this.x < 192 || this.x > 330)) || this.y > 720) 
+            {
                 balls.pop()
+                this.scene.sound.playAudioSprite('sound_effects', 'Drain')
+                playRandomSound('generic_negative', this.scene, 400)
                 this.destroy()
                 this.table_sfx.stop()
                 this.ramp_sfx.stop()
@@ -107,7 +127,6 @@ class StaticShape {
         this.height = height
         this.rotation = rotation
         this.drawShape()
-        //this.body.collisionFilter.category = collisionGroup
         this.object = this.scene.matter.add.image(this.x, this.y, null).setExistingBody(this.body).setVisible(false)
         this.object.setCollisionCategory(collisionGroup)
         this.body.label = label
@@ -133,7 +152,7 @@ class StaticCustomShape extends Phaser.Physics.Matter.Image {
         super(scene.matter.world, x, y, name)
         this.setExistingBody(Bodies.fromVertices(0,0, PATHS[`${name}`]))
         this.body.restitution = 0
-        this.body.label = "StaticCustomShape"
+        this.body.label = name
         this.setVisible(false)
         this.setStatic(true)
         this.x = x
