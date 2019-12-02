@@ -15,7 +15,7 @@ var config = {
   physics: {
     default: 'matter',
     matter: {
-      debug: true,
+      debug: false,
       gravity: {
         x: 0,
         y: .9
@@ -32,7 +32,7 @@ var config = {
   }
 }; //Declare global variables 
 
-var table, ramps, characters, leftFlipper, rightFlipper, sideFlipper, bumperA, bumperB, bumperC, leftSlingshot, rightSlingshot, launcher, ball, spacebar, left, right, down, collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, cartmanLeft, cartmanCenter, cartmanRight, cartmanBlock, rampsCartmanActive, objectives, gameActive, backgroundMusic, eventMusic;
+var table, ramps, characters, leftFlipper, rightFlipper, sideFlipper, bumperA, bumperB, bumperC, leftSlingshot, rightSlingshot, launcher, ball, spacebar, left, right, down, collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, cartmanLeft, cartmanCenter, cartmanRight, cartmanBlock, rampsCartmanActive, objectives, gameActive, backgroundMusic, eventMusic, lights;
 var balls = [];
 var currentBall = 1;
 var multiplier = 1;
@@ -44,12 +44,14 @@ function create() {
   //Development multitool
   this.input.on('pointerdown', function (pointer) {
     //Log the mouse coordinates
-    console.log(pointer.x + ",", pointer.y); //Make a ball where you click
-
-    ball = new Ball(this, pointer.x, pointer.y, 'ball'); //Set velocity for testing ramps etc
-
-    ball.setVelocityY(-10); //Start a new game
-    // newGame(this)
+    // console.log(pointer.x+",", pointer.y)
+    //Make a ball where you click
+    // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+    // ball.setDepth(4)
+    //Set velocity for testing ramps etc
+    // ball.setVelocityY(-10)
+    //Start a new game
+    newGame(this);
   }, this); //Setup collision groups 
 
   sensorGroupA = this.matter.world.nextCategory(); // Ground level sensors
@@ -67,7 +69,8 @@ function create() {
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //Create object to store hit counts for each objective
+  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+  initLights(this); //Create object to store hit counts for each objective
 
   objectives = {
     'cartman-left': 0,
@@ -268,5 +271,10 @@ function playRandomSound(sprite, scene, delay) {
   setTimeout(function () {
     scene.sound.playAudioSprite(sprite, spritemap[Math.floor(Math.random() * spritemap.length)]);
   }, delay);
+}
+
+function comboCounter(scene) {//ball hits flippers
+  //ball speed exceeds a certain threshold 
+  //score points
 }
 //# sourceMappingURL=game.js.map

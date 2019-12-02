@@ -134,7 +134,7 @@ class RightFlipper extends Flipper {
         super.createComponents()
         super.setCollisionGroups()
         this.flipper.displayOriginX = 30
-        this.flipper.body.parts[1].label = 'RightFlipper'
+        this.flipper.body.parts[1].label = 'flipper'
     }
     positionPin(){
         this.pin.pointA = {
@@ -166,6 +166,7 @@ class SideFlipper extends Flipper {
         super.createComponents()
         super.setCollisionGroups()
         this.flipper.displayOriginX = 20
+        this.flipper.body.parts[1].label = 'flipper'
     }
     positionPin(){
         this.pin.pointA = {

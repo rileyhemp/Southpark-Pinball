@@ -192,7 +192,7 @@ function (_Flipper2) {
     _get(_getPrototypeOf(RightFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this3)).call(_assertThisInitialized(_this3));
 
     _this3.flipper.displayOriginX = 30;
-    _this3.flipper.body.parts[1].label = 'RightFlipper';
+    _this3.flipper.body.parts[1].label = 'flipper';
     return _this3;
   }
 
@@ -242,6 +242,7 @@ function (_Flipper3) {
     _get(_getPrototypeOf(SideFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this4)).call(_assertThisInitialized(_this4));
 
     _this4.flipper.displayOriginX = 20;
+    _this4.flipper.body.parts[1].label = 'flipper';
     return _this4;
   }
 

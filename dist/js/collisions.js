@@ -25,6 +25,17 @@ function initCollisionListeners(scene) {
       if (bodyA.label === 'rightTargets') {
         registerHit(scene, bodyA.label);
       }
+
+      if (bodyA.label === 'flipper') {
+        //This function evaluates whether the ball is in an active combo. 
+        //See ball.js for info on how it works
+        if (bodyB.isInMotion) {
+          bodyB.isInMotion = false;
+          var scorePrevious = bodyB.currentScore;
+          bodyB.currentScore = score;
+          bodyB.currentScore > scorePrevious ? bodyB.combo++ : bodyB.combo = 0;
+        }
+      }
     }
   });
   scene.matter.world.on('collisionend', function (event, bodyA, bodyB) {

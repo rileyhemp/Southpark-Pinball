@@ -42,7 +42,7 @@ function createStaticObjects(scene)
     new StaticShape(scene, 'circle', 350, 491, 12, null, null, collisionGroupB, 'rubber') // 
     new StaticShape(scene, 'circle', 148, 575, 8, null, null, collisionGroupB, 'rubber') // 
     new StaticShape(scene, 'circle', 326, 575, 8, null, null, collisionGroupB, 'rubber') // 
-    cartmanBlock = new StaticShape(scene, 'rectangle', 257, 202, 62, 62, .02, collisionGroupB)// Cartman targets
+    cartmanBlock = new StaticShape(scene, 'rectangle', 257, 202, 70, 62, .02, collisionGroupB)// Cartman targets
     new StaticShape(scene, 'rectangle', 249, 125, 62, 30, .02, collisionGroupB)// Cartman back center
     new StaticShape(scene, 'rectangle', 219, 160, 82, 10, 1.5, collisionGroupB)// Cartman back left
     new StaticShape(scene, 'rectangle', 283, 159, 82, 10, 1.3, collisionGroupB)// Cartman back right

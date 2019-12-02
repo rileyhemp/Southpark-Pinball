@@ -15,7 +15,7 @@ const config =
     physics: {
         default: 'matter',
         matter: {
-            debug: true,
+            debug: false,
             gravity: 
             {
                 x: 0,
@@ -48,7 +48,8 @@ sensorGroupA, sensorGroupB,
 cartmanLeft, cartmanCenter, cartmanRight, cartmanBlock, rampsCartmanActive,
 objectives, 
 gameActive,
-backgroundMusic, eventMusic
+backgroundMusic, eventMusic, 
+lights
 
 let balls = []
 let currentBall = 1
@@ -64,16 +65,17 @@ function create() {
     this.input.on('pointerdown', function(pointer)
     {
         //Log the mouse coordinates
-        console.log(pointer.x+",", pointer.y)
+        // console.log(pointer.x+",", pointer.y)
 
         //Make a ball where you click
-        ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+        // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+        // ball.setDepth(4)
 
         //Set velocity for testing ramps etc
-        ball.setVelocityY(-10)
+        // ball.setVelocityY(-10)
 
         //Start a new game
-        // newGame(this)
+        newGame(this)
     }, this)
 
     //Setup collision groups 
@@ -90,6 +92,8 @@ function create() {
     down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
     right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+
+    initLights(this)
     
     //Create object to store hit counts for each objective
     objectives = 
@@ -273,6 +277,7 @@ function registerHit(scene, bodyA, bodyB) {
             if (!objectives[bodyB] && bodyB != 'cartman-himself')
             {
                 objectives[bodyB]++
+
                 scene.sound.playAudioSprite('sound_effects', 'target')
             } 
             break          
@@ -306,4 +311,12 @@ function playRandomSound(sprite, scene, delay)
     }, delay)
 }
 
+function comboCounter(scene)
+{
+
+    //ball hits flippers
+    //ball speed exceeds a certain threshold 
+    //score points
+    
+}
 
