@@ -64,28 +64,33 @@ function (_Phaser$Physics$Matte) {
   _createClass(Ball, [{
     key: "setupBall",
     value: function setupBall() {
-      this.setCollisions('table');
-      this.body.hasCollided = false;
-      this.body.isOnRamp = false;
-      this.body.isOnCenterRamp = false;
-      this.body.isOnLauncher = false;
       this.body.friction = 0;
       this.body.frictionAir = 0;
-      this.body.inertia = Infinity;
       this.setDensity(.001);
-      this.setDepth(1);
-      this.setCollisionCategory(collisionGroupA);
-      balls.push(this.body); //Add the ball to the display list
+      this.setDepth(1); //Set what the ball can collide with
 
-      this.scene.sys.displayList.add(this); //Add sound
+      this.setCollisions('table'); //Set the ball's own collision category
+
+      this.setCollisionCategory(collisionGroupA); //Initialize variables 
+
+      this.body.isOnRamp = false;
+      this.body.isOnCenterRamp = false;
+      this.body.isOnLauncher = false; //Add ball to array
+
+      balls.push(this.body); //Prevents the ball from spinning
+
+      this.body.inertia = Infinity; //Add the ball to the display list
+
+      this.scene.sys.displayList.add(this); //Add rolling table sounds
 
       this.table_sfx = this.scene.sound.add('ball_rolling', {
         loop: true
       });
+      this.table_sfx.play(); //Add rolling ramp sounds
+
       this.ramp_sfx = this.scene.sound.add('ramp_rolling', {
         loop: true
       });
-      this.table_sfx.play();
       this.ramp_sfx.play();
     }
   }, {
@@ -105,6 +110,7 @@ function (_Phaser$Physics$Matte) {
   }, {
     key: "readyBall",
     value: function readyBall() {
+      //Loads a ball on the launcher
       this.setVelocityX(0);
       this.setVelocityY(0);
       this.x = 455;
@@ -115,6 +121,7 @@ function (_Phaser$Physics$Matte) {
     value: function update() {
       var _this2 = this;
 
+      //Watch for changes
       var i = setInterval(function () {
         //Changes sound when ball is on a ramp
         if (_this2.body.isOnPlastic) {
@@ -124,7 +131,7 @@ function (_Phaser$Physics$Matte) {
         else {
             _this2.ramp_sfx.volume = 0;
             _this2.table_sfx.volume = _this2.body.speed / 8.5;
-          } //Kills the sound if the ball has been destroyed (by the butters target)
+          } //Kills the sound if the ball has been destroyed (by butters' target)
 
 
         if (_this2.body.isDestroyed) {
@@ -150,7 +157,7 @@ function (_Phaser$Physics$Matte) {
           _this2.setCollisions('table');
 
           _this2.setDepth(1);
-        } //Checks if the ball has escaped the map
+        } //Checks if the ball has escaped the map and puts it back on the launcher
 
 
         if (_this2.x < 0 || _this2.x > game.config.width || _this2.y < 0 || _this2.y > game.config.height) {
@@ -159,17 +166,19 @@ function (_Phaser$Physics$Matte) {
 
 
         if (_this2.x < 425 && _this2.y > 650 && (_this2.x < 192 || _this2.x > 330) || _this2.y > 720) {
-          balls.pop();
+          //Remove ball from array
+          balls.pop(); //Play sound
 
           _this2.scene.sound.playAudioSprite('sound_effects', 'Drain');
 
-          playRandomSound('generic_negative', _this2.scene, 400);
-
-          _this2.destroy();
+          playRandomSound('generic_negative', _this2.scene, 400); //Stop rolling sounds
 
           _this2.table_sfx.stop();
 
-          _this2.ramp_sfx.stop();
+          _this2.ramp_sfx.stop(); //Destroy and stop watching for changes
+
+
+          _this2.destroy();
 
           clearInterval(i);
         }
@@ -293,10 +302,11 @@ function (_Phaser$Physics$Matte3) {
       var sounds = ['Bumper', 'BumperLeft', 'BumperMiddle', 'BumperRight'];
 
       if (this.canAnimate) {
+        //Play a random bumper sound & a bell
         this.scene.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random() * sounds.length)]);
         this.scene.sound.playAudioSprite('sound_effects', 'bell_ding', {
           volume: 0.2
-        }); //Restrict firing
+        }); //Restrict firing 
 
         this.canAnimate = false; //Grab the starting position
 
@@ -315,7 +325,7 @@ function (_Phaser$Physics$Matte3) {
           yoyo: true,
           duration: 20,
           repeat: 0
-        }); //Move the bumper back to the starting position and un-restrict firing. 
+        }); //Move the bumper back to the starting position and un-restrict firing shortly thereafter. 
 
         setTimeout(function () {
           _this5.x = startPosition.x;
@@ -366,7 +376,7 @@ function () {
   _createClass(Launcher, [{
     key: "createComponents",
     value: function createComponents() {
-      //Create a dynamic body for the top
+      //Create the top of the launcher
       var rectA = Phaser.Physics.Matter.Matter.Bodies.circle(this.x, this.y, 15);
       var body = this.scene.matter.body.create({
         parts: [rectA]
@@ -374,7 +384,8 @@ function () {
       this.top = this.scene.matter.add.image(150, 0, null).setExistingBody(body).setVisible(false);
       this.top.setCollisionCategory(collisionGroupA);
       this.top.setCollidesWith(collisionGroupA);
-      this.top.body.inertia = Infinity;
+      this.top.body.inertia = Infinity; //Create the rest of the launcher
+
       this.bottom = new StaticShape(this.scene, 'rectangle', this.x, this.y + 50, 40, 20, 0, collisionGroupA);
       this.left = new StaticShape(this.scene, 'rectangle', this.x - 10, this.y, 10, 100, 0, collisionGroupA);
       this.right = new StaticShape(this.scene, 'rectangle', this.x + 10, this.y, 10, 100, 0, collisionGroupA);
@@ -386,6 +397,7 @@ function () {
     value: function charge() {
       var _this7 = this;
 
+      //Starts the music
       backgroundMusic.play(); //Pulls back the spring until it reaches desired length
 
       this.update = setInterval(function () {
@@ -404,7 +416,8 @@ function () {
       //Play sound
       this.scene.sound.playAudioSprite('sound_effects', "Plunger"); //Stop pulling the spring back
 
-      clearInterval(this.update);
+      clearInterval(this.update); //Tween back to the starting position. The time is constant, so the greater distance the greater the impact. 
+
       this.scene.tweens.add({
         targets: this.spring,
         length: 102,

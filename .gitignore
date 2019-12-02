@@ -3,5 +3,6 @@ node_modules
 psd_files
 South_Park
 Spiderman
+dist/assets/video
 package-lock.json
 yarn.lock

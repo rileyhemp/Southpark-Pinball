@@ -286,5 +286,7 @@ function (_Flipper3) {
   }]);
 
   return SideFlipper;
-}(Flipper);
+}(Flipper); //    // bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true)
+// this.matter.world.positionIterations = 10
+// this.matter.world.velocityIterations = 10
 //# sourceMappingURL=flipper_old.js.map

@@ -360,6 +360,11 @@
       "start": 172,
       "end": 173.02655328798187,
       "loop": false
+    },
+    "thunder": {
+      "start": 175,
+      "end": 180,
+      "loop": false
     }
   }
 }
