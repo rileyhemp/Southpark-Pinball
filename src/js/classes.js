@@ -162,15 +162,16 @@ class Bumper extends Phaser.Physics.Matter.Image {
 
         let sounds = ['Bumper', 'BumperLeft', 'BumperMiddle', 'BumperRight']
         
-        //Grab the starting position
         if (this.canAnimate) {
             this.scene.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random()*sounds.length)])
             this.scene.sound.playAudioSprite('sound_effects', 'bell_ding', {
                 volume: 0.2
             })
             
+            //Restrict firing
             this.canAnimate = false
             
+            //Grab the starting position
             let startPosition = {
                 x: this.x,
                 y: this.y
@@ -190,6 +191,7 @@ class Bumper extends Phaser.Physics.Matter.Image {
                 repeat: 0
             })
 
+            //Move the bumper back to the starting position and un-restrict firing. 
             setTimeout(()=>{
                 this.x = startPosition.x
                 this.y = startPosition.y

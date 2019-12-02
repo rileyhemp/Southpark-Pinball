@@ -1,0 +1,20 @@
+{
+  "resources": [
+    "background_music.ogg",
+    "background_music.m4a",
+    "background_music.mp3",
+    "background_music.ac3"
+  ],
+  "spritemap": {
+    "background_music1": {
+      "start": 0,
+      "end": 199.0253514739229,
+      "loop": false
+    },
+    "background_music3": {
+      "start": 201,
+      "end": 309.55333333333334,
+      "loop": false
+    }
+  }
+}

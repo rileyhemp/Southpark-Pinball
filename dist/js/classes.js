@@ -278,14 +278,16 @@ function (_Phaser$Physics$Matte3) {
     value: function fire(position) {
       var _this5 = this;
 
-      var sounds = ['Bumper', 'BumperLeft', 'BumperMiddle', 'BumperRight']; //Grab the starting position
+      var sounds = ['Bumper', 'BumperLeft', 'BumperMiddle', 'BumperRight'];
 
       if (this.canAnimate) {
         this.scene.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random() * sounds.length)]);
         this.scene.sound.playAudioSprite('sound_effects', 'bell_ding', {
           volume: 0.2
-        });
-        this.canAnimate = false;
+        }); //Restrict firing
+
+        this.canAnimate = false; //Grab the starting position
+
         var startPosition = {
           x: this.x,
           y: this.y
@@ -301,7 +303,8 @@ function (_Phaser$Physics$Matte3) {
           yoyo: true,
           duration: 20,
           repeat: 0
-        });
+        }); //Move the bumper back to the starting position and un-restrict firing. 
+
         setTimeout(function () {
           _this5.x = startPosition.x;
           _this5.y = startPosition.y;
