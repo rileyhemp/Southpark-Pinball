@@ -27,8 +27,7 @@ var balls = [];
 var ballsRemaining = 3;
 var spacebar, left, right, down, ball, bounds, leftFlipper, rightFlipper, sideFlipper, launcher, bumperA, bumperB, bumperC, slingshotA, slingshotB, //Background
 playfield, plastics, table, ramps, characters, //Utilities
-collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, leftRampDivert, // Default: false
-leftRampDiverter, leftRampBottom, flipperCollisionGroup, test, tween, testFlipper, ballRolling, gameActive, score, multiplier;
+collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, flipperCollisionGroup, test, tween, testFlipper, ballRolling, gameActive, score, multiplier, backgroundMusic;
 var game = new Phaser.Game(config); //Load assets
 
 function preload() {
@@ -42,8 +41,10 @@ function preload() {
   this.load.image('sideFlipper', 'dist/assets/table/side-flipper.png'); //Table Sounds
 
   this.load.audioSprite('sound_effects', 'dist/assets/sounds/sound_effects.json', ['dist/assets/sounds/sound_effects.ogg', 'dist/assets/sounds/sound_effects.mp3']);
-  this.load.audio('ball_rolling', ['dist/assets/sounds/fx_ballrolling.ogg', 'dist/assets/sounds/fx_ballrolling.mp3']); //Character Sounds
-  //Generic Negative
+  this.load.audio('ball_rolling', ['dist/assets/sounds/fx_ballrolling.ogg', 'dist/assets/sounds/fx_ballrolling.mp3']);
+  this.load.audio('ramp_rolling', ['dist/assets/sounds/fx_plasticrolling.ogg', 'dist/assets/sounds/fx_plasticrolling.mp3']); //Music
+
+  this.load.audio('background_music', ['dist/assets/sounds/background_music.ogg', 'dist/assets/sounds/character_sounds/background_music.mp3']); //Generic Negative
 
   this.load.audioSprite('generic_negative', 'dist/assets/sounds/character_sounds/generic_negative.json', ['dist/assets/sounds/character_sounds/generic_negative.ogg', 'dist/assets/sounds/character_sounds/generic_negative.mp3']); //Generic Positive
 
@@ -67,6 +68,7 @@ function newGame(scene) {
   gameActive = true;
   score = 0;
   multiplier = 1;
+  backgroundMusic = scene.sound.add('background_music');
   getNewBall(scene);
 }
 
@@ -76,6 +78,7 @@ function endGame() {
 }
 
 function getNewBall(scene) {
+  backgroundMusic.pause();
   ball = new Ball(scene, 455, 689, 'ball');
   scene.sound.playAudioSprite('sound_effects', "rollover");
   ballsRemaining--;
@@ -112,23 +115,20 @@ function create() {
   collisionGroupD = this.matter.world.nextCategory();
   collisionGroupE = this.matter.world.nextCategory();
   flipperCollisionGroup = this.matter.world.nextCategory();
-  leftRampDivert = false; //test = this
-
+  test = this;
   bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true);
   left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-  var ballHasCollided = false; //Utility functions
-
-  test = this; //Add a ball where you click
+  spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); //Utility functions
+  //Add a ball where you click
 
   this.input.on('pointerdown', function (pointer) {
     // console.log(pointer.x, ',', pointer.y)
     // //ball.readyBall()
     ball = new Ball(this, pointer.x, pointer.y, 'ball');
     ball.setVelocityY(-15); // ball.setVelocityX(-5)
-    //newGame(this)
+    // newGame(this)
   }, this); //Textures
 
   table = this.add.image(260, 400, 'table');
@@ -303,6 +303,7 @@ function create() {
 
       if (bodyA.type === 'ramp-on') {
         bodyB.isOnRamp = true;
+        bodyB.isOnPlastic = true;
       } //Generic ramp off
 
 
@@ -346,8 +347,11 @@ function create() {
 
 
       if (bodyA.type === 'rail') {
-        _this.sound.playAudioSprite('sound_effects', 'WireRamp');
+        _this.sound.playAudioSprite('sound_effects', 'WireRamp', {
+          volume: 0.5
+        });
 
+        bodyB.isOnPlastic = false;
         addScore(5000);
       } //Rubbers 
 

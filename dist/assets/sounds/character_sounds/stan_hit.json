@@ -6,39 +6,84 @@
     "stan_hit.ac3"
   ],
   "spritemap": {
-    "ch_stan_b_swap_0226": {
+    "ch_stan_b_enter_0230": {
       "start": 0,
-      "end": 0.8626530612244898,
+      "end": 2.7666666666666666,
       "loop": false
     },
     "ch_stan_block_0150": {
-      "start": 2,
-      "end": 2.8973469387755104,
-      "loop": false
-    },
-    "ch_stan_block_0152": {
       "start": 4,
-      "end": 5.225351473922903,
+      "end": 4.89734693877551,
       "loop": false
     },
-    "ch_stan_buddy_fall_0022": {
-      "start": 7,
-      "end": 8.041337868480726,
+    "ch_stan_combat_end_0200": {
+      "start": 6,
+      "end": 7.246666666666666,
       "loop": false
     },
-    "ch_stan_combat_st_0091": {
-      "start": 10,
-      "end": 11.228004535147392,
+    "ch_stan_combat_end_0202": {
+      "start": 9,
+      "end": 10.086666666666666,
+      "loop": false
+    },
+    "ch_stan_combat_end_0203": {
+      "start": 12,
+      "end": 13.081337868480725,
+      "loop": false
+    },
+    "ch_stan_combat_st_0128": {
+      "start": 15,
+      "end": 15.721337868480726,
+      "loop": false
+    },
+    "ch_stan_evnt_resp_0070": {
+      "start": 17,
+      "end": 18.350680272108843,
       "loop": false
     },
     "ch_stan_evnt_resp_0075": {
-      "start": 13,
-      "end": 13.66,
+      "start": 20,
+      "end": 20.66,
       "loop": false
     },
     "ch_stan_evnt_resp_0096": {
-      "start": 15,
-      "end": 15.595986394557823,
+      "start": 22,
+      "end": 22.595986394557823,
+      "loop": false
+    },
+    "ch_stan_evnt_resp_0107": {
+      "start": 24,
+      "end": 24.409319727891155,
+      "loop": false
+    },
+    "ch_stan_fart_react_0238": {
+      "start": 26,
+      "end": 26.81734693877551,
+      "loop": false
+    },
+    "ch_stan_heal_0170": {
+      "start": 28,
+      "end": 28.644013605442176,
+      "loop": false
+    },
+    "ch_stan_heal_0172": {
+      "start": 30,
+      "end": 30.89734693877551,
+      "loop": false
+    },
+    "ch_stan_heal_0174": {
+      "start": 32,
+      "end": 33.10265306122449,
+      "loop": false
+    },
+    "ch_stan_pre_attack_0140": {
+      "start": 35,
+      "end": 35.85201814058957,
+      "loop": false
+    },
+    "ch_stan_resurrect_0050": {
+      "start": 37,
+      "end": 37.649319727891154,
       "loop": false
     }
   }

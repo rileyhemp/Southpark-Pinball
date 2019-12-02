@@ -53,9 +53,6 @@ let
     //Utilities
     collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE,
     sensorGroupA, sensorGroupB,
-    leftRampDivert, // Default: false
-    leftRampDiverter, 
-    leftRampBottom,
     flipperCollisionGroup,
     test,
     tween,
@@ -63,7 +60,8 @@ let
     ballRolling,
     gameActive,
     score,
-    multiplier
+    multiplier,
+    backgroundMusic
     
 const game = new Phaser.Game(config)
 
@@ -91,8 +89,18 @@ function preload() {
             'dist/assets/sounds/fx_ballrolling.mp3'
         ]
     )
-    //Character Sounds
-
+    this.load.audio('ramp_rolling', 
+        [
+            'dist/assets/sounds/fx_plasticrolling.ogg',
+            'dist/assets/sounds/fx_plasticrolling.mp3'
+        ]
+    )
+    //Music
+    this.load.audio('background_music', 
+        [
+            'dist/assets/sounds/background_music.ogg',
+            'dist/assets/sounds/character_sounds/background_music.mp3'
+        ])
     //Generic Negative
     this.load.audioSprite('generic_negative', 'dist/assets/sounds/character_sounds/generic_negative.json',
         [
@@ -167,6 +175,7 @@ function newGame(scene)
     gameActive = true
     score = 0
     multiplier = 1
+    backgroundMusic = scene.sound.add('background_music')
     getNewBall(scene)
 }
 
@@ -178,6 +187,7 @@ function endGame()
 
 function getNewBall(scene)
 {
+    backgroundMusic.pause()
     ball = new Ball(scene, 455, 689, 'ball') 
     scene.sound.playAudioSprite('sound_effects', "rollover")
         ballsRemaining--
@@ -201,6 +211,7 @@ function playRandomSound(sprite, scene)
 
 function create() {
 
+
     this.matter.world.positionIterations = 10
     this.matter.world.velocityIterations = 10
 
@@ -213,17 +224,16 @@ function create() {
     collisionGroupD = this.matter.world.nextCategory()
     collisionGroupE = this.matter.world.nextCategory()
     flipperCollisionGroup = this.matter.world.nextCategory()
-    leftRampDivert = false
-    //test = this
+    test = this
     bounds = this.matter.world.setBounds(0, 0, 520, 800, 30, true, true, true, true)
     left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
     down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
     right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-    let ballHasCollided = false
+    
 
     //Utility functions
-    test = this
+
     //Add a ball where you click
     this.input.on('pointerdown', function(pointer)
     {
@@ -232,7 +242,7 @@ function create() {
         ball = new Ball(this, pointer.x, pointer.y, 'ball') 
         ball.setVelocityY(-15)
         // ball.setVelocityX(-5)
-        //newGame(this)
+        // newGame(this)
     }, this)
 
     //Textures
@@ -382,6 +392,7 @@ function create() {
             if (bodyA.type === 'ramp-on')
             {
                 bodyB.isOnRamp = true
+                bodyB.isOnPlastic = true
             } 
 
             //Generic ramp off
@@ -433,7 +444,10 @@ function create() {
             //Rails 
             if (bodyA.type === 'rail')
             {
-                this.sound.playAudioSprite('sound_effects', 'WireRamp')
+                this.sound.playAudioSprite('sound_effects', 'WireRamp', {
+                    volume: 0.5
+                })
+                bodyB.isOnPlastic = false
                 addScore(5000)
             }
 

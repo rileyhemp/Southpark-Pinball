@@ -79,11 +79,14 @@ function (_Phaser$Physics$Matte) {
 
       this.scene.sys.displayList.add(this); //Add sound
 
-      this.sfx = this.scene.sound.add('ball_rolling', {
+      this.table_sfx = this.scene.sound.add('ball_rolling', {
         loop: true
       });
-      this.sfx.play();
-      console.log(this);
+      this.ramp_sfx = this.scene.sound.add('ramp_rolling', {
+        loop: true
+      });
+      this.table_sfx.play();
+      this.ramp_sfx.play();
     }
   }, {
     key: "setCollisions",
@@ -100,13 +103,6 @@ function (_Phaser$Physics$Matte) {
       }
     }
   }, {
-    key: "launch",
-    value: function launch() {
-      _get(_getPrototypeOf(Ball.prototype), "setVelocityY", this).call(this, -20);
-
-      _get(_getPrototypeOf(Ball.prototype), "setVelocityX", this).call(this, -1);
-    }
-  }, {
     key: "readyBall",
     value: function readyBall() {
       this.x = 455;
@@ -118,7 +114,16 @@ function (_Phaser$Physics$Matte) {
       var _this2 = this;
 
       var i = setInterval(function () {
-        _this2.sfx.volume = _this2.body.speed / 8; //Check if the ball is on a ramp
+        //Changes sound when ball is on a ramp
+        if (_this2.body.isOnPlastic) {
+          _this2.table_sfx.volume = 0;
+          _this2.ramp_sfx.volume = .25;
+        } //Sets the volume of the ball rolling to the balls speed. 
+        else {
+            _this2.ramp_sfx.volume = 0;
+            _this2.table_sfx.volume = _this2.body.speed / 8;
+          } //Check if the ball is on a ramp
+
 
         if (_this2.body.isOnRamp && _this2.body.isOnCenterRamp) {
           _this2.setCollisions('centerRamp');
@@ -149,7 +154,9 @@ function (_Phaser$Physics$Matte) {
 
           _this2.destroy();
 
-          _this2.sfx.stop();
+          _this2.table_sfx.stop();
+
+          _this2.ramp_sfx.stop();
 
           clearInterval(i);
         }
@@ -275,6 +282,9 @@ function (_Phaser$Physics$Matte3) {
 
       if (this.canAnimate) {
         this.scene.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random() * sounds.length)]);
+        this.scene.sound.playAudioSprite('sound_effects', 'bell_ding', {
+          volume: 0.2
+        });
         this.canAnimate = false;
         var startPosition = {
           x: this.x,
@@ -361,6 +371,8 @@ function () {
     value: function charge() {
       var _this7 = this;
 
+      backgroundMusic.play(); //Pulls back the spring until it reaches desired length
+
       this.update = setInterval(function () {
         _this7.spring.length--;
 
@@ -374,7 +386,9 @@ function () {
     value: function fire() {
       var _this8 = this;
 
-      this.scene.sound.playAudioSprite('sound_effects', "Plunger");
+      //Play sound
+      this.scene.sound.playAudioSprite('sound_effects', "Plunger"); //Stop pulling the spring back
+
       clearInterval(this.update);
       this.scene.tweens.add({
         targets: this.spring,

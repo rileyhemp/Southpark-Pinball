@@ -25,9 +25,10 @@ class Ball extends Phaser.Physics.Matter.Image {
         //Add the ball to the display list
         this.scene.sys.displayList.add(this)
         //Add sound
-        this.sfx = this.scene.sound.add('ball_rolling', { loop: true })
-        this.sfx.play() 
-        console.log(this)
+        this.table_sfx = this.scene.sound.add('ball_rolling', { loop: true })
+        this.ramp_sfx = this.scene.sound.add('ramp_rolling', { loop: true })
+        this.table_sfx.play() 
+        this.ramp_sfx.play() 
     }
     setCollisions(level)
     { 
@@ -42,11 +43,6 @@ class Ball extends Phaser.Physics.Matter.Image {
             this.setCollidesWith([collisionGroupA, collisionGroupC, collisionGroupD, sensorGroupB])
         }
     }
-    launch()
-    {
-        super.setVelocityY(-20)
-        super.setVelocityX(-1)
-    }
     readyBall()
     {
         this.x = 455
@@ -56,7 +52,18 @@ class Ball extends Phaser.Physics.Matter.Image {
     {
         let i = setInterval(()=>
         {
-            this.sfx.volume = this.body.speed/8
+            //Changes sound when ball is on a ramp
+            if (this.body.isOnPlastic) 
+            {
+                this.table_sfx.volume = 0
+                this.ramp_sfx.volume = .25
+            }
+            //Sets the volume of the ball rolling to the balls speed. 
+            else
+            {
+                this.ramp_sfx.volume = 0
+                this.table_sfx.volume = this.body.speed/8
+            }
 
             //Check if the ball is on a ramp
             if (this.body.isOnRamp && this.body.isOnCenterRamp){
@@ -81,7 +88,8 @@ class Ball extends Phaser.Physics.Matter.Image {
             if (this.x < 425 && (this.y > 650 && (this.x < 192 || this.x > 330)) || this.y > 720) {
                 balls.pop()
                 this.destroy()
-                this.sfx.stop()
+                this.table_sfx.stop()
+                this.ramp_sfx.stop()
                 clearInterval(i)
             }
         }, 16.66666)
@@ -157,6 +165,9 @@ class Bumper extends Phaser.Physics.Matter.Image {
         //Grab the starting position
         if (this.canAnimate) {
             this.scene.sound.playAudioSprite('sound_effects', sounds[Math.floor(Math.random()*sounds.length)])
+            this.scene.sound.playAudioSprite('sound_effects', 'bell_ding', {
+                volume: 0.2
+            })
             
             this.canAnimate = false
             
@@ -230,6 +241,9 @@ class Launcher {
         this.spring.length = 90
     }
     charge() {
+        backgroundMusic.play()
+
+        //Pulls back the spring until it reaches desired length
         this.update = setInterval(() => {
             this.spring.length--
             if (this.spring.length < 70){
@@ -238,13 +252,18 @@ class Launcher {
         }, 40)
     }
     fire() {
+
+        //Play sound
         this.scene.sound.playAudioSprite('sound_effects', "Plunger")
+
+        //Stop pulling the spring back
         clearInterval(this.update)
         this.scene.tweens.add({
             targets: this.spring,
             length: 102,
             duration: 20
         })
+        
         //Reset the spring
         setTimeout(() => {
             this.spring.length = 90

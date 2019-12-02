@@ -6,74 +6,69 @@
     "kyle_hit.ac3"
   ],
   "spritemap": {
-    "ch_kyle_damage_0060": {
+    "107_cv_book2_raidintro_kyle_0009": {
       "start": 0,
-      "end": 1.02,
+      "end": 4.22265306122449,
       "loop": false
     },
-    "ch_kyle_damage_0097": {
-      "start": 3,
-      "end": 3.7186848072562357,
+    "107_cv_book2_s_finale_kyle_0002": {
+      "start": 6,
+      "end": 7.065351473922902,
       "loop": false
     },
-    "ch_kyle_damage_0099": {
-      "start": 5,
-      "end": 5.69734693877551,
+    "ch_kyle_b_enter_0286": {
+      "start": 9,
+      "end": 11.164013605442177,
       "loop": false
     },
-    "ch_kyle_damage_0106": {
-      "start": 7,
-      "end": 8.086666666666666,
+    "ch_kyle_combat_end_0260": {
+      "start": 13,
+      "end": 14.26265306122449,
       "loop": false
     },
-    "ch_kyle_damage_0108": {
-      "start": 10,
-      "end": 10.614671201814058,
+    "ch_kyle_evnt_resp_0087": {
+      "start": 16,
+      "end": 16.921337868480727,
       "loop": false
     },
-    "ch_kyle_damage_0113": {
-      "start": 12,
-      "end": 13.041337868480726,
+    "ch_kyle_evnt_resp_0278": {
+      "start": 18,
+      "end": 18.57734693877551,
       "loop": false
     },
-    "ch_kyle_damage_0120": {
-      "start": 15,
-      "end": 15.926666666666666,
+    "ch_kyle_fart_react_0162": {
+      "start": 20,
+      "end": 20.505351473922904,
       "loop": false
     },
-    "ch_kyle_damage_0122": {
-      "start": 17,
-      "end": 17.878684807256235,
-      "loop": false
-    },
-    "ch_kyle_damage_0129": {
-      "start": 19,
-      "end": 20.166666666666668,
-      "loop": false
-    },
-    "ch_kyle_damage_0171": {
+    "ch_kyle_heal_0205": {
       "start": 22,
-      "end": 23.065351473922902,
+      "end": 22.708004535147392,
       "loop": false
     },
-    "ch_kyle_damage_0180": {
-      "start": 25,
-      "end": 25.93201814058957,
+    "ch_kyle_heal_0206": {
+      "start": 24,
+      "end": 24.686666666666667,
       "loop": false
     },
-    "ch_kyle_damage_0198": {
-      "start": 27,
-      "end": 27.70265306122449,
+    "ch_kyle_heal_0208": {
+      "start": 26,
+      "end": 26.915986394557823,
       "loop": false
     },
-    "ch_kyle_damage_0200": {
-      "start": 29,
-      "end": 29.764013605442177,
+    "ch_kyle_nz_c_idle_0007": {
+      "start": 28,
+      "end": 29.37734693877551,
       "loop": false
     },
-    "ch_kyle_damage_0202": {
+    "ch_kyle_nz_c_idle_0009": {
       "start": 31,
-      "end": 32.030680272108846,
+      "end": 31.692018140589568,
+      "loop": false
+    },
+    "ch_kyle_point_of_interest_0048": {
+      "start": 33,
+      "end": 34.1453514739229,
       "loop": false
     }
   }
