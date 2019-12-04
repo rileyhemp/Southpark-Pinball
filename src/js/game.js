@@ -15,7 +15,7 @@ const config =
     physics: {
         default: 'matter',
         matter: {
-            debug: true,
+            debug: false,
             gravity: 
             {
                 x: 0,
@@ -70,13 +70,13 @@ function create() {
         // console.log(pointer.x+",", pointer.y)
 
 
-        // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
-        // ball.setVelocityY(-20)
+        ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+        ball.setVelocityY(-10)
 
 
 
         //Start a new game
-        newGame(this)
+        // newGame(this)
     }, this)
 
     //Setup collision groups 

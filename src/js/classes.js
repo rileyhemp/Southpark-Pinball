@@ -60,7 +60,8 @@ class Bumper extends Phaser.Physics.Matter.Image
         super(scene.matter.world, x, y, name)
         this.setCircle(24)
         this.setStatic(true)
-        this.setScale(0.75)
+		this.setScale(0.75)
+		this.setDepth(5)
         this.body.mass = .999
         this.x = x
         this.y = y

@@ -121,6 +121,8 @@ function (_Phaser$Physics$Matte2) {
 
     _this2.setScale(0.75);
 
+    _this2.setDepth(5);
+
     _this2.body.mass = .999;
     _this2.x = x;
     _this2.y = y;
