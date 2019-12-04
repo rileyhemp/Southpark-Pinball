@@ -76,6 +76,11 @@ function preload() {
         [
             'dist/assets/sounds/background_music.ogg',
             'dist/assets/sounds/character_sounds/background_music.mp3'
+		])
+	this.load.audioSprite('intro_music', 'dist/assets/sounds/intro-music.json', 
+        [
+            'dist/assets/sounds/intro-music.ogg',
+            'dist/assets/sounds/intro-music.mp3'
         ])
     this.load.audio('cartman_music',
         [

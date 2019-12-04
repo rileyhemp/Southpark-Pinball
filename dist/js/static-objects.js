@@ -91,7 +91,8 @@ function createStaticObjects(scene) {
   new StaticShape(scene, 'circle', 348, 78, 50, null, null, collisionGroupC); //Right ramp bottom
 
   new StaticCustomShape(scene, 335, 16, 'rightRampTop', collisionGroupC).setScale(0.8, 1); // Right ramp top
-  // new StaticShape(scene, 'rectangle', 275, 125, 15, 170, -0.05, collisionGroupC) // Right ramp left
+
+  new StaticShape(scene, 'rectangle', 275, 125, 15, 170, -0.05, collisionGroupC); // Right ramp left
 
   new StaticShape(scene, 'rectangle', 319, 160, 20, 140, -0.15, collisionGroupC); // Right ramp right
 
@@ -116,8 +117,9 @@ function createStaticObjects(scene) {
   //constructor(scene, x, y, width, height, rotation, type, name, collisionGroup)
   //Ramp on
 
-  new Sensor(scene, 165, 235, 30, 20, 1.6, 'ramp-on', 'leftRampOn', sensorGroupA);
+  new Sensor(scene, 172, 235, 30, 20, 1.6, 'ramp-on', 'leftRampOn', sensorGroupA);
   new Sensor(scene, 202, 205, 30, 20, -.1, 'ramp-on', 'centerRampOn', sensorGroupA);
+  new Sensor(scene, 194, 151, 30, 20, -.1, 'ramp-on', 'leftRampOn', sensorGroupB);
   new Sensor(scene, 303, 200, 30, 20, -.1, 'ramp-on', 'rightRampOn', sensorGroupA); //Ramp off
 
   new Sensor(scene, 78, 461, 30, 20, -.50, 'ramp-off', 'leftRampOff', sensorGroupB);

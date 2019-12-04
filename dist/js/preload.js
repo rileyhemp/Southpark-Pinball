@@ -56,6 +56,7 @@ function preload() {
   this.load.audio('ramp_rolling', ['dist/assets/sounds/fx_plasticrolling.ogg', 'dist/assets/sounds/fx_plasticrolling.mp3']); //Music
 
   this.load.audio('background_music', ['dist/assets/sounds/background_music.ogg', 'dist/assets/sounds/character_sounds/background_music.mp3']);
+  this.load.audioSprite('intro_music', 'dist/assets/sounds/intro-music.json', ['dist/assets/sounds/intro-music.ogg', 'dist/assets/sounds/intro-music.mp3']);
   this.load.audio('cartman_music', ['dist/assets/sounds/music/cartman_event.ogg', 'dist/assets/sounds/music/cartman_event.mp3']); //Generic Negative
 
   this.load.audioSprite('generic_negative', 'dist/assets/sounds/character_sounds/generic_negative.json', ['dist/assets/sounds/character_sounds/generic_negative.ogg', 'dist/assets/sounds/character_sounds/generic_negative.mp3']); //Generic Positive

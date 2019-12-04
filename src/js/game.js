@@ -15,7 +15,7 @@ const config =
     physics: {
         default: 'matter',
         matter: {
-            debug: false,
+            debug: true,
             gravity: 
             {
                 x: 0,
@@ -61,18 +61,19 @@ const game = new Phaser.Game(config)
 
 function create() {
 
-    //Development multitool
+	playRandomSound('intro_music', this)
+
+    //What to do on click
     this.input.on('pointerdown', function(pointer)
     {
-        //Log the mouse coordinates
+
         // console.log(pointer.x+",", pointer.y)
 
-        //Make a ball where you click
-        // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
-        // ball.setDepth(4)
 
-        //Set velocity for testing ramps etc
-        // ball.setVelocityY(-10)
+        // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+        // ball.setVelocityY(-20)
+
+
 
         //Start a new game
         newGame(this)
@@ -208,12 +209,13 @@ function newGame(scene)
     score = 0
     multiplier = 1
     backgroundMusic = scene.sound.add('background_music')
-    getNewBall(scene)
+	getNewBall(scene)
 }
 
 function endGame()
 {
     console.log('game over')
+    backgroundMusic.stop()
     score = 0
 }
 
@@ -257,8 +259,8 @@ function registerHit(scene, bodyA, bodyB) {
     {
         case "butters" :
             playRandomSound('butters_hit', scene)  
-            scene.sound.playAudioSprite('sound_effects', 'hole_enter')
             scene.sound.playAudioSprite('sound_effects', 'thunder', {volume: 0.5})
+            scene.sound.playAudioSprite('sound_effects', 'hole_enter')
             bodyB.render.visible = false
             bodyB.isDestroyed = true
             bodyB.destroy()
@@ -277,26 +279,34 @@ function registerHit(scene, bodyA, bodyB) {
             if (!objectives[bodyB] && bodyB != 'cartman-himself')
             {
                 objectives[bodyB]++
+				scene.sound.playAudioSprite('sound_effects', 'target')
 
-                scene.sound.playAudioSprite('sound_effects', 'target')
+				switch(bodyB) 
+				{
+					case "cartman-left" : lights.cartman.one.active = true 
+					break
+					case "cartman-center" : lights.cartman.two.active = true 
+					break
+					case "cartman-right" : lights.cartman.three.active = true 
+					break
+				}
+				// lights.cartman.bodyB.active = true
+				console.log(bodyB)
             } 
             break          
         
         case "cartman-himself" :
             objectives[bodyB]++
-            playRandomSound('cartman_damage', scene)
+            // playRandomSound('cartman_damage', scene)
             scene.sound.playAudioSprite('sound_effects', 'rubber_hit_2')
             break
 
         case "rightTargets" :
-            console.log('asdad')
-            playRandomSound('randy_hit', scene)
             scene.sound.playAudioSprite('sound_effects', 'rubber_hit_1')    
             addScore('randy')
             break
         
         case "loop-hit" :
-            playRandomSound('loop_hit', scene)
             addScore('loop')
             objectives[bodyA]++
             console.log(objectives)
@@ -305,7 +315,8 @@ function registerHit(scene, bodyA, bodyB) {
 
 function playRandomSound(sprite, scene, delay)
 {
-    let spritemap = Object.keys(scene.cache.json.get(sprite).spritemap)
+	let spritemap = Object.keys(scene.cache.json.get(sprite).spritemap)
+	console.log(spritemap)
     setTimeout(()=>{
         scene.sound.playAudioSprite(sprite, spritemap[Math.floor(Math.random()*spritemap.length)])
     }, delay)

@@ -3,7 +3,7 @@ function startEvent(name, scene)
     switch(name) 
     {
         case "cartman" :
-            let duration = 14500
+            let duration = 5000 //14500
             startCartman(scene)
             setTimeout(()=>
             {
@@ -15,19 +15,21 @@ function startEvent(name, scene)
 function startCartman(scene)
 {
     
-    eventMusic = scene.sound.add('cartman_music')
-    setTimeout(()=>
-        {
-            backgroundMusic ? backgroundMusic.pause() : null
-            eventMusic.play()
-            scene.tweens.add({
-                targets: eventMusic,
-                volume: { from: 0, to: 1 },
-                duration: 1000,
-            })
-        }, 2000)
+    // eventMusic = scene.sound.add('cartman_music')
+    // setTimeout(()=>
+    //     {
+    //         backgroundMusic ? backgroundMusic.pause() : null
+    //         eventMusic.play()
+    //         scene.tweens.add({
+    //             targets: eventMusic,
+    //             volume: { from: 0, to: 1 },
+    //             duration: 1000,
+    //         })
+	//     }, 2000)
+
+	flashLights('cartman')
     scene.sound.playAudioSprite('sound_effects', 'Drain')
-    playRandomSound('cartman_start', scene, 500)
+    // playRandomSound('cartman_start', scene, 500)
     rampsCartmanActive.setDepth(2)
     ramps.setDepth(0)
     //Reset the counter
@@ -44,14 +46,15 @@ function startCartman(scene)
 
 function endCartman(scene, result)
 {
-    eventMusic.stop()
+	clearInterval(lights.cartman.areFlashing)
+    // eventMusic.stop()
     if (result === 'win' )
     {
-        addScore('cartman-win')
-        playRandomSound('cartman_end', scene, 500)
+		addScore('cartman-win')
+        // playRandomSound('cartman_end', scene, 500)
     } else 
     {
-        playRandomSound('generic_negative', scene, 500)
+        // playRandomSound('generic_negative', scene, 500)
     }
     objectives['cartman-himself'] = 0
     rampsCartmanActive.setDepth(0)

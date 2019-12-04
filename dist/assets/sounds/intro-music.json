@@ -1,0 +1,30 @@
+{
+  "resources": [
+    "intro-music.ogg",
+    "intro-music.m4a",
+    "intro-music.mp3",
+    "intro-music.ac3"
+  ],
+  "spritemap": {
+    "stickoftruth_1036134620": {
+      "start": 0,
+      "end": 4.118684807256236,
+      "loop": false
+    },
+    "stickoftruth_270869613": {
+      "start": 6,
+      "end": 10.094671201814059,
+      "loop": false
+    },
+    "stickoftruth_286795225": {
+      "start": 12,
+      "end": 16.153333333333332,
+      "loop": false
+    },
+    "stickoftruth_823534071": {
+      "start": 18,
+      "end": 22.50265306122449,
+      "loop": false
+    }
+  }
+}

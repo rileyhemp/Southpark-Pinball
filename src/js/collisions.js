@@ -48,17 +48,17 @@ function initCollisionListeners(scene)
             //Kenny ramp
             if (bodyA.label === 'leftRampHit' && !bodyB.isOnCenterRamp)
             {
-                playRandomSound('kenny_hit', scene)
+                //playRandomSound('kenny_hit', scene)
             }
             //Stan ramp
             if (bodyA.label === 'centerRampHit')
             {
-                playRandomSound('stan_hit', scene)
+                //playRandomSound('stan_hit', scene)
             }
             //Kyle ramp
             if (bodyA.label === 'rightRampHit')
             {
-                playRandomSound('kyle_hit', scene)
+                // playRandomSound('kyle_hit', scene)
             }
             //Cartman targets 
             if (bodyA.type === 'cartman-hit')
@@ -111,12 +111,13 @@ function initCollisionListeners(scene)
             }
         
             //Slingshots
-            if (bodyA.label === 'leftSlingshot')
+            if (bodyA.label === 'leftSlingshot' && bodyB.position.x > 148)
             {
+				console.log(bodyB)
                 leftSlingshot.fire()
             }
 
-            if (bodyA.label === 'rightSlingshot')
+            if (bodyA.label === 'rightSlingshot' && bodyB.position.x < 335)
             {
                 rightSlingshot.fire()
             }
