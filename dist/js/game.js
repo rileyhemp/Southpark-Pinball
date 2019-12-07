@@ -45,9 +45,10 @@ function create() {
 
   this.input.on('pointerdown', function (pointer) {
     // console.log(pointer.x+",", pointer.y)
-    ball = new Ball(this, pointer.x, pointer.y, 'ball');
-    ball.setVelocityY(-10); //Start a new game
-    // newGame(this)
+    // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+    // ball.setVelocityY(-10)
+    //Start a new game
+    newGame(this);
   }, this); //Setup collision groups 
 
   sensorGroupA = this.matter.world.nextCategory(); // Ground level sensors

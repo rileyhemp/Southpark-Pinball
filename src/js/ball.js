@@ -29,6 +29,7 @@ class Ball extends Phaser.Physics.Matter.Image
         this.body.isOnRamp = false
         this.body.isOnCenterRamp = false
         this.body.isOnLauncher = false
+        this.ballIdleDuration = 0
         //Add ball to array
         balls.push(this.body)
         //Prevents the ball from spinning
@@ -82,6 +83,19 @@ class Ball extends Phaser.Physics.Matter.Image
             {
                 this.ramp_sfx.volume = 0
                 this.table_sfx.volume = this.body.speed/8.5
+            }
+
+            if ( this.body.position.x === this.body.positionPrev.x )
+            {
+                this.ballIdleDuration++
+            } else 
+            {
+                this.ballIdleDuration = 0
+            }
+
+            if ( this.body.position.y < 700 && this.ballIdleDuration > 200 )
+            {
+                this.body.applyForce(1,1)
             }
             
             //Kills the sound if the ball has been destroyed (by butters' target)

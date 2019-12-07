@@ -70,13 +70,13 @@ function create() {
         // console.log(pointer.x+",", pointer.y)
 
 
-        ball = new Ball(this, pointer.x, pointer.y, 'ball') 
-        ball.setVelocityY(-10)
+        // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
+        // ball.setVelocityY(-10)
 
 
 
         //Start a new game
-        // newGame(this)
+        newGame(this)
     }, this)
 
     //Setup collision groups 

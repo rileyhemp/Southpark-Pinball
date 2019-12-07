@@ -66,7 +66,8 @@ function (_Phaser$Physics$Matte) {
 
       this.body.isOnRamp = false;
       this.body.isOnCenterRamp = false;
-      this.body.isOnLauncher = false; //Add ball to array
+      this.body.isOnLauncher = false;
+      this.ballIdleDuration = 0; //Add ball to array
 
       balls.push(this.body); //Prevents the ball from spinning
       // this.body.inertia = Infinity
@@ -122,7 +123,17 @@ function (_Phaser$Physics$Matte) {
         else {
             _this2.ramp_sfx.volume = 0;
             _this2.table_sfx.volume = _this2.body.speed / 8.5;
-          } //Kills the sound if the ball has been destroyed (by butters' target)
+          }
+
+        if (_this2.body.position.x === _this2.body.positionPrev.x) {
+          _this2.ballIdleDuration++;
+        } else {
+          _this2.ballIdleDuration = 0;
+        }
+
+        if (_this2.body.position.y < 700 && _this2.ballIdleDuration > 200) {
+          _this2.body.applyForce(1, 1);
+        } //Kills the sound if the ball has been destroyed (by butters' target)
 
 
         if (_this2.body.isDestroyed) {
