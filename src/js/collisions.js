@@ -1,32 +1,116 @@
+function registerHit(scene, bodyA, bodyB) {
+
+	lights.butters.hit === 0 && bodyA !='cartman-hit' ? flashLights('butters', 1) : null
+
+    switch(bodyA)
+    {
+        case "butters" :
+			console.log(rampsLit)
+			
+			playRandomSound('butters_hit', scene)  
+			flashLights('butters', 1, 2500)
+            scene.sound.playAudioSprite('sound_effects', 'thunder', {volume: 0.5})
+            scene.sound.playAudioSprite('sound_effects', 'hole_enter')
+            bodyB.render.visible = false
+            bodyB.isDestroyed = true
+			bodyB.destroy()
+			if (rampsLit < 5)
+			{
+				alert('Jackpot x' + rampsLit + ' ' + 25000 * rampsLit, 2000)
+				addScore('jackpot', rampsLit)
+			} else 
+			{
+				alert('Super Jackpot - 500,000', 2000)
+				addScore('super-jackpot')
+				ball = new Ball(scene, 398, 115, 'ball') 
+			}
+            //Holds the ball for 3 seconds and shoots back to left flipper
+            setTimeout(()=>
+            {
+				flashLights('butters', 0)
+                ball = new Ball(scene, 340, 259, 'ball') 
+                ball.setVelocityY(3.3)
+                ball.setVelocityX(-3.3)
+                scene.sound.playAudioSprite('sound_effects', 'ExitSandman')
+				addScore('butters')
+				clearLights()
+            }, 3000)     
+            break     
+
+        case "cartman-hit" :
+            if (!lights[bodyB] && bodyB != 'cartman-himself')
+            {
+				scene.sound.playAudioSprite('sound_effects', 'target')
+				lights.cartman[bodyB].hit++
+            } 
+            break          
+        
+        case "cartman-himself" :
+			lights.cartmanBody.hit++
+            playRandomSound('cartman_damage', scene)
+			scene.sound.playAudioSprite('sound_effects', 'rubber_hit_2')
+			addScore('cartman-body')
+            break
+        
+        case "loop-hit" :
+			rampsLit++
+			alert(rampsLit + " /5 jackpots active", 2000)
+			addScore('loop')
+			if (bodyB.velocity.x > 0)
+			{
+				flashLights('leftLoop', 1)
+			} else
+			{
+				flashLights('rightLoop', 1)
+			}
+			break
+		
+		case "leftRampHit" :
+			rampsLit++
+			alert(rampsLit + " /5 jackpots active", 2000)
+			addScore('ramp')
+			flashLights('leftRamp', 1)
+			break
+		case "centerRampHit" :
+			rampsLit++
+			alert(rampsLit + " /5 jackpots active", 2000)
+			addScore('ramp')
+			flashLights('centerRamp', 1)
+			break
+		case "rightRampHit" :
+			rampsLit++
+			alert(rampsLit + " /5 jackpots active", 2000)
+			addScore('ramp')
+			flashLights('rightRamp', 1)
+			break
+    }
+}
 function initCollisionListeners(scene) 
 {
+	//Collision start events
     scene.matter.world.on('collisionstart', (event, bodyA, bodyB) => 
     {
         if (bodyB.label === 'Ball') 
         {
-            //Butters target 
             if ( bodyA.label === 'butters' ) 
             {   
                 registerHit(scene, bodyA.label, bodyB)
             }
-            //Generic ramp on
-            if (bodyA.type === 'ramp-on')
-            {
-                bodyB.isOnRamp = true
-                bodyB.isOnPlastic = true
-            }            
-            if (bodyA.label === 'leftRampOn')
-            {
-                bodyB.isOnPlastic = true
-            }    
             if (bodyA.label === 'cartman-himself')
             {
-                registerHit(scene, bodyA.type, bodyA.label)
-            }     
-            if (bodyA.label === 'rightTargets')
-            {
-                registerHit(scene, bodyA.label)
-            }     
+				registerHit(scene, bodyA.type, bodyA.label)
+            }       
+			//Ramps
+			if (bodyA.type === 'ramp-on')
+			{
+				bodyB.isOnRamp = true
+				bodyB.isOnPlastic = true
+			}            
+			if (bodyA.label === 'leftRampOn')
+			{
+				bodyB.isOnPlastic = true
+			}    
+			//COMBOS
             if (bodyA.label === 'flipper')
             {
                 //This function evaluates whether the ball is in an active combo. 
@@ -40,32 +124,31 @@ function initCollisionListeners(scene)
                 }   
             }
         }
-    })
+	})
+
+	//Collision end events
     scene.matter.world.on('collisionend', (event, bodyA, bodyB) => 
     {
         if (bodyB.label === 'Ball') 
         {
-            //Kenny ramp
+			//Ramp hits
             if (bodyA.label === 'leftRampHit' && !bodyB.isOnCenterRamp)
             {
-                //playRandomSound('kenny_hit', scene)
+				registerHit(scene, bodyA.label)
             }
-            //Stan ramp
             if (bodyA.label === 'centerRampHit')
             {
-                //playRandomSound('stan_hit', scene)
-            }
-            //Kyle ramp
+				registerHit(scene, bodyA.label)
+			}
             if (bodyA.label === 'rightRampHit')
             {
-                // playRandomSound('kyle_hit', scene)
+				registerHit(scene, bodyA.label)
             }
-            //Cartman targets 
             if (bodyA.type === 'cartman-hit')
             {
                 registerHit(scene, bodyA.type, bodyA.label)
             }
-
+			//Ramp on/off
             if (bodyA.label === 'centerRampOn')
             {
                 bodyB.isOnCenterRamp = true
@@ -73,7 +156,7 @@ function initCollisionListeners(scene)
 
             if (bodyA.type === 'loop-hit')
             {
-                registerHit(scene, bodyA.type)
+                registerHit(scene, bodyA.type, bodyB)
             }
 
             //Generic ramp on
@@ -90,8 +173,9 @@ function initCollisionListeners(scene)
                     bodyB.isOnRamp = false
                     bodyB.isOnCenterRamp = false
                 }, 100)
-            }
-
+			}
+			
+			//"Roll back" failsafe 
             if (bodyA.type === 'all-ramps-off')
             {
                 bodyB.isOnRamp = false
@@ -113,7 +197,6 @@ function initCollisionListeners(scene)
             //Slingshots
             if (bodyA.label === 'leftSlingshot' && bodyB.position.x > 148)
             {
-				console.log(bodyB)
                 leftSlingshot.fire()
             }
 

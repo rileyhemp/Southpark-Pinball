@@ -241,7 +241,9 @@ function () {
       var _this5 = this;
 
       //Starts the music
-      backgroundMusic.play(); //Pulls back the spring until it reaches desired length
+      //backgroundMusic.play()
+      document.querySelector('.launcher-inner').style.transition = 'height 1s linear';
+      document.querySelector('.launcher-inner').style.height = '100%'; //Pulls back the spring until it reaches desired length
 
       this.update = setInterval(function () {
         _this5.spring.length--;
@@ -256,7 +258,9 @@ function () {
     value: function fire() {
       var _this6 = this;
 
-      //Play sound
+      document.querySelector('.launcher-inner').style.transition = '0.3s';
+      document.querySelector('.launcher-inner').style.height = '0%'; //Play sound
+
       this.scene.sound.playAudioSprite('sound_effects', "Plunger"); //Stop pulling the spring back
 
       clearInterval(this.update); //Tween back to the starting position. The time is constant, so the greater distance the greater the impact. 

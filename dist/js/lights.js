@@ -1,218 +1,137 @@
 "use strict";
 
 function initLights(scene) {
-  //Stan
-  var stan1_off = scene.add.image(216, 282, 'stan1_off').setDepth(2);
-  var stan1_on = scene.add.image(216, 282, 'stan1_on').setDepth(0);
-  var stan2_off = scene.add.image(226, 316, 'stan2_off').setDepth(2);
-  var stan2_on = scene.add.image(226, 316, 'stan2_on').setDepth(0);
-  var stan3_off = scene.add.image(237, 346, 'stan3_off').setDepth(2);
-  var stan3_on = scene.add.image(237, 346, 'stan3_on').setDepth(0); //Kyle
+  //Center ramp
+  var centerOn = scene.add.image(208, 236, 'blueArrowOn').setDepth(0).setRotation(-0.18).setScale(0.75);
+  var centerOff = scene.add.image(208, 236, 'blueArrowOff').setDepth(2).setRotation(-0.18).setScale(0.75); //Right ramp
 
-  var kyle1_off = scene.add.image(300, 260, 'stan1_off copy').setDepth(2);
-  var kyle1_on = scene.add.image(300, 260, 'stan1_on copy').setDepth(0);
-  var kyle2_off = scene.add.image(295, 297, 'stan2_off copy').setDepth(2);
-  var kyle2_on = scene.add.image(295, 297, 'stan2_on copy').setDepth(0);
-  var kyle3_off = scene.add.image(290, 336, 'stan3_off copy').setDepth(2);
-  var kyle3_on = scene.add.image(290, 336, 'stan3_on_copy').setDepth(0); //Butters
+  var rightOn = scene.add.image(300, 260, 'blueArrowOn').setDepth(0).setRotation(0.1).setScale(0.75);
+  var rightOff = scene.add.image(300, 260, 'blueArrowOff').setDepth(2).setRotation(0.1).setScale(0.75); //Left ramp
 
-  var butters_arrow_off = scene.add.image(329, 284, 'butters_arrow_off').setDepth(2);
-  var butters_arrow_on = scene.add.image(329, 284, 'butters_arrow_on').setDepth(0);
-  var butters_circle_off = scene.add.image(319, 304, 'butters_circle_off').setDepth(2);
-  var butters_circle_on = scene.add.image(319, 304, 'butters_circle_on').setDepth(0); //Cartman
+  var leftOn = scene.add.image(230, 268, 'blueArrowOn').setDepth(0).setRotation(-.9).setScale(0.75);
+  var leftOff = scene.add.image(230, 268, 'blueArrowOff').setDepth(2).setRotation(-.9).setScale(0.75); //Left loop
 
-  var cartman1_off = scene.add.image(234, 245, 'cartman_left_off').setDepth(2);
-  var cartman1_on = scene.add.image(234, 245, 'cartman_left_on').setDepth(0);
-  var cartman2_off = scene.add.image(257, 246, 'cartman_center_off').setDepth(2);
-  var cartman2_on = scene.add.image(257, 246, 'cartman_center_on').setDepth(0);
-  var cartman3_off = scene.add.image(279, 247, 'cartman_right_off').setDepth(2);
-  var cartman3_on = scene.add.image(279, 247, 'cartman_right_on').setDepth(0); //Kenny
+  var leftLoopOn = scene.add.image(150, 311, 'blueArrowOn').setDepth(0).setRotation(-.3).setScale(0.75);
+  var leftLoopOff = scene.add.image(150, 311, 'blueArrowOff').setDepth(2).setRotation(-.3).setScale(0.75); //Right loop
 
-  var kenny1_off = scene.add.image(205, 252, 'kenny1_off').setDepth(2);
-  var kenny1_on = scene.add.image(205, 252, 'kenny1_on').setDepth(0);
-  var kenny2_off = scene.add.image(230, 264, 'kenny2_off').setDepth(2);
-  var kenny2_on = scene.add.image(230, 264, 'kenny2_on').setDepth(0);
-  var kenny3_off = scene.add.image(256, 277, 'kenny3_off').setDepth(2);
-  var kenny3_on = scene.add.image(256, 277, 'kenny3_on').setDepth(0); //Left loop
+  var rightLoopOn = scene.add.image(357, 317, 'blueArrowOn').setDepth(0).setRotation(.4).setScale(0.75);
+  var rightLoopOff = scene.add.image(357, 317, 'blueArrowOff').setDepth(2).setRotation(.4).setScale(0.75); //Butters
 
-  var left_loop1_off = scene.add.image(150, 311, 'left_loop1_off').setDepth(2);
-  var left_loop1_on = scene.add.image(150, 311, 'left_loop1_on').setDepth(0);
-  var left_loop2_off = scene.add.image(161, 343, 'left_loop2_off').setDepth(2);
-  var left_loop2_on = scene.add.image(161, 343, 'left_loop2_on').setDepth(0);
-  var left_loop3_off = scene.add.image(172, 373, 'left_loop3_off').setDepth(2);
-  var left_loop3_on = scene.add.image(172, 373, 'left_loop3_on').setDepth(0); //Right loop
+  var buttersOn = scene.add.image(332, 291, 'greenArrowOn').setDepth(0).setRotation(.3).setScale(0.75);
+  var buttersOff = scene.add.image(332, 291, 'greenArrowOff').setDepth(2).setRotation(.3).setScale(0.75); //Cartman
 
-  var right_loop1_off = scene.add.image(360, 317, 'right_loop1_off').setDepth(2);
-  var right_loop1_on = scene.add.image(360, 317, 'right_loop1_on').setDepth(0);
-  var right_loop2_off = scene.add.image(344, 347, 'right_loop2_off').setDepth(2);
-  var right_loop2_on = scene.add.image(344, 347, 'right_loop2_on').setDepth(0);
-  var right_loop3_off = scene.add.image(329, 376, 'right_loop3_off').setDepth(2);
-  var right_loop3_on = scene.add.image(329, 376, 'right_loop3_on').setDepth(0);
+  var cartmanOneOn = scene.add.image(234, 245, 'redArrowOn').setDepth(0).setScale(0.5);
+  var cartmanOneOff = scene.add.image(234, 245, 'redArrowOff').setDepth(2).setScale(0.5);
+  var cartmanTwoOn = scene.add.image(257, 246, 'redArrowOn').setDepth(0).setScale(0.5);
+  var cartmanTwoOff = scene.add.image(257, 246, 'redArrowOff').setDepth(2).setScale(0.5);
+  var cartmanThreeOn = scene.add.image(279, 247, 'redArrowOn').setDepth(0).setScale(0.5);
+  var cartmanThreeOff = scene.add.image(279, 247, 'redArrowOff').setDepth(2).setScale(0.5);
   lights = {
-    'stan': {
-      one: {
-        active: false,
-        on: stan1_on,
-        off: stan1_off
-      },
-      two: {
-        active: false,
-        on: stan2_on,
-        off: stan2_off
-      },
-      three: {
-        active: false,
-        on: stan3_on,
-        off: stan3_off
-      }
+    'centerRamp': {
+      hit: 0,
+      active: false,
+      on: centerOn,
+      off: centerOff
     },
-    'kyle': {
-      one: {
-        active: false,
-        on: kyle1_on,
-        off: kyle1_off
-      },
-      two: {
-        active: false,
-        on: kyle2_on,
-        off: kyle2_off
-      },
-      three: {
-        active: false,
-        on: kyle3_on,
-        off: kyle3_off
-      }
+    'rightRamp': {
+      hit: 0,
+      active: false,
+      on: rightOn,
+      off: rightOff
     },
-    'kenny': {
-      one: {
-        active: false,
-        on: kenny1_on,
-        off: kenny1_off
-      },
-      two: {
-        active: false,
-        on: kenny2_on,
-        off: kenny2_off
-      },
-      three: {
-        active: false,
-        on: kenny3_on,
-        off: kenny3_off
-      }
+    'leftRamp': {
+      hit: 0,
+      active: false,
+      on: leftOn,
+      off: leftOff
+    },
+    'leftLoop': {
+      hit: 0,
+      active: false,
+      on: leftLoopOn,
+      off: leftLoopOff
+    },
+    'rightLoop': {
+      hit: 0,
+      active: false,
+      on: rightLoopOn,
+      off: rightLoopOff
     },
     'cartman': {
-      one: {
+      'cartmanLeft': {
+        hit: 0,
         active: false,
-        on: cartman1_on,
-        off: cartman1_off
+        on: cartmanOneOn,
+        off: cartmanOneOff
       },
-      two: {
+      'cartmanCenter': {
+        hit: 0,
         active: false,
-        on: cartman2_on,
-        off: cartman2_off
+        on: cartmanTwoOn,
+        off: cartmanTwoOff
       },
-      three: {
+      'cartmanRight': {
+        hit: 0,
         active: false,
-        on: cartman3_on,
-        off: cartman3_off
+        on: cartmanThreeOn,
+        off: cartmanThreeOff
       }
     },
-    // 'butters': {
-    //     one: {active: false, on: butters_arrow_on, off: butters_arrow_off},
-    //     two: {active: false, on: butters_circle_on, off: butters_circle_off},
-    // },
-    'left loop': {
-      one: {
-        active: false,
-        on: left_loop1_on,
-        off: left_loop1_off
-      },
-      two: {
-        active: false,
-        on: left_loop2_on,
-        off: left_loop2_off
-      },
-      three: {
-        active: false,
-        on: left_loop3_on,
-        off: left_loop3_off
-      }
+    'butters': {
+      hit: 0,
+      active: false,
+      on: buttersOn,
+      off: buttersOff
     },
-    'right loop': {
-      one: {
-        active: false,
-        on: right_loop1_on,
-        off: right_loop1_off
-      },
-      two: {
-        active: false,
-        on: right_loop2_on,
-        off: right_loop2_off
-      },
-      three: {
-        active: false,
-        on: right_loop3_on,
-        off: right_loop3_off
-      }
+    'cartmanBody': {
+      hit: 0,
+      active: false
     }
-  }; // console.log(lights['left loop'])
+  }; // Interval that turns the lights on or off depending on the current state within the lights object
 
   Object.keys(lights).forEach(function (el) {
     var i = setInterval(function () {
-      lights[el].one.active ? lights[el].one.on.setDepth(2) : lights[el].one.on.setDepth(0);
-      lights[el].two.active ? lights[el].two.on.setDepth(2) : lights[el].two.on.setDepth(0);
-      lights[el].three ? lights[el].three.active ? lights[el].three.on.setDepth(2) : lights[el].three.on.setDepth(0) : null;
+      lights[el].on ? lights[el].hit ? lights[el].on.setDepth(3) : lights[el].on.setDepth(0) : null;
+      lights[el].cartmanLeft ? lights[el].cartmanLeft.hit ? lights[el].cartmanLeft.on.setDepth(3) : lights[el].cartmanLeft.on.setDepth(0) : null;
+      lights[el].cartmanCenter ? lights[el].cartmanCenter.hit ? lights[el].cartmanCenter.on.setDepth(3) : lights[el].cartmanCenter.on.setDepth(0) : null;
+      lights[el].cartmanRight ? lights[el].cartmanRight.hit ? lights[el].cartmanRight.on.setDepth(3) : lights[el].cartmanRight.on.setDepth(0) : null;
     }, 16.667);
   });
 }
 
-function flashLights(character, command) {
-  var keys = ['one', 'two', 'three'];
-  lights[character].areFlashing = setInterval(function () {
-    keys.forEach(function (el) {
-      lights[character][el].active ^= true;
-    });
-  }, 200);
+function flashLights(id, after, duration) {
+  //Set default duration
+  console.log(duration);
+  duration === undefined ? duration = 1000 : null;
+  var active = false;
+  var endState = after;
+
+  if (id === 'cartman') {
+    var keys = ['cartmanLeft', 'cartmanCenter', 'cartmanRight'];
+    lights[id].isFlashing = setInterval(function () {
+      active ^= true;
+      keys.forEach(function (el) {
+        active ? lights[id][el].hit = 1 : lights[id][el].hit = 0;
+      });
+    }, 200);
+  } else {
+    lights[id].isFlashing = setInterval(function () {
+      active ^= true;
+      active > 0 ? lights[id].hit = 1 : lights[id].hit = 0;
+    }, 200);
+    setTimeout(function () {
+      clearInterval(lights[id].isFlashing);
+      lights[id].hit = endState;
+    }, duration);
+  }
+
+  id === 'butters' ? buttersLightOn = true : null;
 }
-/*
- butters_arrow_off.png
- butters_arrow_on.png
- butters_circle_off.png
- butters_circle_on.png
- cartman_center_off.png
- cartman_center_on.png
- cartman_left_off.png
- cartman_left_on.png
- cartman_right_off.png
- cartman_right_on.png
- kenny1_off.png
- kenny1_on.png
- kenny2_off.png
- kenny2_on.png
- kenny3_off.png
- kenny3_on.png
- left_loop1_off.png
- left_loop1_on.png
- left_loop2_off.png
- left_loop2_on.png
- left_loop3_off.png
- left_loop3_on.png
- right_loop1_off.png
- right_loop1_on.png
- right_loop2_off.png
- right_loop2_off-2.png
- right_loop2_on.png
- right_loop3_on.png
-'stan1_off copy.png'
- stan1_off.png
-'stan1_on copy.png'
- stan1_on.png
-'stan2_off copy.png'
- stan2_off.png
-'stan2_on copy.png'
- stan2_on.png
-'stan3_off copy.png'
- stan3_off.png
- stan3_on.png
- stan3_on_copy.png */
+
+function clearLights() {
+  Object.keys(lights).forEach(function (el) {
+    rampsLit = 0;
+    lights[el].hit = 0;
+  });
+}
 //# sourceMappingURL=lights.js.map

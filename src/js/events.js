@@ -7,14 +7,14 @@ function startEvent(name, scene)
             startCartman(scene)
             setTimeout(()=>
             {
-                objectives['cartman-himself'] > 4 ? endCartman(scene, 'win') : endCartman(scene, 'loss')
+                lights['cartmanBody'].hit > 4 ? endCartman(scene, 'win') : endCartman(scene, 'loss')
             }, duration)
     }
 }
 
 function startCartman(scene)
 {
-    
+    cartmanCanStart = false
     // eventMusic = scene.sound.add('cartman_music')
     // setTimeout(()=>
     //     {
@@ -28,15 +28,13 @@ function startCartman(scene)
 	//     }, 2000)
 
 	flashLights('cartman')
+	
     scene.sound.playAudioSprite('sound_effects', 'Drain')
-    // playRandomSound('cartman_start', scene, 500)
-    rampsCartmanActive.setDepth(2)
-    ramps.setDepth(0)
+	playRandomSound('cartman_start', scene, 500)
+	rampsCartmanGate.setDepth(0)
     //Reset the counter
-    objectives['cartman-left'] = 0
-    objectives['cartman-center'] = 0
-    objectives['cartman-right'] = 0
-    //Open the cartman ramp
+
+    //Open the cartman ramp once all targets are hit
     let targets = [cartmanRight, cartmanLeft, cartmanCenter, cartmanBlock]
     for ( let target in targets )
     {
@@ -46,23 +44,26 @@ function startCartman(scene)
 
 function endCartman(scene, result)
 {
-	clearInterval(lights.cartman.areFlashing)
+	lights.cartman.cartmanLeft.hit = 0
+	lights.cartman.cartmanCenter.hit = 0
+	lights.cartman.cartmanRight.hit = 0
+	clearInterval(lights.cartman.isFlashing)
+	rampsCartmanGate.setDepth(2)
     // eventMusic.stop()
     if (result === 'win' )
     {
 		addScore('cartman-win')
-        // playRandomSound('cartman_end', scene, 500)
+        playRandomSound('cartman_end', scene, 500)
     } else 
     {
         // playRandomSound('generic_negative', scene, 500)
     }
-    objectives['cartman-himself'] = 0
-    rampsCartmanActive.setDepth(0)
-    ramps.setDepth(2)
+    lights['cartmanBody'].hit = 0
     scene.sound.playAudioSprite('sound_effects', 'kicker_enter_center')
     let targets = [cartmanRight, cartmanLeft, cartmanCenter, cartmanBlock]
     for ( let target in targets )
     {
         targets[target].object.setCollidesWith(collisionGroupA)
-    }
+	}
+	//cartmanCanStart = true
 }

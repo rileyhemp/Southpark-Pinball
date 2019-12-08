@@ -1,5 +1,65 @@
 body {
-	background-color: darkgrey;
+	background-color: black;
+	display: -webkit-box;
+	display: flex;
+	font-family: 'VT323', monospace;
+}
+
+.display {
+	align-self: flex-start;
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	        flex-direction: column;
+	height: 100vh;
+	-webkit-box-pack: justify;
+	        justify-content: space-between;
+	min-height: 100%;
+	color: #fca400;
+	margin: 10px 0;
+	visibility: hidden;
+}
+
+.score {
+	font-size: 70px;
+	margin: 20px 0;
+}
+
+.score-display {
+	padding: 20px 0;
+}
+
+.launcher-outer {
+	margin-bottom: 45px;
+	height: 200px;
+	background-color: rgba(255, 255, 255, 0.1);
+	width: 50px;
+	display: -webkit-box;
+	display: flex;
+}
+
+.launcher-inner {
+	background-color: limegreen;
+	height: 0;
+	width: 100%;
+	align-self: flex-end;
+}
+
+.alert-window {
+	font-size: 50px;
+	padding-top: 20px;
+}
+
+.controls {
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	color: white;
+}
+
+.controls p {
+	margin-top: 10px;
 }
 
 /*# sourceMappingURL=main.css.map */

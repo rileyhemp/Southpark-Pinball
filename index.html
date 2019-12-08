@@ -3,9 +3,11 @@
 <head> 
     <meta charset="UTF-8" />
     <title>Pinball Game</title>
-    <script src="//cdn.jsdelivr.net/npm/phaser/dist/phaser.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/phaser/dist/phaser.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./dist/css/reset.css">
     <link rel="stylesheet" href="./dist/css/main.css">
+    <link rel="stylesheet" href="./dist/css/button.css">
 </head>
 <body>
     <script src="dist/js/preload.js"></script>
@@ -19,8 +21,25 @@
     <script src="dist/js/flipper.js"></script>
     <script src="dist/js/main.js"></script>
     <script src="dist/js/paths.js"></script>
-    <script src="dist/js/game.js"></script>
-    <p>Score: <span class='score'>0</span></p>
-    <p>Ball: <span class='balls-remaining'>1</span></p>
+	<script src="dist/js/game.js"></script>
+	<section class="display">
+		<div>
+			<p class="score-display"><span class='score'>0</span></p>
+			<p>Ball: <span class='balls-remaining'>1</span></p>
+		</div>
+		<p class="alert-window"></p>
+		<div class="launcher">
+			<div class="launcher-outer">
+				<div class="launcher-inner"></div>
+			</div>
+		</div>
+	</section>
+	<div class="controls">
+		<p>LEFT and RIGHT control flippers</p>
+		<p>Hold DOWN to launch a ball</p>
+	</div>
+	<button class="left-button push--flat"></button>
+	<button class="right-button push--flat"></button>
+
 </body>
 </html>

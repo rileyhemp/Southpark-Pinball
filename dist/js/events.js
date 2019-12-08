@@ -7,13 +7,13 @@ function startEvent(name, scene) {
 
       startCartman(scene);
       setTimeout(function () {
-        objectives['cartman-himself'] > 4 ? endCartman(scene, 'win') : endCartman(scene, 'loss');
+        lights['cartmanBody'].hit > 4 ? endCartman(scene, 'win') : endCartman(scene, 'loss');
       }, duration);
   }
 }
 
 function startCartman(scene) {
-  // eventMusic = scene.sound.add('cartman_music')
+  cartmanCanStart = false; // eventMusic = scene.sound.add('cartman_music')
   // setTimeout(()=>
   //     {
   //         backgroundMusic ? backgroundMusic.pause() : null
@@ -24,15 +24,12 @@ function startCartman(scene) {
   //             duration: 1000,
   //         })
   //     }, 2000)
+
   flashLights('cartman');
-  scene.sound.playAudioSprite('sound_effects', 'Drain'); // playRandomSound('cartman_start', scene, 500)
-
-  rampsCartmanActive.setDepth(2);
-  ramps.setDepth(0); //Reset the counter
-
-  objectives['cartman-left'] = 0;
-  objectives['cartman-center'] = 0;
-  objectives['cartman-right'] = 0; //Open the cartman ramp
+  scene.sound.playAudioSprite('sound_effects', 'Drain');
+  playRandomSound('cartman_start', scene, 500);
+  rampsCartmanGate.setDepth(0); //Reset the counter
+  //Open the cartman ramp once all targets are hit
 
   var targets = [cartmanRight, cartmanLeft, cartmanCenter, cartmanBlock];
 
@@ -42,21 +39,25 @@ function startCartman(scene) {
 }
 
 function endCartman(scene, result) {
-  clearInterval(lights.cartman.areFlashing); // eventMusic.stop()
+  lights.cartman.cartmanLeft.hit = 0;
+  lights.cartman.cartmanCenter.hit = 0;
+  lights.cartman.cartmanRight.hit = 0;
+  clearInterval(lights.cartman.isFlashing);
+  rampsCartmanGate.setDepth(2); // eventMusic.stop()
 
   if (result === 'win') {
-    addScore('cartman-win'); // playRandomSound('cartman_end', scene, 500)
+    addScore('cartman-win');
+    playRandomSound('cartman_end', scene, 500);
   } else {// playRandomSound('generic_negative', scene, 500)
-    }
+  }
 
-  objectives['cartman-himself'] = 0;
-  rampsCartmanActive.setDepth(0);
-  ramps.setDepth(2);
+  lights['cartmanBody'].hit = 0;
   scene.sound.playAudioSprite('sound_effects', 'kicker_enter_center');
   var targets = [cartmanRight, cartmanLeft, cartmanCenter, cartmanBlock];
 
   for (var target in targets) {
     targets[target].object.setCollidesWith(collisionGroupA);
-  }
+  } //cartmanCanStart = true
+
 }
 //# sourceMappingURL=events.js.map

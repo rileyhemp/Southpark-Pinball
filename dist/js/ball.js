@@ -69,9 +69,7 @@ function (_Phaser$Physics$Matte) {
       this.body.isOnLauncher = false;
       this.ballIdleDuration = 0; //Add ball to array
 
-      balls.push(this.body); //Prevents the ball from spinning
-      // this.body.inertia = Infinity
-      //Add the ball to the display list
+      balls.push(this.body); //Add the ball to the display list
 
       this.scene.sys.displayList.add(this); //Add rolling table sounds
 
@@ -129,46 +127,56 @@ function (_Phaser$Physics$Matte) {
           _this2.ballIdleDuration++;
         } else {
           _this2.ballIdleDuration = 0;
-        }
-
-        if (_this2.body.position.y < 700 && _this2.ballIdleDuration > 200) {
-          _this2.body.applyForce(1, 1);
-        } //Kills the sound if the ball has been destroyed (by butters' target)
+        } // if ( this.body.position.y < 700 && this.ballIdleDuration > 200 )
+        // {
+        //     this.body.applyForce(1,1)
+        // }
+        //Kills the sound if the ball has been destroyed (by butters' target)
 
 
         if (_this2.body.isDestroyed) {
           _this2.table_sfx.stop();
 
           _this2.ramp_sfx.stop();
+        }
+
+        if (_this2.body.combo < 3) {
+          multiplier = 1;
+        }
+
+        if (_this2.body.combo >= 3) {
+          multiplier = 2; //Alert
+        }
+
+        if (_this2.body.combo > 4) {
+          multiplier = 3;
+        }
+
+        if (_this2.body.combo > 5) {
+          multiplier = 4;
         } //Check balls location and adjusts collision groups accordingly
 
 
         if (_this2.body.isOnRamp && _this2.body.isOnCenterRamp) {
           _this2.setCollisions('centerRamp');
 
-          _this2.setDepth(3);
+          _this2.setDepth(5);
         } else if (_this2.body.isOnRamp) {
           _this2.setCollisions('ramps');
 
-          _this2.setDepth(3);
+          _this2.setDepth(5);
         } else if (!_this2.body.isOnRamp && _this2.body.isOnLauncher) {
           _this2.setCollisions('launcher');
 
-          _this2.setDepth(2);
+          _this2.setDepth(4);
         } else {
           _this2.setCollisions('table');
 
-          _this2.setDepth(2);
+          _this2.setDepth(4);
         } //Keeps the ball from spinning
-        // this.body.angle = this.body.anglePrev
 
 
-        _this2.body.angle = 0; //Checks if the ball has escaped the map and puts it back on the launcher
-        // if (this.x < 0 || this.x > game.config.width || this.y < 0 || this.y > game.config.height)
-        // {
-        //     this.readyBall()
-        // }
-        //Checks if the ball is traveling at a certain speed. 
+        _this2.body.angle = 0; //Checks if the ball is traveling at a certain speed. 
         //This is for registering missed / made shots and tracking combos. 
         //See collisions.js for the rest of the code. 
 

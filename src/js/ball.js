@@ -32,8 +32,6 @@ class Ball extends Phaser.Physics.Matter.Image
         this.ballIdleDuration = 0
         //Add ball to array
         balls.push(this.body)
-        //Prevents the ball from spinning
-        // this.body.inertia = Infinity
         //Add the ball to the display list
         this.scene.sys.displayList.add(this)
         //Add rolling table sounds
@@ -93,50 +91,62 @@ class Ball extends Phaser.Physics.Matter.Image
                 this.ballIdleDuration = 0
             }
 
-            if ( this.body.position.y < 700 && this.ballIdleDuration > 200 )
-            {
-                this.body.applyForce(1,1)
-            }
+            // if ( this.body.position.y < 700 && this.ballIdleDuration > 200 )
+            // {
+            //     this.body.applyForce(1,1)
+            // }
             
             //Kills the sound if the ball has been destroyed (by butters' target)
             if (this.body.isDestroyed)
             {
                 this.table_sfx.stop()
                 this.ramp_sfx.stop()
-            }
+			}
+			
+			if ( this.body.combo < 3 )
+			{
+				multiplier = 1
+			}
+			if (this.body.combo >= 3 )
+			{
+				multiplier = 2
+				//Alert
+			}
+
+			if ( this.body.combo > 4 )
+			{
+				multiplier = 3
+			}
+
+			if ( this.body.combo > 5 )
+			{
+				multiplier = 4
+			}
 
             //Check balls location and adjusts collision groups accordingly
             if (this.body.isOnRamp && this.body.isOnCenterRamp)
             {
                 this.setCollisions('centerRamp')
-                this.setDepth(3)
+                this.setDepth(5)
             } 
             else if (this.body.isOnRamp)
             {
                 this.setCollisions('ramps')
-                this.setDepth(3)
+                this.setDepth(5)
             } 
             else if (!this.body.isOnRamp && this.body.isOnLauncher)
             {
                 this.setCollisions('launcher')
-                this.setDepth(2)
+                this.setDepth(4)
             } 
             else 
             {
                 this.setCollisions('table')
-                this.setDepth(2)
+                this.setDepth(4)
 			} 
 			
 			//Keeps the ball from spinning
-			// this.body.angle = this.body.anglePrev
 			this.body.angle = 0
-
-
-            //Checks if the ball has escaped the map and puts it back on the launcher
-            // if (this.x < 0 || this.x > game.config.width || this.y < 0 || this.y > game.config.height)
-            // {
-            //     this.readyBall()
-            // }
 
             //Checks if the ball is traveling at a certain speed. 
             //This is for registering missed / made shots and tracking combos. 
@@ -144,9 +154,9 @@ class Ball extends Phaser.Physics.Matter.Image
             this.body.speed > 12 ? this.body.isInMotion = true : null
 
             //Check if the ball is in a killzone
-            if (this.x < 425 && (this.y > 650 && (this.x < 192 || this.x > 330)) || this.y > 720) 
+            if (this.x < 425 && (this.y > 650 && (this.x < 192 || this.x > 330)) || this.y > 720 ) 
             {
-                balls.pop()
+				balls.pop()
                 this.scene.sound.playAudioSprite('sound_effects', 'Drain')
                 //playRandomSound('generic_negative', this.scene, 400)
                 this.table_sfx.stop()

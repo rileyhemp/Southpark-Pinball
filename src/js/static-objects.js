@@ -88,9 +88,9 @@ function createStaticObjects(scene)
     //Loop hit
     new Sensor(scene, 296, 68, 20, 20, 0, 'loop-hit', null, sensorGroupA)
     //Cartman hit
-    cartmanLeft = new Sensor(scene, 257, 226, 18, 20, 0, 'cartman-hit', 'cartman-center', sensorGroupA)
-    cartmanCenter = new Sensor(scene, 237, 226, 18, 20, 0, 'cartman-hit', 'cartman-left', sensorGroupA)
-    cartmanRight = new Sensor(scene, 277, 226, 18, 20, 0, 'cartman-hit', 'cartman-right', sensorGroupA)
+    cartmanLeft = new Sensor(scene, 257, 226, 18, 20, 0, 'cartman-hit', 'cartmanCenter', sensorGroupA)
+    cartmanCenter = new Sensor(scene, 237, 226, 18, 20, 0, 'cartman-hit', 'cartmanLeft', sensorGroupA)
+    cartmanRight = new Sensor(scene, 277, 226, 18, 20, 0, 'cartman-hit', 'cartmanRight', sensorGroupA)
     new Sensor(scene, 249, 153, 40, 10, 0, 'cartman-himself', 'cartman-himself', sensorGroupA) //Cartman himself
     //Launcher on 
     new Sensor(scene, 435, 477, 30, 20, 1.6, 'launcher-on', 'launcherOn', sensorGroupA)

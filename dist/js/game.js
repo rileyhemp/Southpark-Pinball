@@ -32,23 +32,43 @@ var config = {
   }
 }; //Declare global variables 
 
-var table, ramps, characters, leftFlipper, rightFlipper, sideFlipper, bumperA, bumperB, bumperC, leftSlingshot, rightSlingshot, launcher, ball, spacebar, left, right, down, collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, cartmanLeft, cartmanCenter, cartmanRight, cartmanBlock, rampsCartmanActive, objectives, gameActive, backgroundMusic, eventMusic, lights;
+var table, ramps, characters, leftFlipper, rightFlipper, sideFlipper, bumperA, bumperB, bumperC, leftSlingshot, rightSlingshot, launcher, ball, spacebar, left, right, down, collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, cartmanLeft, cartmanCenter, cartmanRight, cartmanBlock, rampsCartmanActive, rampsCartmanGate, buttersLightOn, gameActive, backgroundMusic, eventMusic, lights, currentScene, test;
 var balls = [];
-var currentBall = 1;
+var currentBall = 0;
 var multiplier = 1;
 var score = 0;
+var rampsLit = 0;
+var cartmanCanStart = true;
+var alerts = [];
 var Bodies = Phaser.Physics.Matter.Matter.Bodies;
 var game = new Phaser.Game(config);
 
-function create() {
-  playRandomSound('intro_music', this); //What to do on click
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+  game.config.isMobile = true;
+} else {
+  game.config.isMobile = false;
+} //Create
 
-  this.input.on('pointerdown', function (pointer) {
-    // console.log(pointer.x+",", pointer.y)
+
+function create() {
+  currentScene = this; //Size to fit
+
+  document.querySelector('canvas').style.maxHeight = window.innerHeight + 'px';
+  document.querySelector('canvas').style.minHeight = window.innerHeight + 'px';
+  initDomControls(); //Move score section to the right of the newly created canvas
+
+  var displaySection = document.querySelector('.display');
+  document.body.appendChild(displaySection);
+  test = this; //Init alerts
+
+  playAlerts(alerts); // playRandomSound('intro_music', this)
+  //What to do on click
+
+  this.input.on('pointerdown', function (pointer) {// console.log(pointer.x+",", pointer.y)
     // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
-    // ball.setVelocityY(-10)
+    // ball.setVelocityY(-20)
+    // ball.setVelocityX(-20)
     //Start a new game
-    newGame(this);
   }, this); //Setup collision groups 
 
   sensorGroupA = this.matter.world.nextCategory(); // Ground level sensors
@@ -67,20 +87,13 @@ function create() {
   down = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
   right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
   spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-  initLights(this); //Create object to store hit counts for each objective
-
-  objectives = {
-    'cartman-left': 0,
-    'cartman-center': 0,
-    'cartman-right': 0,
-    'cartman-himself': 0,
-    'loop-hit': 0
-  }; //Textures
+  initLights(this); //Textures
 
   table = this.add.image(260, 400, 'table').setDepth(1);
-  ramps = this.add.image(260, 400, 'ramps').setDepth(2);
-  rampsCartmanActive = this.add.image(260, 400, 'ramps_cartman_active').setDepth(0);
-  characters = this.add.image(260, 400, 'characters').setDepth(4); //Flippers
+  ramps = this.add.image(260, 400, 'ramps').setDepth(4);
+  rampsCartmanActive = this.add.image(260, 400, 'ramps_cartman_active').setDepth(1);
+  rampsCartmanGate = this.add.image(260, 400, 'ramps_cartman_gate').setDepth(1);
+  characters = this.add.image(260, 380, 'characters').setDepth(5).setScale(0.4); //Flippers
 
   leftFlipper = new LeftFlipper(this, 150, 632);
   rightFlipper = new RightFlipper(this, 327, 632);
@@ -104,6 +117,7 @@ function create() {
   //See collisions.js
 
   initCollisionListeners(this);
+  newGame(this);
 } //Update
 
 /*********************************************************/
@@ -139,17 +153,25 @@ function update() {
 
   if (balls.length === 0) {
     //Get a new ball if there are any remaining. Otherwise end the game.
-    if (currentBall <= config.game.balls && gameActive) {
+    if (currentBall <= config.game.balls - 1 && gameActive) {
+      console.log('new ball');
       getNewBall(this);
-    } else {
+    } else if (gameActive) {
+      endGame(this);
       gameActive = false;
     }
-  } //Events
+  } //Events 
+  //Cartman
 
 
-  if (objectives['cartman-left'] && objectives['cartman-center'] && objectives['cartman-right']) {
+  if (lights.cartman.cartmanLeft.hit > 0 && lights.cartman.cartmanCenter.hit > 0 && lights.cartman.cartmanRight.hit > 0 && cartmanCanStart) {
     startEvent('cartman', this);
-  }
+  } //Butters
+
+
+  Object.keys(lights).forEach(function (el) {
+    lights[el].hit > 0 && !buttersLightOn ? flashLights('butters', 1) : null;
+  });
 } //Functions 
 
 /*********************************************************/
@@ -163,21 +185,25 @@ function newGame(scene) {
   getNewBall(scene);
 }
 
-function endGame() {
+function endGame(scene) {
+  alert("Final score: " + score, 2000);
   console.log('game over');
   backgroundMusic.stop();
   score = 0;
+  document.querySelector('.score').textContent = score;
+  currentBall = 0;
+  newGame(scene);
 }
 
 function getNewBall(scene) {
   backgroundMusic.pause();
-  ball = new Ball(scene, 455, 689, 'ball');
+  ball = new Ball(scene, 455, 669, 'ball');
   scene.sound.playAudioSprite('sound_effects', "rollover");
   currentBall++;
   document.querySelector('.balls-remaining').textContent = currentBall;
 }
 
-function addScore(name) {
+function addScore(name, modifier) {
   var amount;
 
   switch (name) {
@@ -197,97 +223,86 @@ function addScore(name) {
       amount = 100000;
       break;
 
-    case "randy":
-      amount = 2500;
+    case "cartman-body":
+      amount = 25000;
       break;
 
     case "loop":
       amount = 10000;
       break;
+
+    case "jackpot":
+      amount = 25000 * modifier;
+      break;
+
+    case "super-jackpot":
+      amount = 500000;
+      break;
   }
 
   var total = amount * multiplier;
   score += total;
+  console.log(amount, multiplier, total);
   document.querySelector('.score').textContent = score;
-} //Hit registration
-
-/*********************************************************/
-
-
-function registerHit(scene, bodyA, bodyB) {
-  switch (bodyA) {
-    case "butters":
-      playRandomSound('butters_hit', scene);
-      scene.sound.playAudioSprite('sound_effects', 'thunder', {
-        volume: 0.5
-      });
-      scene.sound.playAudioSprite('sound_effects', 'hole_enter');
-      bodyB.render.visible = false;
-      bodyB.isDestroyed = true;
-      bodyB.destroy(); //Holds the ball for 3 seconds and shoots back to left flipper
-
-      setTimeout(function () {
-        ball = new Ball(scene, 340, 259, 'ball');
-        ball.setVelocityY(3.3);
-        ball.setVelocityX(-3.3);
-        scene.sound.playAudioSprite('sound_effects', 'ExitSandman');
-        addScore('butters');
-      }, 3000);
-      break;
-
-    case "cartman-hit":
-      if (!objectives[bodyB] && bodyB != 'cartman-himself') {
-        objectives[bodyB]++;
-        scene.sound.playAudioSprite('sound_effects', 'target');
-
-        switch (bodyB) {
-          case "cartman-left":
-            lights.cartman.one.active = true;
-            break;
-
-          case "cartman-center":
-            lights.cartman.two.active = true;
-            break;
-
-          case "cartman-right":
-            lights.cartman.three.active = true;
-            break;
-        } // lights.cartman.bodyB.active = true
-
-
-        console.log(bodyB);
-      }
-
-      break;
-
-    case "cartman-himself":
-      objectives[bodyB]++; // playRandomSound('cartman_damage', scene)
-
-      scene.sound.playAudioSprite('sound_effects', 'rubber_hit_2');
-      break;
-
-    case "rightTargets":
-      scene.sound.playAudioSprite('sound_effects', 'rubber_hit_1');
-      addScore('randy');
-      break;
-
-    case "loop-hit":
-      addScore('loop');
-      objectives[bodyA]++;
-      console.log(objectives);
-  }
 }
 
 function playRandomSound(sprite, scene, delay) {
   var spritemap = Object.keys(scene.cache.json.get(sprite).spritemap);
-  console.log(spritemap);
   setTimeout(function () {
     scene.sound.playAudioSprite(sprite, spritemap[Math.floor(Math.random() * spritemap.length)]);
   }, delay);
 }
 
-function comboCounter(scene) {//ball hits flippers
-  //ball speed exceeds a certain threshold 
-  //score points
+function alert(message, timeout) {
+  alerts.push(message);
+  setTimeout(function () {
+    var alert = alerts.indexOf(message);
+    alerts.splice(alert, 1);
+  }, timeout);
+}
+
+function playAlerts(alerts) {
+  var text = document.querySelector('.alert-window');
+  var i = 0;
+  alerts[i] != undefined ? text.innerHTML = alerts[i] : null;
+  var loop = setInterval(function () {
+    if (i < alerts.length - 1) {
+      i++;
+      alerts[i] != undefined ? text.innerHTML = alerts[i] : null;
+    } else if (alerts.length > 0) {
+      i = 0;
+      alerts[i] != undefined ? text.innerHTML = alerts[i] : null;
+    } else {
+      text.innerHTML = '';
+    }
+  }, 3000);
+}
+
+function initDomControls() {
+  document.querySelector('.display').style.visibility = 'visible';
+  var tableWidth = game.canvas.offsetWidth;
+
+  if (game.config.isMobile === true) {
+    var leftButton = document.querySelector('.left-button');
+    var rightButton = document.querySelector('.right-button');
+    leftButton.style.visibility = 'visible';
+    rightButton.style.visibility = 'visible';
+    leftButton.style.bottom = '20px';
+    rightButton.style.bottom = '20px';
+    leftButton.style.left = '30px';
+    rightButton.style.left = tableWidth - 175 + 'px';
+    leftButton.addEventListener('touchstart', function () {
+      leftFlipper.flip();
+    });
+    leftButton.addEventListener('touchend', function () {
+      leftFlipper.release();
+    });
+    rightButton.addEventListener('touchstart', function () {
+      rightFlipper.flip();
+    });
+    rightButton.addEventListener('touchend', function () {
+      rightFlipper.release();
+    });
+  }
 }
 //# sourceMappingURL=game.js.map
