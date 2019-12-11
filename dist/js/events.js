@@ -3,8 +3,7 @@
 function startEvent(name, scene) {
   switch (name) {
     case "cartman":
-      var duration = 5000; //14500
-
+      var duration = 14500;
       startCartman(scene);
       setTimeout(function () {
         lights['cartmanBody'].hit > 4 ? endCartman(scene, 'win') : endCartman(scene, 'loss');
@@ -13,19 +12,9 @@ function startEvent(name, scene) {
 }
 
 function startCartman(scene) {
-  cartmanCanStart = false; // eventMusic = scene.sound.add('cartman_music')
-  // setTimeout(()=>
-  //     {
-  //         backgroundMusic ? backgroundMusic.pause() : null
-  //         eventMusic.play()
-  //         scene.tweens.add({
-  //             targets: eventMusic,
-  //             volume: { from: 0, to: 1 },
-  //             duration: 1000,
-  //         })
-  //     }, 2000)
-
+  cartmanCanStart = false;
   flashLights('cartman');
+  alert('Hit Cartman', 4000);
   scene.sound.playAudioSprite('sound_effects', 'Drain');
   playRandomSound('cartman_start', scene, 500);
   rampsCartmanGate.setDepth(0); //Reset the counter
@@ -43,12 +32,14 @@ function endCartman(scene, result) {
   lights.cartman.cartmanCenter.hit = 0;
   lights.cartman.cartmanRight.hit = 0;
   clearInterval(lights.cartman.isFlashing);
-  rampsCartmanGate.setDepth(2); // eventMusic.stop()
+  rampsCartmanGate.setDepth(2);
 
   if (result === 'win') {
     addScore('cartman-win');
+    alert('Defeated Cartman - 1,000,000', 2000);
     playRandomSound('cartman_end', scene, 500);
-  } else {// playRandomSound('generic_negative', scene, 500)
+  } else {
+    alert('Cartman Failed', 2000);
   }
 
   lights['cartmanBody'].hit = 0;
@@ -57,7 +48,8 @@ function endCartman(scene, result) {
 
   for (var target in targets) {
     targets[target].object.setCollidesWith(collisionGroupA);
-  } //cartmanCanStart = true
+  }
 
+  cartmanCanStart = true;
 }
 //# sourceMappingURL=events.js.map

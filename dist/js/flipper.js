@@ -143,7 +143,7 @@ function (_Flipper) {
 
     _get(_getPrototypeOf(LeftFlipper.prototype), "createComponents", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2));
 
-    _this2.endPosition = 102;
+    _this2.endPosition = 101;
 
     _get(_getPrototypeOf(LeftFlipper.prototype), "setCollisionGroups", _assertThisInitialized(_this2)).call(_assertThisInitialized(_this2));
 

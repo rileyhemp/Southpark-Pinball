@@ -32,7 +32,7 @@ var config = {
   }
 }; //Declare global variables 
 
-var table, ramps, characters, leftFlipper, rightFlipper, sideFlipper, bumperA, bumperB, bumperC, leftSlingshot, rightSlingshot, launcher, ball, spacebar, left, right, down, collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, cartmanLeft, cartmanCenter, cartmanRight, cartmanBlock, rampsCartmanActive, rampsCartmanGate, buttersLightOn, gameActive, backgroundMusic, eventMusic, lights, currentScene, test;
+var table, ramps, characters, leftFlipper, rightFlipper, sideFlipper, bumperA, bumperB, bumperC, leftSlingshot, rightSlingshot, launcher, ball, spacebar, left, right, down, collisionGroupA, collisionGroupB, collisionGroupC, collisionGroupD, collisionGroupE, sensorGroupA, sensorGroupB, cartmanLeft, cartmanCenter, cartmanRight, cartmanBlock, rampsCartmanActive, rampsCartmanGate, buttersLightOn, gameActive, backgroundMusic, eventMusic, lights, currentScene, welcomeScreen, test;
 var balls = [];
 var currentBall = 0;
 var multiplier = 1;
@@ -51,7 +51,15 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
 
 
 function create() {
-  currentScene = this; //Size to fit
+  var _this = this;
+
+  document.body.style.visibility = 'visible';
+  currentScene = this;
+  welcomeScreen = document.querySelector('.start-screen');
+  welcomeScreen.addEventListener('click', function () {
+    welcomeScreen.style.visibility = 'hidden';
+    newGame(_this);
+  }); //Size to fit
 
   document.querySelector('canvas').style.maxHeight = window.innerHeight + 'px';
   document.querySelector('canvas').style.minHeight = window.innerHeight + 'px';
@@ -59,16 +67,15 @@ function create() {
 
   var displaySection = document.querySelector('.display');
   document.body.appendChild(displaySection);
-  test = this; //Init alerts
-
-  playAlerts(alerts); // playRandomSound('intro_music', this)
-  //What to do on click
+  test = this;
+  playRandomSound('intro_music', this); //What to do on click
 
   this.input.on('pointerdown', function (pointer) {// console.log(pointer.x+",", pointer.y)
     // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
     // ball.setVelocityY(-20)
     // ball.setVelocityX(-20)
     //Start a new game
+    // newGame(this)
   }, this); //Setup collision groups 
 
   sensorGroupA = this.matter.world.nextCategory(); // Ground level sensors
@@ -117,7 +124,6 @@ function create() {
   //See collisions.js
 
   initCollisionListeners(this);
-  newGame(this);
 } //Update
 
 /*********************************************************/
@@ -154,7 +160,6 @@ function update() {
   if (balls.length === 0) {
     //Get a new ball if there are any remaining. Otherwise end the game.
     if (currentBall <= config.game.balls - 1 && gameActive) {
-      console.log('new ball');
       getNewBall(this);
     } else if (gameActive) {
       endGame(this);
@@ -186,21 +191,35 @@ function newGame(scene) {
 }
 
 function endGame(scene) {
-  alert("Final score: " + score, 2000);
-  console.log('game over');
+  document.querySelector('.start-screen > h1').textContent = "Game Over";
+  document.querySelector('.byline').textContent = 'Final score: ' + score;
+  document.querySelector('.start-screen > a').textContent = '';
+  document.querySelector('.start-screen > p:nth-child(4)').textContent = 'Click to play again';
+  welcomeScreen.style.visibility = 'visible';
   backgroundMusic.stop();
   score = 0;
   document.querySelector('.score').textContent = score;
   currentBall = 0;
-  newGame(scene);
 }
 
 function getNewBall(scene) {
-  backgroundMusic.pause();
+  clearLights();
+  backgroundMusic.play();
   ball = new Ball(scene, 455, 669, 'ball');
   scene.sound.playAudioSprite('sound_effects', "rollover");
   currentBall++;
   document.querySelector('.balls-remaining').textContent = currentBall;
+}
+
+function restartBall(scene) {
+  balls.forEach(function (el) {
+    el.isDestroyed = true;
+    el.destroy();
+    balls.pop();
+    backgroundMusic.play();
+    ball = new Ball(scene, 455, 669, 'ball');
+    scene.sound.playAudioSprite('sound_effects', "rollover");
+  });
 }
 
 function addScore(name, modifier) {
@@ -220,7 +239,7 @@ function addScore(name, modifier) {
       break;
 
     case "cartman-win":
-      amount = 100000;
+      amount = 1000000;
       break;
 
     case "cartman-body":
@@ -242,7 +261,6 @@ function addScore(name, modifier) {
 
   var total = amount * multiplier;
   score += total;
-  console.log(amount, multiplier, total);
   document.querySelector('.score').textContent = score;
 }
 
@@ -254,10 +272,10 @@ function playRandomSound(sprite, scene, delay) {
 }
 
 function alert(message, timeout) {
-  alerts.push(message);
+  var text = document.querySelector('.alert-window');
+  text.innerText = message;
   setTimeout(function () {
-    var alert = alerts.indexOf(message);
-    alerts.splice(alert, 1);
+    text.innerText === message ? text.innerText = '' : null;
   }, timeout);
 }
 
@@ -305,4 +323,8 @@ function initDomControls() {
     });
   }
 }
+
+document.querySelector('#reload-button').addEventListener('click', function () {
+  restartBall(currentScene);
+});
 //# sourceMappingURL=game.js.map

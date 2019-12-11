@@ -18,7 +18,7 @@ class Ball extends Phaser.Physics.Matter.Image
     setupBall()
     {
         this.body.friction = 0
-        this.body.frictionAir = 0
+        this.body.frictionAir = 0.0001
         this.setDensity(.001)
         this.setDepth(1)
         //Set what the ball can collide with
@@ -100,7 +100,7 @@ class Ball extends Phaser.Physics.Matter.Image
             if (this.body.isDestroyed)
             {
                 this.table_sfx.stop()
-                this.ramp_sfx.stop()
+				this.ramp_sfx.stop()
 			}
 			
 			if ( this.body.combo < 3 )
@@ -137,12 +137,12 @@ class Ball extends Phaser.Physics.Matter.Image
             else if (!this.body.isOnRamp && this.body.isOnLauncher)
             {
                 this.setCollisions('launcher')
-                this.setDepth(4)
+                this.setDepth(3)
             } 
             else 
             {
                 this.setCollisions('table')
-                this.setDepth(4)
+                this.setDepth(3)
 			} 
 			
 			//Keeps the ball from spinning
@@ -160,10 +160,12 @@ class Ball extends Phaser.Physics.Matter.Image
                 this.scene.sound.playAudioSprite('sound_effects', 'Drain')
                 //playRandomSound('generic_negative', this.scene, 400)
                 this.table_sfx.stop()
-                this.ramp_sfx.stop()
+				this.ramp_sfx.stop()
+				backgroundMusic.stop()
                 this.destroy()
                 clearInterval(i)
             }
         }, 16.66666)
-    }
+	}
 }
+

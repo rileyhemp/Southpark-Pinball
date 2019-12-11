@@ -5,7 +5,7 @@ function createStaticObjects(scene)
 
     //First level (collision group B)
     //new StaticCustomShape(scene, 218, 90, 'midTargetLeft', collisionGroupB)
-    new StaticCustomShape(scene, 250, 740, 'killZone', collisionGroupB).setScale(0.9, 1)
+    new StaticCustomShape(scene, 250, 740, 'killZone', collisionGroupB).setScale(0.9, 1).setCollidesWith(collisionGroupB)
     new StaticCustomShape(scene, 147, 200, 'topLoop', collisionGroupB).setScale(0.85, 0.9)
     new StaticCustomShape(scene, 155, 244, 'leftRampLeft', collisionGroupB).setScale(0.82, 1)
     new StaticCustomShape(scene, 155, 244, 'leftRampLeft', collisionGroupC).setScale(0.82, 1)
@@ -37,7 +37,7 @@ function createStaticObjects(scene)
     new StaticShape(scene, 'circle', 375, 98, 5, null, null, collisionGroupB, 'rubber')//Top tri-lane
     new StaticShape(scene, 'circle', 367, 98, 5, null, null, collisionGroupB, 'rubber')//Top tri-lane
     new StaticShape(scene, 'circle', 320, 160, 10, null, null, collisionGroupB, 'rubber') // Bumpers spacer
-    new StaticShape(scene, 'circle', 100, 435, 8, null, null, collisionGroupB, 'rubber') // Left lane
+    new StaticShape(scene, 'circle', 100, 430, 8, null, null, collisionGroupB, 'rubber') // Left lane
     new StaticShape(scene, 'circle', 125, 491, 12, null, null, collisionGroupB, 'rubber') // Slingshot corners
     new StaticShape(scene, 'circle', 350, 491, 12, null, null, collisionGroupB, 'rubber') // 
     new StaticShape(scene, 'circle', 148, 575, 8, null, null, collisionGroupB, 'rubber') // 
@@ -86,7 +86,11 @@ function createStaticObjects(scene)
     new Sensor(scene, 136, 13, 50, 20, -.1, 'ramp-hit', 'centerRampHit', sensorGroupB)
     new Sensor(scene, 349, 16, 60, 20, -.1, 'ramp-hit', 'rightRampHit', sensorGroupB)  
     //Loop hit
-    new Sensor(scene, 296, 68, 20, 20, 0, 'loop-hit', null, sensorGroupA)
+	new Sensor(scene, 296, 68, 20, 20, 0, 'loop-hit', null, sensorGroupA)
+	new Sensor(scene, 128, 257, 30, 20, -.1, 'loop-on', 'leftLoopOn', sensorGroupA)  
+	new Sensor(scene, 378, 262, 30, 20, -.1, 'loop-on', 'rightLoopOn', sensorGroupA)  
+	new Sensor(scene, 128, 257, 30, 20, -.1, 'loop-on', 'leftLoopOn', sensorGroupB)  
+    new Sensor(scene, 378, 262, 30, 20, -.1, 'loop-on', 'rightLoopOn', sensorGroupB)  
     //Cartman hit
     cartmanLeft = new Sensor(scene, 257, 226, 18, 20, 0, 'cartman-hit', 'cartmanCenter', sensorGroupA)
     cartmanCenter = new Sensor(scene, 237, 226, 18, 20, 0, 'cartman-hit', 'cartmanLeft', sensorGroupA)

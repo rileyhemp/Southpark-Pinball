@@ -4,6 +4,12 @@ body {
 	background-color: black;
 	display: flex;
 	font-family: 'VT323', monospace;
+	justify-content: center;
+	max-width: 1000px;
+	margin: auto;
+	overflow: hidden;
+	position: relative;
+	visibility: hidden;
 }
 
 .display {
@@ -16,6 +22,7 @@ body {
 	color: rgb(252, 164, 0);
 	margin: 10px 0;
 	visibility: hidden;
+	width: 20vw;
 }
 
 .score {
@@ -50,9 +57,42 @@ body {
 .controls {
 	position: absolute;
 	bottom: 10px;
-	left: 10px;
+	width: 100%;
+	padding-right: 23vw;
+	text-align: center;
 	color: white;
 	p {
 		margin-top: 10px;
+	}
+}
+
+.glitch {
+	color: white;
+	top: 10px;
+	position: absolute;
+	left: 0;
+}
+
+.start-screen {
+	background-color: rgba(0,0,0,0.8);
+	position: absolute;
+	flex-direction: column;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	a {
+		color: white;
+		margin: 0 0 1rem 0;
+	}
+	h1 {
+		font-size: 50px;
+	}
+	p {
+		display: block;
 	}
 }

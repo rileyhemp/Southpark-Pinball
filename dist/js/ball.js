@@ -56,7 +56,7 @@ function (_Phaser$Physics$Matte) {
     key: "setupBall",
     value: function setupBall() {
       this.body.friction = 0;
-      this.body.frictionAir = 0;
+      this.body.frictionAir = 0.0001;
       this.setDensity(.001);
       this.setDepth(1); //Set what the ball can collide with
 
@@ -168,11 +168,11 @@ function (_Phaser$Physics$Matte) {
         } else if (!_this2.body.isOnRamp && _this2.body.isOnLauncher) {
           _this2.setCollisions('launcher');
 
-          _this2.setDepth(4);
+          _this2.setDepth(3);
         } else {
           _this2.setCollisions('table');
 
-          _this2.setDepth(4);
+          _this2.setDepth(3);
         } //Keeps the ball from spinning
 
 
@@ -191,6 +191,8 @@ function (_Phaser$Physics$Matte) {
           _this2.table_sfx.stop();
 
           _this2.ramp_sfx.stop();
+
+          backgroundMusic.stop();
 
           _this2.destroy();
 

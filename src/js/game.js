@@ -51,6 +51,7 @@ gameActive,
 backgroundMusic, eventMusic, 
 lights, 
 currentScene,
+welcomeScreen,
 test
 
 let balls = []
@@ -75,21 +76,27 @@ if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
 //Create
 
 function create() {
+	document.body.style.visibility = 'visible'
 	currentScene = this
+	welcomeScreen = document.querySelector('.start-screen')
+	welcomeScreen.addEventListener('click', ()=>
+	{
+		welcomeScreen.style.visibility = 'hidden'
+		newGame(this)
+	})
 	//Size to fit
 	document.querySelector('canvas').style.maxHeight = window.innerHeight+'px'
 	document.querySelector('canvas').style.minHeight = window.innerHeight+'px'
 
 	initDomControls()
+
 	//Move score section to the right of the newly created canvas
 	let displaySection = document.querySelector('.display')
 	document.body.appendChild(displaySection)
 
 	test = this
 	
-	//Init alerts
-	playAlerts(alerts)
-	// playRandomSound('intro_music', this)
+	playRandomSound('intro_music', this)
 
     //What to do on click
     this.input.on('pointerdown', function(pointer)
@@ -101,11 +108,8 @@ function create() {
         // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
 		// ball.setVelocityY(-20)
 		// ball.setVelocityX(-20)
-
-
-
         //Start a new game
-        
+        // newGame(this)
     }, this)
 	
     //Setup collision groups 
@@ -160,7 +164,6 @@ function create() {
     //See collisions.js
 
 	initCollisionListeners(this) 
-	newGame(this)
 }
 
 
@@ -207,7 +210,6 @@ function update() {
         //Get a new ball if there are any remaining. Otherwise end the game.
         if ( currentBall <= config.game.balls - 1 && gameActive)
         {
-			console.log('new ball')
             getNewBall(this)
         }
         else if (gameActive)
@@ -229,7 +231,7 @@ function update() {
 	//Butters
 	Object.keys(lights).forEach(el =>
 	{
-		lights[el].hit  > 0 && !buttersLightOn ? flashLights('butters', 1) : null
+		lights[el].hit  >  0 && !buttersLightOn ? flashLights('butters', 1) : null
 	})
 } 
 
@@ -241,28 +243,44 @@ function newGame(scene)
     gameActive = true
     score = 0
     multiplier = 1
-    backgroundMusic = scene.sound.add('background_music')
+	backgroundMusic = scene.sound.add('background_music')	
 	getNewBall(scene)
 }
 
 function endGame(scene)
 {
-	alert("Final score: " + score, 2000)
-    console.log('game over')
+	document.querySelector('.start-screen > h1').textContent = "Game Over"
+	document.querySelector('.byline').textContent = 'Final score: ' + score
+	document.querySelector('.start-screen > a').textContent = ''
+	document.querySelector('.start-screen > p:nth-child(4)').textContent = 'Click to play again'
+	welcomeScreen.style.visibility = 'visible'
     backgroundMusic.stop()
 	score = 0
 	document.querySelector('.score').textContent = score
 	currentBall = 0
-	newGame(scene)
 }
 
 function getNewBall(scene)
 {
-    backgroundMusic.pause()
+	clearLights()
+    backgroundMusic.play()
 	ball = new Ball(scene, 455, 669, 'ball') 
     scene.sound.playAudioSprite('sound_effects', "rollover")
-        currentBall++
-        document.querySelector('.balls-remaining').textContent = currentBall
+	currentBall++
+	document.querySelector('.balls-remaining').textContent = currentBall
+}
+
+function restartBall(scene)
+{
+	balls.forEach(el=>
+		{
+			el.isDestroyed = true
+			el.destroy()
+			balls.pop()
+			backgroundMusic.play()
+			ball = new Ball(scene, 455, 669, 'ball') 
+			scene.sound.playAudioSprite('sound_effects', "rollover")
+		})
 }
 
 function addScore(name, modifier)
@@ -276,7 +294,7 @@ function addScore(name, modifier)
             break
         case "ramp" : amount = 5000
             break
-        case "cartman-win" : amount = 100000
+        case "cartman-win" : amount = 1000000
             break
         case "cartman-body" : amount = 25000
             break
@@ -289,7 +307,6 @@ function addScore(name, modifier)
     }
     let total = amount * multiplier
 	score += total
-	console.log(amount, multiplier, total)
     document.querySelector('.score').textContent = score
 }
 
@@ -304,12 +321,12 @@ function playRandomSound(sprite, scene, delay)
 
 function alert(message, timeout)
 {
-	alerts.push(message)
+	let text = document.querySelector('.alert-window')
+	text.innerText = message
 
 	setTimeout(()=>
 	{
-		const alert = alerts.indexOf(message);
-		alerts.splice(alert, 1)
+		text.innerText === message ? text.innerText = '' : null
 	}, timeout)
 
 }
@@ -373,4 +390,7 @@ function initDomControls()
 	}
 }
 
-
+document.querySelector('#reload-button').addEventListener('click', function()
+{
+	restartBall(currentScene)
+})

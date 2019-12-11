@@ -3,7 +3,7 @@ function startEvent(name, scene)
     switch(name) 
     {
         case "cartman" :
-            let duration = 5000 //14500
+            let duration = 14500
             startCartman(scene)
             setTimeout(()=>
             {
@@ -15,20 +15,9 @@ function startEvent(name, scene)
 function startCartman(scene)
 {
     cartmanCanStart = false
-    // eventMusic = scene.sound.add('cartman_music')
-    // setTimeout(()=>
-    //     {
-    //         backgroundMusic ? backgroundMusic.pause() : null
-    //         eventMusic.play()
-    //         scene.tweens.add({
-    //             targets: eventMusic,
-    //             volume: { from: 0, to: 1 },
-    //             duration: 1000,
-    //         })
-	//     }, 2000)
 
 	flashLights('cartman')
-	
+	alert('Hit Cartman', 4000)
     scene.sound.playAudioSprite('sound_effects', 'Drain')
 	playRandomSound('cartman_start', scene, 500)
 	rampsCartmanGate.setDepth(0)
@@ -49,14 +38,14 @@ function endCartman(scene, result)
 	lights.cartman.cartmanRight.hit = 0
 	clearInterval(lights.cartman.isFlashing)
 	rampsCartmanGate.setDepth(2)
-    // eventMusic.stop()
     if (result === 'win' )
     {
 		addScore('cartman-win')
+		alert('Defeated Cartman - 1,000,000', 2000)
         playRandomSound('cartman_end', scene, 500)
     } else 
     {
-        // playRandomSound('generic_negative', scene, 500)
+        alert('Cartman Failed', 2000)
     }
     lights['cartmanBody'].hit = 0
     scene.sound.playAudioSprite('sound_effects', 'kicker_enter_center')
@@ -65,5 +54,5 @@ function endCartman(scene, result)
     {
         targets[target].object.setCollidesWith(collisionGroupA)
 	}
-	//cartmanCanStart = true
+	cartmanCanStart = true
 }

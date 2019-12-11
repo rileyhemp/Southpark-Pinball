@@ -101,7 +101,6 @@ function initLights(scene) {
 
 function flashLights(id, after, duration) {
   //Set default duration
-  console.log(duration);
   duration === undefined ? duration = 1000 : null;
   var active = false;
   var endState = after;

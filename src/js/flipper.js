@@ -105,7 +105,7 @@ class LeftFlipper extends Flipper {
         super(scene, x, y)
         this.orientation = 'left'
         super.createComponents()
-        this.endPosition = 102
+        this.endPosition = 101
         super.setCollisionGroups()
         this.flipper.displayOriginX = 42
     }

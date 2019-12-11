@@ -5,35 +5,33 @@ function registerHit(scene, bodyA, bodyB) {
     switch(bodyA)
     {
         case "butters" :
-			console.log(rampsLit)
-			
 			playRandomSound('butters_hit', scene)  
-			flashLights('butters', 1, 2500)
+			lights.butters.active= true
             scene.sound.playAudioSprite('sound_effects', 'thunder', {volume: 0.5})
             scene.sound.playAudioSprite('sound_effects', 'hole_enter')
             bodyB.render.visible = false
             bodyB.isDestroyed = true
 			bodyB.destroy()
+			balls.pop()
 			if (rampsLit < 5)
 			{
-				alert('Jackpot x' + rampsLit + ' ' + 25000 * rampsLit, 2000)
+				alert('Jackpot x' + rampsLit , 2000)
 				addScore('jackpot', rampsLit)
 			} else 
 			{
 				alert('Super Jackpot - 500,000', 2000)
 				addScore('super-jackpot')
-				ball = new Ball(scene, 398, 115, 'ball') 
 			}
             //Holds the ball for 3 seconds and shoots back to left flipper
             setTimeout(()=>
             {
-				flashLights('butters', 0)
                 ball = new Ball(scene, 340, 259, 'ball') 
                 ball.setVelocityY(3.3)
                 ball.setVelocityX(-3.3)
                 scene.sound.playAudioSprite('sound_effects', 'ExitSandman')
 				addScore('butters')
 				clearLights()
+				rampsLit = 0
             }, 3000)     
             break     
 
@@ -54,7 +52,6 @@ function registerHit(scene, bodyA, bodyB) {
         
         case "loop-hit" :
 			rampsLit++
-			alert(rampsLit + " /5 jackpots active", 2000)
 			addScore('loop')
 			if (bodyB.velocity.x > 0)
 			{
@@ -67,19 +64,16 @@ function registerHit(scene, bodyA, bodyB) {
 		
 		case "leftRampHit" :
 			rampsLit++
-			alert(rampsLit + " /5 jackpots active", 2000)
 			addScore('ramp')
 			flashLights('leftRamp', 1)
 			break
 		case "centerRampHit" :
 			rampsLit++
-			alert(rampsLit + " /5 jackpots active", 2000)
 			addScore('ramp')
 			flashLights('centerRamp', 1)
 			break
 		case "rightRampHit" :
 			rampsLit++
-			alert(rampsLit + " /5 jackpots active", 2000)
 			addScore('ramp')
 			flashLights('rightRamp', 1)
 			break
@@ -99,7 +93,11 @@ function initCollisionListeners(scene)
             if (bodyA.label === 'cartman-himself')
             {
 				registerHit(scene, bodyA.type, bodyA.label)
-            }       
+			}       
+			if (bodyA.type === 'loop-on') 
+			{
+				bodyB.level = 'table'
+			}
 			//Ramps
 			if (bodyA.type === 'ramp-on')
 			{
@@ -157,7 +155,12 @@ function initCollisionListeners(scene)
             if (bodyA.type === 'loop-hit')
             {
                 registerHit(scene, bodyA.type, bodyB)
-            }
+			}
+			
+			if (bodyA.type === 'loop-on') 
+			{
+				bodyB.level = 'table'
+			}
 
             //Generic ramp on
             if (bodyA.type === 'ramp-on')
