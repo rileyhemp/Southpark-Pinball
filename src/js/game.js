@@ -101,10 +101,7 @@ function create() {
     //What to do on click
     this.input.on('pointerdown', function(pointer)
     {
-
         // console.log(pointer.x+",", pointer.y)
-
-
         // ball = new Ball(this, pointer.x, pointer.y, 'ball') 
 		// ball.setVelocityY(-20)
 		// ball.setVelocityX(-20)
