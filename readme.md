@@ -2,5 +2,4 @@
 
 ## Built with Phaser.js
 
-
-
+Development: npm install & gulp

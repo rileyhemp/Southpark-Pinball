@@ -352,12 +352,16 @@ function initDomControls() {
 	if (game.config.isMobile === true) {
 		let leftButton = document.querySelector(".left-button");
 		let rightButton = document.querySelector(".right-button");
+		let launchButton = document.querySelector(".launch-button");
 		leftButton.style.visibility = "visible";
 		rightButton.style.visibility = "visible";
+		launchButton.style.visibility = "visible";
 		leftButton.style.bottom = "20px";
 		rightButton.style.bottom = "20px";
+		launchButton.style.bottom = "50px";
 		leftButton.style.left = "30px";
-		rightButton.style.left = tableWidth - 175 + "px";
+		rightButton.style.right = "30px";
+		launchButton.style.left = "50%";
 		leftButton.addEventListener("touchstart", function() {
 			leftFlipper.flip();
 		});
@@ -372,6 +376,14 @@ function initDomControls() {
 
 		rightButton.addEventListener("touchend", function() {
 			rightFlipper.release();
+		});
+
+		launchButton.addEventListener("touchstart", function() {
+			launcher.charge();
+		});
+
+		launchButton.addEventListener("touchend", function() {
+			launcher.fire();
 		});
 	}
 }
