@@ -2,29 +2,42 @@
 
 body {
 	background-color: black;
-	display: flex;
-	font-family: 'VT323', monospace;
+	display: block;
+	font-family: "VT323", monospace;
 	justify-content: center;
 	max-width: 1000px;
 	margin: auto;
 	overflow: hidden;
 	position: relative;
 	visibility: hidden;
+	@media screen and (min-width: 1000px) {
+		display: flex;
+	}
 }
 
 .display {
 	align-self: flex-start;
-	display: flex;
+	display: none;
 	flex-direction: column;
 	height: 100vh;
 	justify-content: space-between;
 	min-height: 100%;
 	color: rgb(252, 164, 0);
 	margin: 10px 0;
-	visibility: hidden;
 	width: 20vw;
 }
 
+@media only screen and (min-width: 1000px) {
+	.display {
+		display: flex;
+	}
+}
+
+@media only screen and (max-width: 1000px) {
+	canvas {
+		transform: translateY(5%) translateX(-5%);
+	}
+}
 .score {
 	font-size: 70px;
 	margin: 20px 0;
@@ -37,7 +50,7 @@ body {
 .launcher-outer {
 	margin-bottom: 45px;
 	height: 200px;
-	background-color: rgba(255,255,255,0.1);
+	background-color: rgba(255, 255, 255, 0.1);
 	width: 50px;
 	display: flex;
 }
@@ -74,8 +87,9 @@ body {
 }
 
 .start-screen {
-	background-color: rgba(0,0,0,0.8);
-	position: absolute;
+	position: fixed;
+	background: rgba(0, 0, 0, 0.7);
+	z-index: 999;
 	flex-direction: column;
 	left: 0;
 	top: 0;

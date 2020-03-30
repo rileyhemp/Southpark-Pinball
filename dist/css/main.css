@@ -1,8 +1,7 @@
 body {
 	background-color: black;
-	display: -webkit-box;
-	display: flex;
-	font-family: 'VT323', monospace;
+	display: block;
+	font-family: "VT323", monospace;
 	-webkit-box-pack: center;
 	        justify-content: center;
 	max-width: 1000px;
@@ -12,10 +11,16 @@ body {
 	visibility: hidden;
 }
 
+@media screen and (min-width: 1000px) {
+	body {
+		display: -webkit-box;
+		display: flex;
+	}
+}
+
 .display {
 	align-self: flex-start;
-	display: -webkit-box;
-	display: flex;
+	display: none;
 	-webkit-box-orient: vertical;
 	-webkit-box-direction: normal;
 	        flex-direction: column;
@@ -25,8 +30,21 @@ body {
 	min-height: 100%;
 	color: #fca400;
 	margin: 10px 0;
-	visibility: hidden;
 	width: 20vw;
+}
+
+@media only screen and (min-width: 1000px) {
+	.display {
+		display: -webkit-box;
+		display: flex;
+	}
+}
+
+@media only screen and (max-width: 1000px) {
+	canvas {
+		-webkit-transform: translateY(5%) translateX(-5%);
+		        transform: translateY(5%) translateX(-5%);
+	}
 }
 
 .score {
@@ -80,8 +98,9 @@ body {
 }
 
 .start-screen {
-	background-color: rgba(0, 0, 0, 0.8);
-	position: absolute;
+	position: fixed;
+	background: rgba(0, 0, 0, 0.7);
+	z-index: 999;
 	-webkit-box-orient: vertical;
 	-webkit-box-direction: normal;
 	        flex-direction: column;
